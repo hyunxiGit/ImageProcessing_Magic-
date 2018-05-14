@@ -1,0 +1,3 @@
+iterate 文件使用方法:
+FindNextFile(hFind, &ffd)
+https://msdn.microsoft.com/en-us/library/windows/desktop/aa365200(v=vs.85).aspx
