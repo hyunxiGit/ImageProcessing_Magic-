@@ -1,8 +1,0 @@
-iterate 文件使用方法:
-FindNextFile(hFind, &ffd)
-https://msdn.microsoft.com/en-us/library/windows/desktop/aa365200(v=vs.85).aspx
-
-Unicode的C++输出方法
-https://blog.csdn.net/jiangxinyu/article/details/7875981
-
-Magick++ 不支持Uincode输入， 必须按照ASSCII 输出然后改名
