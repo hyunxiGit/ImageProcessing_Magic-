@@ -1,19 +1,19 @@
-﻿#include "fileManager.h"
+﻿#pragma once
 #include "stdafx.h"
 
-fileManager* fileManager::theFileManager = nullptr;
+FileManager* FileManager::theFileManager = nullptr;
 
-fileManager::fileManager()
+FileManager::FileManager()
 {
 	test = 10;
 }
 
-fileManager* fileManager :: getInstance()
+FileManager* FileManager:: getInstance()
 {
-	fileManager* result;
+	FileManager* result;
 	if (theFileManager == nullptr)
 	{
-		theFileManager = new fileManager();
+		theFileManager = new FileManager();
 	}
 	result = theFileManager;
 	return(theFileManager);

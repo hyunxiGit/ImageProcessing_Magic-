@@ -167,13 +167,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="asset2D.h" />
     <ClInclude Include="fileManager.h" />
+    <ClInclude Include="keywordManager.h" />
+    <ClInclude Include="serialize.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Asset2D.cpp" />
     <ClCompile Include="fileManager.cpp" />
     <ClCompile Include="ImageProcess.cpp" />
+    <ClCompile Include="keywordManager.cpp" />
+    <ClCompile Include="serialize.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
