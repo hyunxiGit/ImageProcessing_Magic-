@@ -1,11 +1,21 @@
 ﻿#pragma once
 #include "stdafx.h"
 
+//empty pointer assignment
 FileManager* FileManager::theFileManager = nullptr;
 
 FileManager::FileManager()
 {
-	test = 10;
+	//todo : 不使用常量使用传入值
+	LPCWSTR myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";
+	cout << "current root is : ";
+	locale loc("chs");
+	//locale loc( "Chinese-simplified" );
+	//locale loc( "ZHI" );
+	//locale loc( ".936" );
+	wcout.imbue(loc);
+	std::wcout << myroot <<endl;
+	setRoot(myroot);
 }
 
 FileManager* FileManager:: getInstance()
@@ -19,77 +29,61 @@ FileManager* FileManager:: getInstance()
 	return(theFileManager);
 }
 
-//
-//void fileManagement_outputUnicode()
-//{
-//	//method 1 : 使用wprintf
-//
-//	char scp[16];
-//	int cp = GetACP();
-//	sprintf_s(scp, ".%d", cp);
-//	setlocale(LC_ALL, scp);
-//	wprintf(L"测试1234");
-//
-//	//method 2 : 使用wcout
-//	/*
-//	locale loc("chs");
-//	//locale loc( "Chinese-simplified" );
-//	//locale loc( "ZHI" );
-//	//locale loc( ".936" );
-//	wcout.imbue(loc);
-//	std::wcout << L"中国" << endl;
-//	*/
-//}
-//
-//void fileManagement_iterateFolder()
-//{
-//	//输出 unicode
-//	//这段代码保证Unicode的输出啊
-//	char scp[16];
-//	int cp = GetACP();
-//	sprintf_s(scp, ".%d", cp);
-//	setlocale(LC_ALL, scp);
-//	//wprintf(L"测试1234");
-//
-//	//输出 Unicode 啊
-//
-//	//iterate folder part
-//	HANDLE hFind = INVALID_HANDLE_VALUE;
-//	TCHAR szDir[MAX_PATH];
-//	WIN32_FIND_DATA ffd;
-//	DWORD dwError = 0;
-//
-//	StringCchCopy(szDir, MAX_PATH, L"d:/");
-//	hFind = FindFirstFile(szDir, &ffd);
-//	//找所有 文件夹
-//	//hFind = FindFirstFile(L"d:\\*.*", &ffd);
-//	//找特定的文件
-//	hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
-//
-//	if (INVALID_HANDLE_VALUE == hFind)
-//	{
-//		//DisplayErrorBox(TEXT("FindFirstFile"));
-//		cout << "incorrect" << endl;
-//	}
-//	do
-//	{
-//		cout << "find" << endl;
-//		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-//		{
-//			/*cout << ffd.cFileName;
-//			cout << " ";
-//			cout << "<DIR>" << endl;*/
-//			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
-//		}
-//		else
-//		{
-//			//cout << ffd.cFileName <<endl;
-//			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
-//		}
-//	} while (FindNextFile(hFind, &ffd) != 0);
-//
-//}
-//
+bool FileManager::setRoot(LPCWSTR myPath)
+{
+	StringCchCopy(root, MAX_PATH, myPath);
+	return (true);
+}
+
+void fileManagement_iterateFolder()
+{
+	//输出 unicode
+	//这段代码保证Unicode的输出啊
+	char scp[16];
+	int cp = GetACP();
+	sprintf_s(scp, ".%d", cp);
+	setlocale(LC_ALL, scp);
+	//wprintf(L"测试1234");
+
+	//输出 Unicode 啊
+
+	//iterate folder part
+	HANDLE hFind = INVALID_HANDLE_VALUE;
+	TCHAR szDir[MAX_PATH];
+	WIN32_FIND_DATA ffd;
+	DWORD dwError = 0;
+
+	StringCchCopy(szDir, MAX_PATH, L"d:/");
+	hFind = FindFirstFile(szDir, &ffd);
+	//找所有 文件夹
+	//hFind = FindFirstFile(L"d:\\*.*", &ffd);
+	//找特定的文件
+	hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
+
+	if (INVALID_HANDLE_VALUE == hFind)
+	{
+		//DisplayErrorBox(TEXT("FindFirstFile"));
+		cout << "incorrect" << endl;
+	}
+	do
+	{
+		cout << "find" << endl;
+		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			/*cout << ffd.cFileName;
+			cout << " ";
+			cout << "<DIR>" << endl;*/
+			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
+		}
+		else
+		{
+			//cout << ffd.cFileName <<endl;
+			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
+		}
+	} while (FindNextFile(hFind, &ffd) != 0);
+
+}
+
 //void fileManagement_createFolder()
 //{
 //	//support Unicode
@@ -106,3 +100,27 @@ FileManager* FileManager:: getInstance()
 //	cout << "flag: " << flag << endl;
 //	cout << "err: " << err << endl;
 //}
+
+
+
+//todo this function is purely test for support Unicode it should be somewhere else
+void outputUnicode()
+{
+	//method 1 : 使用wprintf
+
+	char scp[16];
+	int cp = GetACP();
+	sprintf_s(scp, ".%d", cp);
+	setlocale(LC_ALL, scp);
+	wprintf(L"测试1234");
+
+	//method 2 : 使用wcout
+	/*
+	locale loc("chs");
+	//locale loc( "Chinese-simplified" );
+	//locale loc( "ZHI" );
+	//locale loc( ".936" );
+	wcout.imbue(loc);
+	std::wcout << L"中国" << endl;
+	*/
+}
