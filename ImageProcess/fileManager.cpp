@@ -2,39 +2,73 @@
 #include "stdafx.h"
 
 //empty pointer assignment
-FileManager* FileManager::theFileManager = nullptr;
+FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager()
 {
 	//todo : 不使用常量使用传入值
-	LPCWSTR myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";
-	cout << "current root is : ";
-	locale loc("chs");
-	//locale loc( "Chinese-simplified" );
-	//locale loc( "ZHI" );
-	//locale loc( ".936" );
-	wcout.imbue(loc);
-	std::wcout << myroot <<endl;
+	//公司环境
+	//LPCWSTR myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
+	//家里环境
+	LPCWSTR myroot = L"F:/我的/surfaces/";
 	setRoot(myroot);
 }
 
 FileManager* FileManager:: getInstance()
 {
 	FileManager* result;
-	if (theFileManager == nullptr)
+	if (instance == nullptr)
 	{
-		theFileManager = new FileManager();
+		instance = new FileManager();
 	}
-	result = theFileManager;
-	return(theFileManager);
+	result = instance;
+	return(instance);
 }
 
 bool FileManager::setRoot(LPCWSTR myPath)
 {
 	StringCchCopy(root, MAX_PATH, myPath);
+	cout << "current root is : ";
+	locale loc("chs");
+	wcout.imbue(loc);
+	std::wcout << root << endl;
 	return (true);
 }
+void FileManager::iterateFolder()
+{
+	HANDLE hFind = INVALID_HANDLE_VALUE;
+	TCHAR szDir[MAX_PATH];
+	WIN32_FIND_DATA ffd;
+	DWORD dwError = 0;
 
+	//set root
+	StringCchCopy(szDir, MAX_PATH, root);
+
+	//set search path
+	//hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
+	StringCchCat(szDir, MAX_PATH, L"*.*");
+	hFind = FindFirstFile(szDir, &ffd);
+
+	if (INVALID_HANDLE_VALUE == hFind)
+	{
+		cout << "path can not be found" << endl;
+	}
+	do
+	{
+		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			// These 2 folder should be ignore
+			if (lstrcmpW(ffd.cFileName, L".") == 0) {}
+			if (lstrcmpW(ffd.cFileName, L"..") == 0) {}
+			wcout << ffd.cFileName << " <DIR> " << endl; 
+		}
+		else
+		{
+			//cout << ffd.cFileName <<endl;
+			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
+		}
+	} while (FindNextFile(hFind, &ffd) != 0);
+}
 void fileManagement_iterateFolder()
 {
 	//输出 unicode

@@ -1,7 +1,7 @@
 class FileManager
 {
 private:
-	static FileManager* theFileManager;
+	static FileManager* instance;
 	FileManager();
 
 
@@ -11,9 +11,8 @@ private:
 public:
 	static FileManager* getInstance();
 	bool setRoot(LPCWSTR);
-
-	static void iterateFolder();
-	//static void createFolder();
+	void iterateFolder();
+	void createFolder();
 	int test;
 
 
