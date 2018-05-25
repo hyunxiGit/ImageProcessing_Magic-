@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "stdafx.h"
 
+
 //empty pointer assignment
+void logFileOut(TCHAR *);
 FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager()
@@ -36,6 +38,7 @@ bool FileManager::setRoot(LPCWSTR myPath)
 }
 void FileManager::iterateFolder()
 {
+
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	TCHAR szDir[MAX_PATH];
 	WIN32_FIND_DATA ffd;
@@ -45,7 +48,6 @@ void FileManager::iterateFolder()
 	StringCchCopy(szDir, MAX_PATH, root);
 
 	//set search path
-	//hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
 	StringCchCat(szDir, MAX_PATH, L"*.*");
 	hFind = FindFirstFile(szDir, &ffd);
 
@@ -60,15 +62,34 @@ void FileManager::iterateFolder()
 			// These 2 folder should be ignore
 			if (lstrcmpW(ffd.cFileName, L".") == 0) {}
 			if (lstrcmpW(ffd.cFileName, L"..") == 0) {}
-			wcout << ffd.cFileName << " <DIR> " << endl; 
+			std :: wcout << ffd.cFileName << " <DIR> " << endl;
 		}
 		else
 		{
 			//cout << ffd.cFileName <<endl;
 			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
 		}
+		logFileOut(ffd.cFileName);
 	} while (FindNextFile(hFind, &ffd) != 0);
+	
 }
+
+void logFileOut(TCHAR * szDir)
+{
+	char path[] = "d:/test.txt" ;
+	std::locale chs("chs");
+	wofstream myLog;
+	myLog.imbue(chs);
+
+	myLog.open(path, ios::app);
+
+	if (myLog.is_open())
+	{
+		myLog << szDir<<endl;
+		myLog.close();
+	}
+}
+
 void fileManagement_iterateFolder()
 {
 	//输出 unicode

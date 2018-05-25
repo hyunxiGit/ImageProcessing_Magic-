@@ -1,22 +1,37 @@
 ﻿#pragma once
 #include "stdafx.h"
+
 void Serialize :: makeJsonObj() 
 {
-	cout << " 字符串建立Json Object___________________________________________" << endl;
-	/*
 	rapidjson :: Document document;
 	//建立char的json object
-	const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
-	//建立Json文档
+	//const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+	const WCHAR* wc = L" { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[\"辣\", \"的\"] } ";
+	//转换wchar_t为 char
+	_bstr_t b(wc);
+	const char* json = b;
+
+	//建立Json文档 这里只能接受char
 	document.Parse(json);
 	assert(document.IsObject());
+
 	//取得字符串方法
 	assert(document["hello"].IsString());
 	printf("hello = %s\n", document["hello"].GetString());
 	// 取得bool方法
 	assert(document["t"].IsBool());
 	printf("t = %s\n", document["t"].GetBool() ? "true" : "false");
-	*/
+	const rapidjson :: Value& a = document["a"];
+	assert(a.IsArray());
+	cout << (a.IsArray());
+	for (rapidjson::SizeType i = 0; i < a.Size(); i++) // Uses SizeType instead of size_t
+	{
+		//wstring myWS = "你好";
+		wcout << a[i].GetString() << endl;
+		//printf("a[%d] = %d\n", i, a[i].GetInt());
+		
+	}
+	
 
 }
 void Serialize :: exportJsonFile() 
