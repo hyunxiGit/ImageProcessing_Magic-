@@ -2,17 +2,19 @@
 #include "stdafx.h"
 #define BUFFER_SIZE 50
 
+#define MAX_PROCESS_FOLDER_NUMBER 300
+
 //empty pointer assignment
-void logFileOut(TCHAR *);
+void logFilesOut(WCHAR ** , int , int );
 FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager()
 {
 	//todo : 不使用常量使用传入值
 	//公司环境
-	//LPCWSTR myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
+	LPCWSTR myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
 	//家里环境
-	LPCWSTR myroot = L"F:/我的/surfaces/";
+	//LPCWSTR myroot = L"F:/我的/surfaces/";
 	setRoot(myroot);
 }
 
@@ -38,6 +40,12 @@ bool FileManager::setRoot(LPCWSTR myPath)
 }
 void FileManager::iterateFolder()
 {
+	WCHAR ** _outputFolderNames;
+	_outputFolderNames = (WCHAR **)(malloc(MAX_PROCESS_FOLDER_NUMBER * sizeof(WCHAR *) ));
+	for (int i = 0; i < MAX_PROCESS_FOLDER_NUMBER ; i++)
+	{
+		*(_outputFolderNames+i) = (WCHAR *)(malloc(sizeof(WCHAR) * MAX_PATH));
+	}
 
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	TCHAR szDir[MAX_PATH];
@@ -46,6 +54,7 @@ void FileManager::iterateFolder()
 
 	//set root
 	StringCchCopy(szDir, MAX_PATH, root);
+	cout << root << endl;
 
 	//set search path
 	StringCchCat(szDir, MAX_PATH, L"*.*");
@@ -55,6 +64,8 @@ void FileManager::iterateFolder()
 	{
 		cout << "path can not be found" << endl;
 	}
+	
+	int _fileRecorded = 0;
 	do
 	{
 		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
@@ -62,82 +73,110 @@ void FileManager::iterateFolder()
 			// These 2 folder should be ignore
 			if (lstrcmpW(ffd.cFileName, L".") == 0) {}
 			if (lstrcmpW(ffd.cFileName, L"..") == 0) {}
-			std :: wcout << ffd.cFileName << " <DIR> " << endl;
+			//put  filename in the output array
+			if (_fileRecorded < MAX_PROCESS_FOLDER_NUMBER)
+			{
+				wcscpy_s(_outputFolderNames[_fileRecorded], MAX_PATH,ffd.cFileName);
+				_fileRecorded++;
+			}
 		}
+		// todo :  使用数组记录全部file name
 		else
 		{
 			//cout << ffd.cFileName <<endl;
 			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
 		}
-		logFileOut(ffd.cFileName);
+
 	} while (FindNextFile(hFind, &ffd) != 0);
+	//console output
+
+	for (int i = 0; i < _fileRecorded; i++)
+	{
+		std::wcout << _outputFolderNames[i] << " <DIR> " << endl;
+	}
+
+	logFilesOut(_outputFolderNames, _fileRecorded, MAX_PATH);
+
+	//释放内存
+	for (int i = 0; i < MAX_PROCESS_FOLDER_NUMBER; i++)
+	{
+		free(*(_outputFolderNames+i));
+	}
+	free(_outputFolderNames);
 	
 }
 
-void logFileOut(TCHAR * szDir)
+void logFilesOut(WCHAR ** myNames, int myMaxfolders, int myMaxPath)
 {
-	char path[] = "d:/test.txt" ;
+	//path
+	char path[] = "d:/test.txt";
+	//localizetion
 	std::locale chs("chs");
 	wofstream myLog;
 	myLog.imbue(chs);
-
+	//open file
 	myLog.open(path, ios::app);
 
 	if (myLog.is_open())
 	{
-		myLog << szDir<<endl;
+		for (int i = 0; i < myMaxfolders ; i++)
+		{
+			myLog << myNames[i] << endl;
+		}
 		myLog.close();
 	}
 }
 
-void fileManagement_iterateFolder()
-{
-	//输出 unicode
-	//这段代码保证Unicode的输出啊
-	char scp[16];
-	int cp = GetACP();
-	sprintf_s(scp, ".%d", cp);
-	setlocale(LC_ALL, scp);
-	//wprintf(L"测试1234");
 
-	//输出 Unicode 啊
 
-	//iterate folder part
-	HANDLE hFind = INVALID_HANDLE_VALUE;
-	TCHAR szDir[MAX_PATH];
-	WIN32_FIND_DATA ffd;
-	DWORD dwError = 0;
-
-	StringCchCopy(szDir, MAX_PATH, L"d:/");
-	hFind = FindFirstFile(szDir, &ffd);
-	//找所有 文件夹
-	//hFind = FindFirstFile(L"d:\\*.*", &ffd);
-	//找特定的文件
-	hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
-
-	if (INVALID_HANDLE_VALUE == hFind)
-	{
-		//DisplayErrorBox(TEXT("FindFirstFile"));
-		cout << "incorrect" << endl;
-	}
-	do
-	{
-		cout << "find" << endl;
-		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			/*cout << ffd.cFileName;
-			cout << " ";
-			cout << "<DIR>" << endl;*/
-			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
-		}
-		else
-		{
-			//cout << ffd.cFileName <<endl;
-			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
-		}
-	} while (FindNextFile(hFind, &ffd) != 0);
-
-}
+//void fileManagement_iterateFolder()
+//{
+//	//输出 unicode
+//	//这段代码保证Unicode的输出啊
+//	char scp[16];
+//	int cp = GetACP();
+//	sprintf_s(scp, ".%d", cp);
+//	setlocale(LC_ALL, scp);
+//	//wprintf(L"测试1234");
+//
+//	//输出 Unicode 啊
+//
+//	//iterate folder part
+//	HANDLE hFind = INVALID_HANDLE_VALUE;
+//	TCHAR szDir[MAX_PATH];
+//	WIN32_FIND_DATA ffd;
+//	DWORD dwError = 0;
+//
+//	StringCchCopy(szDir, MAX_PATH, L"d:/");
+//	hFind = FindFirstFile(szDir, &ffd);
+//	//找所有 文件夹
+//	//hFind = FindFirstFile(L"d:\\*.*", &ffd);
+//	//找特定的文件
+//	//hFind = FindFirstFile(L"d:\\我的.txt", &ffd);
+//
+//	if (INVALID_HANDLE_VALUE == hFind)
+//	{
+//		//DisplayErrorBox(TEXT("FindFirstFile"));
+//		cout << "incorrect" << endl;
+//	}
+//	do
+//	{
+//		cout << "find" << endl;
+//		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+//		{
+//			/*cout << ffd.cFileName;
+//			cout << " ";
+//			cout << "<DIR>" << endl;*/
+//			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
+//		}
+//		else
+//		{
+//			//cout << ffd.cFileName <<endl;
+//			_tprintf(TEXT("  %s   \n"), ffd.cFileName);
+//		}
+//	} while (FindNextFile(hFind, &ffd) != 0);
+//
+//}
 
 //void fileManagement_createFolder()
 //{
@@ -241,6 +280,7 @@ void wchatTestFunction()
 		printf("The file 'crt_fopen_s.c' was opened\n");
 	}
 	fwprintf(myFile, wc1);
+	fwprintf(myFile, wc1);
 	fclose(myFile);
 
 	// 转化wcharstring 为 multi byte string
@@ -252,7 +292,5 @@ void wchatTestFunction()
 
 	const wchar_t * wc2 = L"来了";
 	wcstombs_s(&oncverted, mbs, BUFFER_SIZE, wc2, BUFFER_SIZE);
-
-
 
 }
