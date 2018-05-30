@@ -1,13 +1,15 @@
 #pragma once
 #include "stdafx.h"
 
-void Log::logFileIn(WCHAR ** myNames, int myCount) 
+//todo : This class better use vector
+void Log::logFileIn(WCHAR ** myNames, int myCount, int & myRecorded) 
 {
 //todo : setlocale ony in one place
 	std::locale chs("chs");
 	wifstream myLog;
 	myLog.imbue(chs);
 
+	bool overFlow = false;
 
 	//open file
 	myLog.open(LOG_PATH, std::ifstream::in);
@@ -16,26 +18,36 @@ void Log::logFileIn(WCHAR ** myNames, int myCount)
 		cout << "faild to open the file" << endl;
 		return;
 	}
-	int recorded = 0;
+	myRecorded = 0;
 	while (!myLog.eof())
 	{
-		myLog >> myNames[recorded];
-		recorded++;
+		if (myRecorded < myCount)
+		{
+			myLog >> myNames[myRecorded];
+			myRecorded++;
+		}
+		else
+		{
+			overFlow = true;
+			break;
+		}
 	}
 	myLog.close();
 
-	for (int i = 0; i < recorded; i++)
+	if (overFlow)
 	{
-		wcout << myNames[i] << endl;
+		wcout << "[log :: logFileIn]" << endl;
+		wcout << "the name array is too small" << endl;
 	}
 }
+
 void Log::logFilesOut(WCHAR ** myNames, int myCount)
 {
-
 	//todo : setlocale ony in one place
 	std::locale chs("chs");
 	wofstream myLog;
 	myLog.imbue(chs);
+
 	//open file
 	myLog.open(LOG_PATH, ios::app);
 

@@ -12,7 +12,7 @@ wchar_t ** Utils::make2dArray(int myLength , int myCount )
 	return(_resultNames);
 }
 
-void Utils::release2DArray (wchar_t ** my2DArray, int myCount )
+void Utils::release2dArray (wchar_t ** my2DArray, int myCount )
 {
 	//释放内存
 	for (int i = 0; i < myCount; i++)

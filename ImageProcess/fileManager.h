@@ -1,3 +1,7 @@
+﻿
+//fileManager 的 singleton 用法:
+//FileManager*  myFileManager = FileManager::getInstance();
+
 class FileManager
 {
 private:
@@ -14,7 +18,5 @@ public:
 	void iterateFolder();
 	void createFolder();
 	int test;
-
-
 	
 };

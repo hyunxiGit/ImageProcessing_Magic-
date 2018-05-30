@@ -1,55 +1,44 @@
 ﻿#pragma once
 #include "stdafx.h"
-void KeywordManager::dictionarySearch()
+bool KeywordManager::dictionarySearch(wchar_t * myCheck)
 {
-	//dictionary feature test
-	string search = "humidity";
-	string line;
-	ifstream inFile;
+
+	//const wchar_t * search = L"humidity";
+
+	wchar_t line[MAX_PATH];
+	wifstream inFile;
 	bool found = false;
-	unsigned int curLine = 0;
 
 	inFile.open("d:/en-dictionary.txt");
-	if (!inFile)
-	{
-		cout << "unable to open file" << endl;
+	if (!inFile.is_open())
+	{ 
+		std :: cout << "unable to open file" << endl;
 	}
 	else
 	{
-		while (getline(inFile, line))
+		while (!inFile.eof())
 		{
-			curLine++;
-			if (line.find(search) != string::npos)
+			inFile >> line;
+			//wcout << line << endl;
+
+			if (std::wcscmp(line, myCheck) == 0)
 			{
 				cout << "found" << endl;
 				found = true;
 				break;
 			}
 		}
-		cout << found << endl;
 	}
+
+	return (found);
 }
 
 //用法：
-//#define MAX_KEYWORD_SIZE 20
-//wchar_t ** _keywordArray = (wchar_t **)malloc(sizeof(wchar_t *) * MAX_KEYWORD_SIZE);
-//for (int i = 0; i < MAX_KEYWORD_SIZE; i++)
-//{
-//	*(_keywordArray + i) = (wchar_t *)malloc(sizeof(wchar_t) * MAX_PATH);
-//}
+//wchar_t ** _keywordArray = Utils::make2dArray(MAX_PATH, MAX_KEYWORD_SIZE);
 //wchar_t * mySource = (wchar_t *)malloc(sizeof(wchar_t) * MAX_PATH);
-//
-//
 //wcscpy_s(mySource, MAX_PATH, L"j喵jl_asldfkl_汪汪_lkjh_");
 //KeywordManager::getKeywords(mySource, _keywordArray, MAX_KEYWORD_SIZE);
-//
-////释放内存
-//for (int i = 0; i < MAX_KEYWORD_SIZE; i++)
-//{
-//	free(*(_keywordArray + i));
-//}
-//free(_keywordArray);
-
+//Utils::release2dArray(_keywordArray, MAX_KEYWORD_SIZE);
 void KeywordManager::getKeywords(wchar_t * mySource, wchar_t ** myKeywordArray, int maxKeyword)
 {
 	int recoded = 0;
