@@ -5,7 +5,7 @@
 #define MAX_PROCESS_FOLDER_NUMBER 300
 
 //empty pointer assignment
-void logFilesOut(WCHAR ** , int , int );
+void logFilesOut(WCHAR **, int);
 FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager()
@@ -95,7 +95,7 @@ void FileManager::iterateFolder()
 		std::wcout << _outputFolderNames[i] << " <DIR> " << endl;
 	}
 
-	logFilesOut(_outputFolderNames, _fileRecorded, MAX_PATH);
+	Log::logFilesOut(_outputFolderNames, _fileRecorded);
 
 	//释放内存
 	for (int i = 0; i < MAX_PROCESS_FOLDER_NUMBER; i++)
@@ -106,11 +106,12 @@ void FileManager::iterateFolder()
 	
 }
 
-void logFilesOut(WCHAR ** myNames, int myMaxfolders, int myMaxPath)
+void logFilesOut(WCHAR ** myNames, int nameCount)
 {
 	//path
 	char path[] = "d:/test.txt";
-	//localizetion
+	// 这里要想办法抽出去
+	////localizetion
 	std::locale chs("chs");
 	wofstream myLog;
 	myLog.imbue(chs);
@@ -119,13 +120,14 @@ void logFilesOut(WCHAR ** myNames, int myMaxfolders, int myMaxPath)
 
 	if (myLog.is_open())
 	{
-		for (int i = 0; i < myMaxfolders ; i++)
+		for (int i = 0; i < nameCount; i++)
 		{
 			myLog << myNames[i] << endl;
 		}
 		myLog.close();
 	}
 }
+
 
 
 
@@ -249,17 +251,6 @@ void WCS_to_MCS()
 
 	*/
 }
-
-void coutFiles()
-{
-	ofstream myFile;
-	const wchar_t *myWC1 = L"测试文件";
-	myFile.open("d:/我的.txt");
-	myFile << "真的吗" << endl;
-
-}
-
-
 
 //字符串的函数测试
 void wchatTestFunction()
