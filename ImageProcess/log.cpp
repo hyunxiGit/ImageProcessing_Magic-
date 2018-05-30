@@ -2,9 +2,10 @@
 #include "stdafx.h"
 
 //todo : This class better use vector
-void Log::logFileIn(WCHAR ** myNames, int myCount, int & myRecorded) 
+
+void Log::logFileIn(std::vector <std::wstring> & myInVector)
 {
-//todo : setlocale ony in one place
+	//todo : setlocale ony in one place
 	std::locale chs("chs");
 	wifstream myLog;
 	myLog.imbue(chs);
@@ -18,30 +19,18 @@ void Log::logFileIn(WCHAR ** myNames, int myCount, int & myRecorded)
 		cout << "faild to open the file" << endl;
 		return;
 	}
-	myRecorded = 0;
+
+	std::wstring myInString;
 	while (!myLog.eof())
 	{
-		if (myRecorded < myCount)
-		{
-			myLog >> myNames[myRecorded];
-			myRecorded++;
-		}
-		else
-		{
-			overFlow = true;
-			break;
-		}
+		myLog >> myInString;
+		myInVector.push_back(myInString);	
 	}
 	myLog.close();
-
-	if (overFlow)
-	{
-		wcout << "[log :: logFileIn]" << endl;
-		wcout << "the name array is too small" << endl;
-	}
+	
 }
 
-void Log::logFilesOut(WCHAR ** myNames, int myCount)
+void Log::logFilesOut(std::vector <std::wstring> & myOutVector)
 {
 	//todo : setlocale ony in one place
 	std::locale chs("chs");
@@ -53,9 +42,10 @@ void Log::logFilesOut(WCHAR ** myNames, int myCount)
 
 	if (myLog.is_open())
 	{
-		for (int i = 0; i < myCount; i++)
+		std::vector<std::wstring>::iterator it;
+		for (it = myOutVector.begin(); it != myOutVector.end(); it++)
 		{
-			myLog << myNames[i] << endl;
+			myLog << *it << endl;
 		}
 		myLog.close();
 	}

@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "stdafx.h"
 
-
 #define MAX_PROCESS_FOLDER_NUMBER 300
 
 //empty pointer assignment
@@ -39,11 +38,12 @@ bool FileManager::setRoot(LPCWSTR myPath)
 	return (true);
 }
 
-void FileManager::iterateFolder()
+//vector string
+void FileManager::iterateFolder(vector < wstring > myResult)
 {
-	WCHAR ** _outputFolderNames;
+	//WCHAR ** _outputFolderNames;
 
-	_outputFolderNames = Utils::make2dArray(MAX_PATH, MAX_PROCESS_FOLDER_NUMBER);
+	//_outputFolderNames = Utils::make2dArray(MAX_PATH, MAX_PROCESS_FOLDER_NUMBER);
 
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	TCHAR szDir[MAX_PATH];
@@ -62,7 +62,7 @@ void FileManager::iterateFolder()
 	{
 		cout << "path can not be found" << endl;
 	}
-	
+
 	int _fileRecorded = 0;
 	do
 	{
@@ -72,7 +72,9 @@ void FileManager::iterateFolder()
 			//todo : put  filename in the output array
 			if (_fileRecorded < MAX_PROCESS_FOLDER_NUMBER)
 			{
-				wcscpy_s(_outputFolderNames[_fileRecorded], MAX_PATH,ffd.cFileName);
+				std::wstring myString =  ffd.cFileName;
+				myResult.push_back(myString);
+				//wcscpy_s(_outputFolderNames[_fileRecorded], MAX_PATH, ffd.cFileName);
 				_fileRecorded++;
 			}
 		}
@@ -87,13 +89,13 @@ void FileManager::iterateFolder()
 
 	for (int i = 0; i < _fileRecorded; i++)
 	{
-		std::wcout << _outputFolderNames[i] << " <DIR> " << endl;
+		std::wcout << myResult.at(i) << endl;
 	}
 
 	//输出　iterate 结果
-	//Log::logFilesOut(_outputFolderNames, _fileRecorded);
+	Log::logFilesOut(myResult);
 
-	Utils::release2dArray(_outputFolderNames, MAX_PROCESS_FOLDER_NUMBER);
+	//Utils::release2dArray(_outputFolderNames, MAX_PROCESS_FOLDER_NUMBER);
 }
 
 //todo 需要成为filemanager 的成员函数

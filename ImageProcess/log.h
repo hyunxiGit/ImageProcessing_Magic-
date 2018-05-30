@@ -1,8 +1,10 @@
 #pragma once
+#include <vector>
+#include <string>
 
 class Log
 {
 public:
-	static void logFileIn   ( WCHAR ** myNames, int nameCount , int & recorded);
-	static void logFilesOut(WCHAR ** myNames, int nameCount);
+	static void logFileIn  (std::vector <std::wstring> &);
+	static void logFilesOut (std::vector <std::wstring> &);
 };
