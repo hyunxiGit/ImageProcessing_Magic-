@@ -1,7 +1,18 @@
 ﻿#pragma once
 #include "stdafx.h"
 
-void Serialize :: makeJsonObj() 
+using namespace rapidjson;
+void Serialize::makeJsonObj()
+{
+	Document document;
+	document.SetObject();
+	Document::AllocatorType &allocator = document.GetAllocator(); //获取分配器
+	document.SetObject();
+	document.AddMember("ID", 1, allocator);
+
+	printf("%i", document["ID"].GetInt());
+}
+void makeJsonObj() 
 {
 	rapidjson :: Document document;
 	//建立char的json object
