@@ -1,10 +1,18 @@
 #pragma once
+#include <set>
 #include <vector>
 #include <string>
 class KeywordManager
 {
+private:
+	static KeywordManager* instance;
+	KeywordManager();
+	std::set<std::wstring> myDictionary;
+	char dictionaryPath [MAX_PATH];
 public:
-	static bool dictionarySearch(std::wstring);
-	static void getKeywords(std::wstring , std::vector <std::wstring> &);
-	static void generateObjectID (std::wstring mySource, std::wstring & myTarget);
+	static KeywordManager* getInstance();
+	bool dictionarySearch(std::wstring);
+	void getKeywords(std::wstring , std::vector <std::wstring> &);
+	void generateObjectID (std::wstring mySource, std::wstring & myTarget);
+
 };

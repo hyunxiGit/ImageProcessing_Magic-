@@ -1,6 +1,23 @@
 ﻿#pragma once
 #include "stdafx.h"
-bool KeywordManager::dictionarySearch(wstring myCheck)
+
+KeywordManager * KeywordManager::instance = nullptr;
+KeywordManager::KeywordManager()
+{
+	strcpy_s(dictionaryPath, MAX_PATH,"d:/en-dictionary.txt");
+}
+KeywordManager * KeywordManager::getInstance()
+{
+	KeywordManager * result; 
+	if (instance == nullptr)
+	{
+		instance = new KeywordManager();
+	}
+	result = instance;
+	return (instance);
+}
+
+bool KeywordManager::dictionarySearch(std::wstring myCheck)
 {
 	std::transform(myCheck.begin(), myCheck.end(), myCheck.begin(), ::tolower);
 
@@ -65,13 +82,19 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 
 void KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID)
 {
+	//todo:支持查找中文
+	//提高查找效率
+	//两个英语单词拼接
+	//objectID.json
+
 	myID = L"";
 	bool isKey;
 	wcout << mySource << L", ";
 	//get all the keyword from source in order
 	std::vector <std::wstring> _keywordVector;
 	getKeywords(mySource, _keywordVector);
-
+	
+	int megaIDCount = 0;
 	for (std::vector <std::wstring>::iterator it = _keywordVector.begin(); it != _keywordVector.end(); it++)
 	{
 		//check all of them through dictionary
@@ -89,10 +112,19 @@ void KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 				myID = myID + L"_" + *it;
 			}	
 		}
+		else
+		{
+			megaIDCount++;
+		}
 	}
 	
 	wcout << myID << endl;
 	
+	if (megaIDCount != 1)
+	{
+		wcout << "< problematic asset >: " << mySource << endl;
+	}
+
 	//check keyword.txt see if exist and add index number 
 
 
