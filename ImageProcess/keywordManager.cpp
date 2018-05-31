@@ -1,10 +1,30 @@
 ﻿#pragma once
 #include "stdafx.h"
+#include "keywordManager.h"
 
 KeywordManager * KeywordManager::instance = nullptr;
 KeywordManager::KeywordManager()
 {
 	strcpy_s(dictionaryPath, MAX_PATH,"d:/en-dictionary.txt");
+	wstring line;
+	wifstream inFile;
+	bool found = false;
+
+	inFile.open(dictionaryPath);
+	if (!inFile.is_open())
+	{
+		std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath  << endl;
+	}
+	else
+	{
+		while (!inFile.eof())
+		{
+			inFile >> line;
+			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+
+			this->dictionary.insert(line);
+		}
+	}
 }
 KeywordManager * KeywordManager::getInstance()
 {
@@ -18,6 +38,22 @@ KeywordManager * KeywordManager::getInstance()
 }
 
 bool KeywordManager::dictionarySearch(std::wstring myCheck)
+{
+	std::transform(myCheck.begin(), myCheck.end(), myCheck.begin(), ::tolower);
+	bool found = false;
+
+	for (std::set<std::wstring>::iterator it = dictionary.begin(); it != dictionary.end(); it++)
+	{
+		if (*it == myCheck)
+		{
+			found = true;
+			break;
+		}
+	}
+	return (found);
+}
+
+bool dictionarySearch(std::wstring myCheck)
 {
 	std::transform(myCheck.begin(), myCheck.end(), myCheck.begin(), ::tolower);
 
@@ -126,7 +162,10 @@ void KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 	}
 
 	//check keyword.txt see if exist and add index number 
-
-
 	
+}
+
+KeywordManager::~KeywordManager()
+{
+	dictionary.clear();
 }
