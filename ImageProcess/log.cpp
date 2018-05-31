@@ -2,6 +2,54 @@
 #include "stdafx.h"
 
 //todo : This class better use vector
+Log * Log::instance = nullptr;
+Log * Log::getInstance()
+{
+	if (instance == nullptr)
+	{
+		instance = new Log();
+		strcpy_s(instance->toolLogPath, MAX_PATH, "d:/assetToolLog.txt");
+	}
+	return(instance);
+}
+
+Log::Log(){}
+
+void Log::log(std::wstring info)
+{
+	Log * _log = getInstance();
+	_log->toolLog.push_back(info);
+}
+
+void Log::printLog()
+{
+	Log * _log = getInstance();
+	for (std::vector<std::wstring>::iterator it = _log->toolLog.begin(); it != _log->toolLog.end(); it++)
+	{
+		wcout << *it << endl;
+	}
+}
+
+void Log::exportLog()
+{
+	Log * _log = getInstance();
+	wcout << _log->toolLogPath << endl;
+
+	wofstream outFile;
+	std::locale chs("chs");
+	outFile.imbue(chs);
+
+	outFile.open(instance->toolLogPath, ios::out);
+	if (outFile.is_open())
+	{
+		std::vector<std::wstring>::iterator it;
+		for (it = _log->toolLog.begin(); it != _log->toolLog.end(); it++)
+		{
+			outFile << *it << endl;
+		}
+		outFile.close();
+	}
+}
 
 void Log::logFileIn(std::vector <std::wstring> & myInVector)
 {
@@ -26,8 +74,7 @@ void Log::logFileIn(std::vector <std::wstring> & myInVector)
 		myLog >> myInString;
 		myInVector.push_back(myInString);	
 	}
-	myLog.close();
-	
+	myLog.close();	
 }
 
 void Log::logFilesOut(std::vector <std::wstring> & myOutVector)
