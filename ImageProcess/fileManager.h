@@ -18,8 +18,9 @@ private:
 
 public:
 	static FileManager* getInstance();
-	bool setRoot(LPCWSTR);
-	void iterateFolder(std::vector <std::wstring>);
+	bool    setRoot(LPCWSTR);
+	LPCWSTR getRoot();
+	void iterateFolder(std::vector <std::wstring> & , LPCWSTR);
 	void createFolder();
 	int test;
 	
