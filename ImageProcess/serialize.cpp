@@ -2,9 +2,8 @@
 #include "stdafx.h"
 #include "serialize.h"
 #include <fstream>
-
-using namespace rapidjson;
-void Serialize::exportSet(std::map <std::wstring, short> myMap)
+#define EXPORT_PATH "d:/JsonFile.Json"
+void Serialize::exportMap(std::map <std::wstring, short> myMap)
 {
 	Document document;
 	Document::AllocatorType &allocator = document.GetAllocator();
@@ -12,9 +11,7 @@ void Serialize::exportSet(std::map <std::wstring, short> myMap)
 	for (std::map <std::wstring, short>::iterator it = myMap.begin(); it != myMap.end(); it++)
 	{
 		Value objectId;
-		wchar_t * mywID = (wchar_t *)(it->first).c_str();
-		string myID = Serialize::WStringToUTF8(mywID);
-		
+		string myID = Serialize::wStringToUTF8(it->first);	
 		const char * myCha = myID.c_str();//string 转 字符串数组
 		char buffer[260];
 		int len = sprintf_s(buffer, "%s", myCha);
@@ -24,23 +21,54 @@ void Serialize::exportSet(std::map <std::wstring, short> myMap)
 		objectId.SetString(buffer, len, document.GetAllocator());
 		document.AddMember(objectId, myIndex, document.GetAllocator());
 	}
+	Serialize ::exportJsonFile(document);
+}
 
-	//Serialize::exportJsonFile(document);
+void Serialize::importJsonFeil()
+{
+	cout << "读json file___________________________________________" << endl;
+	//support both ASKII and Unicode
+	
+	errno_t err;
+	FILE *fp;
+	err = fopen_s(&fp, EXPORT_PATH, "r ");
+	if (err == 0)
+	{
+		printf("The file 'd:/myTestJson.json' was opened\n");
+	}
+	else
+	{
+		printf("The file 'd:/myTestJson.json' was not opened\n");
+	}
+	char readBuffer[65536];
+	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	rapidjson :: Document d;
+	d.ParseStream(is);
+	fclose(fp);
+
+	assert(d["Brick_Mud"].IsInt());
+	printf("Brick_Mud = %i\n", d["Brick_Mud"].GetInt());
+	
+}
+
+
+void Serialize :: exportJsonFile(rapidjson::Document & myDoc)
+{
+	// Serialize::exportJsonFile(document);
 	StringBuffer buffer;
-	Writer<StringBuffer>  writer(buffer);
-	document.Accept(writer);
+	PrettyWriter<StringBuffer>  writer(buffer);
+	myDoc.Accept(writer);
+
 	std::string strJson = buffer.GetString();
 
-	std::string strPath = "d:/JsonFile.txt";
-
 	wofstream myLog;
-	myLog.open(strPath, ios::app);
+	myLog.open(EXPORT_PATH, ios::app);
 	if (myLog.is_open())
 	{
 		myLog << buffer.GetString() << endl;
 	}
 }
- 
+
 void Serialize::makeJsonObj()
 {
 	Document document;
@@ -62,25 +90,6 @@ void Serialize::makeJsonObj()
 	document.AddMember(author, val, document.GetAllocator());
 	printf("%i", document[author].GetInt());
 	printf("%i", document["lalaji"].GetInt());
-
-}
-
-void makeJsonObj2()
-{
-	Document document;
-	Document::AllocatorType &allocator = document.GetAllocator();
-
-	Value author;
-	char buffer[10];
-	int len = sprintf_s(buffer, "%s %s", "Milo", "Yip"); // 动态创建的字符串。
-	author.SetString(buffer, len, document.GetAllocator());
-	//memset(buffer, 0, sizeof(buffer));
-	printf("__________");
-
-	Value key("key", document.GetAllocator()); // copy string name
-	Value val(42);                             // 某 Value
-	document.AddMember(author, val, document.GetAllocator());
-	printf("%i", document["Milo Yip"].GetInt());
 
 }
 
@@ -115,62 +124,11 @@ void makeJsonObj()
 		//printf("a[%d] = %d\n", i, a[i].GetInt());
 		
 	}
-	
-
-}
-void Serialize :: exportJsonFile()
-{
-	cout << "写Json file___________________________________________" << endl;
-	Document d;
-	errno_t err;
-	FILE *fp;
-	err = fopen_s(&fp, "d:/我的Json.json", "w");
-	if (err == 0)
-	{
-	printf("The file 'd:/我的Json.json\n");
-	}
-	else
-	{
-	printf("The file 'd:/我的Json.json\n");
-	}
-	//rapidjson :: Document d;
-	const char json[] = " { \"hello\" : \"世界噜\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
-	d.Parse(json);
-	char writeBuffer[65536];
-	rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-	rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
-	d.Accept(writer);
-	fclose(fp);
-	
-}
-void Serialize ::importJsonFeil()
-{
-	cout << "读json file___________________________________________" << endl;
-	//support both ASKII and Unicode
-	/*
-	errno_t err;
-	FILE *fp;
-	err = fopen_s(&fp, "d:/我的Json.json", "r ");
-	if (err == 0)
-	{
-	printf("The file 'd:/myTestJson.json' was opened\n");
-	}
-	else
-	{
-	printf("The file 'd:/myTestJson.json' was not opened\n");
-	}
-	char readBuffer[65536];
-	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-	rapidjson :: Document d;
-	d.ParseStream(is);
-	fclose(fp);
-	assert(d["hello"].IsString());
-	printf("hello = %s\n", d["hello"].GetString());
-	*/
 }
 
-std::string Serialize::WStringToUTF8(const wchar_t* lpwcszWString)
+std::string Serialize::wStringToUTF8(wstring myWString)
 {
+	wchar_t * lpwcszWString = (wchar_t *)(myWString).c_str();
 	char* pElementText;
 	int iTextLen = ::WideCharToMultiByte(CP_UTF8, 0, (LPWSTR)lpwcszWString, -1, NULL, 0, NULL, NULL);
 	pElementText = new char[iTextLen + 1];
