@@ -15,6 +15,7 @@ using namespace rapidjson;
 class Serialize
 {
 public:
+	static void exportObjectID(std::map<std::wstring, std::vector<std::wstring>>);
 	static void exportMap(std::map <std::wstring, short>);
 	static void importMap(std::map <std::wstring, short> & );
 	static void exportJsonFile(rapidjson::Document &);

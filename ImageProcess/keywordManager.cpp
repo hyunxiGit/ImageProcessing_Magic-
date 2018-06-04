@@ -144,8 +144,11 @@ bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 
 short KeywordManager::addId(wstring mySource)
 {	
+	//读入已经存在的jsonfile进入idMap
+	//产生ID
 	idMap[mySource] = idMap[mySource] + 1;
 	return(idMap[mySource]);
+	//更新json文档
 }
 
 KeywordManager::~KeywordManager()

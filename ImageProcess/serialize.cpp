@@ -3,6 +3,121 @@
 #include "serialize.h"
 #include <fstream>
 #define EXPORT_PATH "d:/JsonFile.Json"
+
+void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap)
+{
+	//把指定的<objectID : [megaID, megaID, ...]> 输出为 json格式
+	//todo : debug 检测， keywordmanager 输出相应的 map格式
+	//<Vector>
+	Document _document;
+	Document::AllocatorType &allocator = _document.GetAllocator();
+	_document.SetObject();
+
+	for (map<wstring, vector<wstring>>::iterator itr = myObjectIDMap.begin(); itr != myObjectIDMap.end(); itr++)
+	{
+		Value _objectId;
+		string _objectIdString = Serialize::wStringToUTF8(itr->first);
+		//产生一个json能用的string value
+		//string 转 字符串数组
+		const char * _cha = _objectIdString.c_str();
+		char buffer[260];
+		int _len = sprintf_s(buffer, "%s", _cha);
+		_objectId.SetString(buffer, _len, allocator);
+		
+		Value _array(kArrayType);
+
+		for (vector<wstring>::iterator itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+		{
+			Value _megaScaneID;
+			string _megaScaneId = Serialize::wStringToUTF8(*itr2);
+			const char * _cha = _megaScaneId.c_str();
+			char buffer[260];
+			int _len = sprintf_s(buffer, "%s", _cha);
+			_megaScaneID.SetString(buffer, _len, allocator);
+			_array.PushBack(_megaScaneID, allocator);
+		}
+
+		_document.AddMember(_objectId, _array, allocator);
+	}
+
+	
+	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	{
+		const char * _key = itr->name.GetString();
+		cout << _key << endl;
+
+		const Value& b = _document[_key];
+		assert(b.IsArray());
+		for (SizeType i = 0; i < b.Size(); i++) // 使用 SizeType 而不是 size_t
+		{
+			cout << b[i].GetString() << endl;
+		}
+	}
+
+
+	//Serialize::exportJsonFile(document);
+}
+
+void exportObjectID()
+{
+	for (map<wstring, vector<wstring>>)
+	//<Vector>
+	Document document;
+	Document::AllocatorType &allocator = document.GetAllocator();
+	document.SetObject();
+
+	//假数据
+	Value a(kArrayType);
+	//string myID = "testing";
+
+	/*a.PushBack("Lua", allocator).PushBack("Mio", allocator);*/
+	
+	//产生一个json能用的string value
+	Value objectId;
+	string myID = "test Object ID";
+	const char * myCha = myID.c_str();//string 转 字符串数组
+	char buffer[260];
+	int len = sprintf_s(buffer, "%s", myCha);
+	objectId.SetString(buffer, len, document.GetAllocator());
+
+	Value myArray1;
+	string myID1 = "array1";
+	const char * myCha1 = myID1.c_str();//string 转 字符串数组
+	char buffer1[260];
+	int len1 = sprintf_s(buffer1, "%s", myCha1);
+	myArray1.SetString(buffer1, len1, document.GetAllocator());
+
+	Value myArray2;
+	string myID2 = "array2";
+	const char * myCha2 = myID2.c_str();//string 转 字符串数组
+	char buffer2[260];
+	int len2 = sprintf_s(buffer2, "%s", myCha2);
+	myArray2.SetString(buffer2, len2, document.GetAllocator());
+
+	a.PushBack(myArray1, allocator);
+	a.PushBack(myArray2, allocator);
+
+	
+
+	document.AddMember(objectId,a, allocator);
+
+	for (Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); ++itr)
+	{
+		const char * _key = itr->name.GetString();
+		cout << _key << endl;
+
+		const Value& b = document[_key];
+		assert(b.IsArray());
+		for (SizeType i = 0; i < a.Size(); i++) // 使用 SizeType 而不是 size_t
+		{
+			cout << b[i].GetString() << endl;
+		}
+	}
+
+
+	//Serialize::exportJsonFile(document);
+}
+
 void Serialize::exportMap(std::map <std::wstring, short> myMap)
 {
 	Document document;
