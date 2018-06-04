@@ -15,10 +15,12 @@ using namespace rapidjson;
 class Serialize
 {
 public:
-	static void makeJsonObj();
 	static void exportMap(std::map <std::wstring, short>);
+	static void importMap(std::map <std::wstring, short> & );
 	static void exportJsonFile(rapidjson::Document &);
-	static void importJsonFeil();
+	static void importJsonFeil(rapidjson::Document & result);
+	//todo: 这里用不用分出去一个类
 	static std::string wStringToUTF8(std::wstring);
+	static std::wstring UTF8ToWString(std::string);
 	static void printUTF8(std::string);
 };

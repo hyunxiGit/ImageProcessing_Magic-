@@ -24,11 +24,28 @@ void Serialize::exportMap(std::map <std::wstring, short> myMap)
 	Serialize ::exportJsonFile(document);
 }
 
-void Serialize::importJsonFeil()
+void Serialize::importMap(std::map <std::wstring, short> & result)
+{
+	//todo : 现在这个东西还只支持  string : int 的格式，以后可能需要转换为多type支持
+	rapidjson::Document _result;
+	Serialize::importJsonFeil(_result);
+
+	printf ("_result.IsObject() : %i", _result.IsObject());
+
+	for (Value::ConstMemberIterator itr = _result.MemberBegin(); itr!=_result.MemberEnd(); ++itr)
+	{
+		string _key = itr->name.GetString();
+		short _value = itr->value.GetInt();
+
+		wstring _wKey = Serialize::UTF8ToWString(_key);
+		result[_wKey] = _value;
+	}
+}
+
+void Serialize::importJsonFeil(Document & result)
 {
 	cout << "读json file___________________________________________" << endl;
 	//support both ASKII and Unicode
-	
 	errno_t err;
 	FILE *fp;
 	err = fopen_s(&fp, EXPORT_PATH, "r ");
@@ -42,13 +59,9 @@ void Serialize::importJsonFeil()
 	}
 	char readBuffer[65536];
 	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-	rapidjson :: Document d;
-	d.ParseStream(is);
-	fclose(fp);
 
-	assert(d["Brick_Mud"].IsInt());
-	printf("Brick_Mud = %i\n", d["Brick_Mud"].GetInt());
-	
+	result.ParseStream(is);
+	fclose(fp);
 }
 
 
@@ -69,8 +82,9 @@ void Serialize :: exportJsonFile(rapidjson::Document & myDoc)
 	}
 }
 
-void Serialize::makeJsonObj()
+void makeJsonObj()
 {
+	//处理使用 string variable 的例子
 	Document document;
 	Document::AllocatorType &allocator = document.GetAllocator();
 
@@ -94,8 +108,9 @@ void Serialize::makeJsonObj()
 }
 
 
-void makeJsonObj() 
+void makeJsonObj2() 
 {
+	//字符串建立 json object的例子
 	rapidjson :: Document document;
 	//建立char的json object
 	//const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
@@ -138,6 +153,21 @@ std::string Serialize::wStringToUTF8(wstring myWString)
 	delete[] pElementText;
 	return strReturn;
 }
+
+std::wstring Serialize::UTF8ToWString(string myString)
+{
+	char * lpcszString = (char *)(myString).c_str();
+	int len = strlen(lpcszString);
+	int unicodeLen = ::MultiByteToWideChar(CP_UTF8, 0, lpcszString, -1, NULL, 0);
+	wchar_t* pUnicode;
+	pUnicode = new wchar_t[unicodeLen + 1];
+	memset((void*)pUnicode, 0, (unicodeLen + 1) * sizeof(wchar_t));
+	::MultiByteToWideChar(CP_UTF8, 0, lpcszString, -1, (LPWSTR)pUnicode, unicodeLen);
+	wstring wstrReturn(pUnicode);
+	delete[] pUnicode;
+	return wstrReturn;
+}
+
 
 void Serialize::printUTF8(string myUTF8String)
 {
