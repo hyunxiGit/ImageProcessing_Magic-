@@ -85,7 +85,7 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 	
 }
 
-bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID)
+bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & result)
 {
 	//todo:支持查找中文
 	//两个英语单词拼接
@@ -93,7 +93,7 @@ bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 
 	bool success = true;
 
-	myID = L"";
+	result = L"";
 	bool isKey;
 	//wcout << mySource << L", ";
 	//get all the keyword from source in order
@@ -109,13 +109,13 @@ bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 		if (isKey)
 		{
 			//make new temp ID
-			if (myID == L"")
+			if (result == L"")
 			{
-				myID = myID + *it;
+				result = result + *it;
 			}
 			else
 			{
-				myID = myID + L"_" + *it;
+				result = result + L"_" + *it;
 			}	
 		}
 		else
@@ -134,21 +134,60 @@ bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & myID
 	else
 	{
 		//succesful asset, generate number
-		short number = addId(myID);
-		myID = myID +L"_"+ std::to_wstring(number-1);
+		//todo:这一步在最开始就应该有，先查找存在再生成ID
+		short number = getIndexNumber(result, mySource);
+		result = result +L"_"+ std::to_wstring(number-1);
 		//wstring _info = L"success generate object ID : " + mySource;
 		//Log::log(_info);
 	}
 	return(success);
 }
 
-short KeywordManager::addId(wstring mySource)
+short KeywordManager::getIndexNumber(wstring myObjectID , wstring myMegaScaneID)
 {	
+	short result;
+
 	//读入已经存在的jsonfile进入idMap
-	//产生ID
-	idMap[mySource] = idMap[mySource] + 1;
-	return(idMap[mySource]);
+	map<wstring, vector<wstring>> _iDMap;
+	Serialize::importObjectID(_iDMap);
+
+	map<wstring, vector<wstring>>::iterator itr = _iDMap.find(myObjectID);
+	if (itr == _iDMap.end())
+	{
+		cout << "There's no such object ID" << endl;
+		//create new key,  在最后加入idMap
+		vector<wstring> _newMegaID;
+		_newMegaID.push_back(myMegaScaneID);
+		_iDMap[myObjectID] = _newMegaID;
+		result = 0;
+	}
+	else
+	{
+		cout << "object ID found " <<endl;
+		//查找对应 megascan ID Vector 然后 ，查找 是否已经存在
+		vector<wstring> _megaScanVector = itr->second ;
+		vector<wstring>::iterator itr1;
+
+		std::find(_megaScanVector.begin(), _megaScanVector.end(), myMegaScaneID);
+		if (itr1 == _megaScanVector.end())
+		{
+			//找不到，添加本megascaneID
+			_megaScanVector.push_back(myMegaScaneID);
+			result = _megaScanVector.size()-1;
+			//替换
+			_iDMap[myObjectID] = _megaScanVector;
+		}
+		else
+		{
+			//找到,取得index
+			result = std::distance(_megaScanVector.begin(), itr1);
+		}
+	}
+	 
 	//更新json文档
+	Serialize::exportObjectID(_iDMap);
+
+	return(result);
 }
 
 KeywordManager::~KeywordManager()
