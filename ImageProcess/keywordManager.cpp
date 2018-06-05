@@ -142,6 +142,9 @@ bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & resu
 	}
 	return(success);
 }
+//todo : 这里算法有问题，
+//1. 应该先读入 json map 
+//2. 检测本megascaneID 是否已经存在， 若存在求 index, 不存在则插入更新map
 
 short KeywordManager::getIndexNumber(wstring myObjectID , wstring myMegaScaneID)
 {	
@@ -163,7 +166,7 @@ short KeywordManager::getIndexNumber(wstring myObjectID , wstring myMegaScaneID)
 	}
 	else
 	{
-		cout << "object ID found " <<endl;
+		//cout << "object ID found " <<endl;
 		//查找对应 megascan ID Vector 然后 ，查找 是否已经存在
 		vector<wstring> _megaScanVector = itr->second ;
 		vector<wstring>::iterator itr1;
@@ -174,6 +177,9 @@ short KeywordManager::getIndexNumber(wstring myObjectID , wstring myMegaScaneID)
 			//找不到，添加本megascaneID
 			_megaScanVector.push_back(myMegaScaneID);
 			result = _megaScanVector.size()-1;
+			wcout << myObjectID << endl;
+			wcout << myMegaScaneID << endl;
+			wcout << _megaScanVector.size() << endl;
 			//替换
 			_iDMap[myObjectID] = _megaScanVector;
 		}

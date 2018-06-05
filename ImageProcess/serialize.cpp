@@ -42,18 +42,18 @@ void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap)
 	}
 
 	
-	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
-	{
-		const char * _key = itr->name.GetString();
-		cout << _key << endl;
+	//for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	//{
+	//	const char * _key = itr->name.GetString();
+	//	cout << _key << endl;
 
-		const Value& b = _document[_key];
-		assert(b.IsArray());
-		for (SizeType i = 0; i < b.Size(); i++) // 使用 SizeType 而不是 size_t
-		{
-			cout << b[i].GetString() << endl;
-		}
-	}
+	//	const Value& b = _document[_key];
+	//	assert(b.IsArray());
+	//	for (SizeType i = 0; i < b.Size(); i++) // 使用 SizeType 而不是 size_t
+	//	{
+	//		cout << b[i].GetString() << endl;
+	//	}
+	//}
 	//todo : 输出位置
 	Serialize::exportJsonFile(_document,"d:/test.Json");
 }
@@ -123,14 +123,13 @@ void Serialize::importMap(std::map <std::wstring, short> & result)
 
 void Serialize::importJsonFile(Document & result , const char * myPath)
 {
-	cout << "读json file___________________________________________" << endl;
 	//support both ASKII and Unicode
 	errno_t err;
 	FILE *fp;
 	err = fopen_s(&fp, myPath, "r ");
 	if (err == 0)
 	{
-		printf("File open: %s\n", myPath);
+		//printf("File open: %s\n", myPath);
 	}
 	else
 	{
@@ -153,7 +152,7 @@ void Serialize :: exportJsonFile(rapidjson::Document & myDoc, const char * myPat
 	std::string strJson = buffer.GetString();
 
 	wofstream myLog;
-	myLog.open(myPath, ios::app);
+	myLog.open(myPath, ios::trunc);
 	if (myLog.is_open())
 	{
 		myLog << buffer.GetString() << endl;
