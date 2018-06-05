@@ -10,16 +10,19 @@
 #include "rapidjson/writer.h"
 #include <stdio.h> //json file读
 
+#define EXPORT_PATH "d:/JsonFile.Json"
+using namespace std;
 using namespace rapidjson;
 
 class Serialize
 {
 public:
-	static void exportObjectID(std::map<std::wstring, std::vector<std::wstring>>);
-	static void exportMap(std::map <std::wstring, short>);
-	static void importMap(std::map <std::wstring, short> & );
-	static void exportJsonFile(rapidjson::Document &);
-	static void importJsonFeil(rapidjson::Document & result);
+	static void exportObjectID(map<wstring, vector<wstring>> );
+	static void importObjectID(map<wstring, vector<wstring>> &);
+	static void exportMap(map <wstring, short>);
+	static void importMap(map <wstring, short> & );
+	static void exportJsonFile(Document & , const char *  myPath = EXPORT_PATH);
+	static void importJsonFile(Document & result, const char *  myPath = EXPORT_PATH);
 	//todo: 这里用不用分出去一个类
 	static std::string wStringToUTF8(std::wstring);
 	static std::wstring UTF8ToWString(std::string);
