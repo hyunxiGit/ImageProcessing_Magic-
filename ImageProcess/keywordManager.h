@@ -13,8 +13,8 @@ public:
 	static KeywordManager* getInstance();
 	bool dictionarySearch(std::wstring);
 	void getKeywords(std::wstring , std::vector <std::wstring> &);
-	bool generateObjectID(std::wstring mySource, std::wstring & myTarget);
-	short getIndexNumber(wstring , wstring);
+	short getObjectID(map<wstring, vector<wstring>> & , wstring mySource, std::wstring & myTarget );
+	void generateObjectID(map<wstring, vector<wstring>> & , wstring , wstring &);
 
 private:
 	char dictionaryPath[MAX_PATH];

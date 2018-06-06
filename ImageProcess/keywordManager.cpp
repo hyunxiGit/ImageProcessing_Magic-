@@ -85,115 +85,130 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 	
 }
 
-bool KeywordManager::generateObjectID(std::wstring mySource, std::wstring & result)
+
+short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap , std::wstring myMegaScaneID, wstring & result )
 {
 	//todo:支持查找中文
 	//两个英语单词拼接
-	//objectID.json..以后要读...2次使用的时候要有以前id的记录
-
-	bool success = true;
-
-	result = L"";
-	bool isKey;
-	//wcout << mySource << L", ";
-	//get all the keyword from source in order
-	std::vector <std::wstring> _keywordVector;
-	getKeywords(mySource, _keywordVector);
 	
-	int megaIDCount = 0;
-	for (std::vector <std::wstring>::iterator it = _keywordVector.begin(); it != _keywordVector.end(); it++)
+	//0: failed , 1: get the id , 2, make new ID
+	short success = 1;
+
+	//检测当前megaScan ID 在 map里是否存在
+	map<wstring, vector<wstring>>::iterator _IDMapItr;
+	
+	bool _idExist = false;
+	if (myObjectIDMap.empty()){	}
+	for (_IDMapItr = myObjectIDMap.begin(); _IDMapItr != myObjectIDMap.end(); _IDMapItr++)
 	{
-		//check all of them through dictionary
-		
-		isKey =  dictionarySearch(*it) ;
-		if (isKey)
+		vector<wstring> _megaIDVector = _IDMapItr->second;
+		vector<wstring>::iterator _megaIDVectorItr = std::find(_megaIDVector.begin(), _megaIDVector.end(), myMegaScaneID);
+		if (_megaIDVectorItr == _megaIDVector.end()){}
+		else
 		{
-			//make new temp ID
-			if (result == L"")
+			//found			
+			short _index = distance(_megaIDVector.begin(), _megaIDVectorItr)-1;
+			result = *_megaIDVectorItr+L"_"+ std::to_wstring(_index) ;
+			_idExist = true;
+			break;
+		}
+	}
+
+	if (_idExist == false)
+	{
+		success = 2;
+		//can not be found generate ID
+
+		result = L"";
+		bool isKey;
+
+		//get all the keyword from source in order
+		std::vector <std::wstring> _keywordVector;
+		getKeywords(myMegaScaneID, _keywordVector);
+
+		int megaIDCount = 0;
+		for (std::vector <std::wstring>::iterator it = _keywordVector.begin(); it != _keywordVector.end(); it++)
+		{
+			//check all of them through dictionary
+
+			isKey = dictionarySearch(*it);
+			if (isKey)
 			{
-				result = result + *it;
+				//make new temp ID
+				if (result == L"")
+				{
+					result = result + *it;
+				}
+				else
+				{
+					result = result + L"_" + *it;
+				}
 			}
 			else
 			{
-				result = result + L"_" + *it;
-			}	
+				megaIDCount++;
+			}
+		}
+
+		if (megaIDCount != 1)
+		{
+			// problematic asset
+			success = 0;
+			wstring _info = L"KeywordManager :: generateObjectID : < problematic asset >: " + myMegaScaneID;
+			Log::log(_info);
 		}
 		else
 		{
-			megaIDCount++;
+			//succesful asset, generate number
+			generateObjectID(myObjectIDMap, myMegaScaneID, result);
+			//result = result + L"_" + std::to_wstring(number - 1);
+			//wstring _info = L"success generate object ID : " + myMegaScaneID;
+			//Log::log(_info);
 		}
 	}
 	
-	if (megaIDCount != 1)
-	{
-		// problematic asset
-		success = false;
-		wstring _info = L"KeywordManager :: generateObjectID : < problematic asset >: " + mySource;
-		Log::log(_info);
-	}
-	else
-	{
-		//succesful asset, generate number
-		//todo:这一步在最开始就应该有，先查找存在再生成ID
-		short number = getIndexNumber(result, mySource);
-		result = result +L"_"+ std::to_wstring(number-1);
-		//wstring _info = L"success generate object ID : " + mySource;
-		//Log::log(_info);
-	}
+
 	return(success);
 }
-//todo : 这里算法有问题，
-//1. 应该先读入 json map 
-//2. 检测本megascaneID 是否已经存在， 若存在求 index, 不存在则插入更新map
 
-short KeywordManager::getIndexNumber(wstring myObjectID , wstring myMegaScaneID)
+void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectIDMap , wstring myMegaScaneID, wstring & myObjectID )
 {	
-	short result;
+	short _index;
 
-	//读入已经存在的jsonfile进入idMap
-	map<wstring, vector<wstring>> _iDMap;
-	Serialize::importObjectID(_iDMap);
-
-	map<wstring, vector<wstring>>::iterator itr = _iDMap.find(myObjectID);
-	if (itr == _iDMap.end())
+	map<wstring, vector<wstring>>::iterator itr = myObjectIDMap.find(myObjectID);
+	if (itr == myObjectIDMap.end())
 	{
-		cout << "There's no such object ID" << endl;
+		//cout << "There's no such object ID" << endl;
 		//create new key,  在最后加入idMap
 		vector<wstring> _newMegaID;
 		_newMegaID.push_back(myMegaScaneID);
-		_iDMap[myObjectID] = _newMegaID;
-		result = 0;
+		myObjectIDMap[myObjectID] = _newMegaID;
+		_index = 0;
 	}
 	else
 	{
 		//cout << "object ID found " <<endl;
 		//查找对应 megascan ID Vector 然后 ，查找 是否已经存在
 		vector<wstring> _megaScanVector = itr->second ;
-		vector<wstring>::iterator itr1;
-
-		std::find(_megaScanVector.begin(), _megaScanVector.end(), myMegaScaneID);
+		vector<wstring>::iterator itr1 = std::find(_megaScanVector.begin(), _megaScanVector.end(), myMegaScaneID);
 		if (itr1 == _megaScanVector.end())
 		{
 			//找不到，添加本megascaneID
 			_megaScanVector.push_back(myMegaScaneID);
-			result = _megaScanVector.size()-1;
-			wcout << myObjectID << endl;
+			_index = _megaScanVector.size()-1;
+			/*wcout << myObjectID << endl;
 			wcout << myMegaScaneID << endl;
-			wcout << _megaScanVector.size() << endl;
-			//替换
-			_iDMap[myObjectID] = _megaScanVector;
+			wcout << _megaScanVector.size() << endl;*/
+			//替换megascen vector
+			myObjectIDMap[myObjectID] = _megaScanVector;
 		}
-		else
-		{
-			//找到,取得index
-			result = std::distance(_megaScanVector.begin(), itr1);
-		}
+		//else
+		//{
+		//	//找到,取得index
+		//	_index = std::distance(_megaScanVector.begin(), itr1);
+		//}
 	}
-	 
-	//更新json文档
-	Serialize::exportObjectID(_iDMap);
-
-	return(result);
+	myObjectID = myObjectID + L"_" + std::to_wstring(_index - 1);
 }
 
 KeywordManager::~KeywordManager()
