@@ -11,6 +11,7 @@ KeywordManager::KeywordManager()
 	bool found = false;
 
 	inFile.open(dictionaryPath);
+	//初始化字典
 	if (!inFile.is_open())
 	{
 		std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath  << endl;
@@ -216,28 +217,62 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
 {
 	wstring result = L"";
+	wstring _id = myObjectID;
+	wstring _usage = L"";
+	wstring _size = L"";
+	wstring _extension = L"";
 	//get keyword vector
 	vector <std::wstring> _keywordVector;
 	getKeywords(mySourceFile, _keywordVector);
+	wcout << endl;
 	wcout << "_________________________________________" << endl;
 	wcout << "objectID : " << myObjectID << endl;
 	wcout << "mySourceFile : " << mySourceFile << endl;
 	for (vector <std::wstring> ::iterator itr = _keywordVector.begin(); itr != _keywordVector.end(); itr++)
 	{
-		wcout << *itr ;
-		bool isKey = dictionarySearch(*itr);
-		if (isKey)
+		//wcout << *itr ;
+		//analysis keyword usage
+		getfileKWType(*itr);
+		/*if (isKey)
 		{
 			wcout << " : true" << endl;
 		}
 		else
 		{
 			wcout << " : false" << endl;
+		}*/
+	}
+	
+
+	//gelete megaScaneID
+
+	//
+	return(result);
+}
+
+wstring KeywordManager::getfileKWType(wstring myKW)
+{
+	wstring result = L"";
+	KeywordManager * _kwManager = getInstance();
+	bool _idExist = false;;
+	for (map<wstring, vector<wstring>>::iterator itr = _kwManager->fileKWMap.begin(); itr != _kwManager->fileKWMap.end(); itr++)
+	{
+		vector<wstring> kWVector = itr->second;
+		vector<wstring>::iterator itr2 = std::find(kWVector.begin(), kWVector.end(), myKW);
+		if (itr2 == kWVector.end()) 
+		{
+			wcout << "wrong keyword :"<< myKW << endl;
+		}
+		else
+		{
+			wcout << "[" << myKW << " , "<< itr->first<<"]"<<endl;
+			//found			
+			_idExist = true;
+			result = itr->first;
+			return(result);
+			break;
 		}
 	}
-	//analysis keyword usage
-	//gelete megaScaneID
-	//
 	return(result);
 }
 

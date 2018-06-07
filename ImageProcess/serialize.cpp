@@ -58,14 +58,14 @@ void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap)
 	Serialize::exportJsonFile(_document,"d:/test.Json");
 }
 
-void Serialize::importObjectID(map<wstring, vector<wstring>> & result)
+void Serialize::importObjectID(map<wstring, vector<wstring>> & result, const char * myFilePath)
 {
 	//import json 到 <objectID : [megaID, megaID, ...]> 
 	//<Vector>
 
 	rapidjson::Document _document;
 	//todo : path 修改
-	Serialize::importJsonFile(_document,"d:/test.Json");
+	Serialize::importJsonFile(_document, myFilePath);
 
 	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
 	{

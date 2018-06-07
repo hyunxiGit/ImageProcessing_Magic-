@@ -7,8 +7,9 @@ using namespace std;
 class KeywordManager
 {
 public:
-	std::set<std::wstring> dictionary;
-	std::map<std::wstring, short> idMap;
+	set<std::wstring> dictionary;
+	map<std::wstring, short> idMap;
+	map<wstring, vector<wstring>> fileKWMap;
 	
 	static KeywordManager* getInstance();
 	bool dictionarySearch(std::wstring);
@@ -21,7 +22,7 @@ private:
 	char iDPath[MAX_PATH];
 
 	static KeywordManager* instance;
-	
+	static wstring getfileKWType(wstring);
 
 	KeywordManager();
 	~KeywordManager();
