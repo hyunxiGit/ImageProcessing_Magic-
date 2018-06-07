@@ -12,10 +12,10 @@ public:
 	
 	static KeywordManager* getInstance();
 	bool dictionarySearch(std::wstring);
-	void getKeywords(std::wstring , std::vector <std::wstring> &);
+	void getKeywords(std::wstring , std::vector <std::wstring> & );
 	short getObjectID(map<wstring, vector<wstring>> & , wstring mySource, std::wstring & myTarget );
 	void generateObjectID(map<wstring, vector<wstring>> & , wstring , wstring &);
-
+	wstring getFileName(wstring , wstring);
 private:
 	char dictionaryPath[MAX_PATH];
 	char iDPath[MAX_PATH];

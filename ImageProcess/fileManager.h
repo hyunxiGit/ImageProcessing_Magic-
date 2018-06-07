@@ -4,7 +4,7 @@
 
 //fileManager 的 singleton 用法:
 //FileManager*  myFileManager = FileManager::getInstance();
-
+using namespace std;
 class FileManager
 {
 private:
@@ -12,15 +12,15 @@ private:
 	FileManager();
 
 
-	TCHAR root[MAX_PATH];
+	wstring root;
 	//root
 	/*root = e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/*/
 
 public:
 	static FileManager* getInstance();
-	bool    setRoot(LPCWSTR);
-	LPCWSTR getRoot();
-	void iterateFolder(std::vector <std::wstring> & , LPCWSTR);
+	bool    setRoot(wstring);
+	wstring getRoot();
+	void iterateFolder(std::vector <std::wstring> & , std::vector <std::wstring> &, wstring);
 	void createFolder();
 	int test;
 	

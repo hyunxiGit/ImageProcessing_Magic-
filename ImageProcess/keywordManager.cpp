@@ -54,35 +54,40 @@ bool KeywordManager::dictionarySearch(std::wstring myCheck)
 	return (found);
 }
 
-void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> & myKeywordmyKeyword)
+void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> & myKeyword)
 {
 	int startPos = 0;
 	int findPos = 0;
 	std::wstring subStr;
+
+	short _extensionPos = 0;  //L"."
+	_extensionPos = mySource.rfind(L".");
+
+	//文件 etension
+	if (_extensionPos != string::npos)
+	{
+		subStr = mySource.substr(_extensionPos+1, mySource.length()-_extensionPos);
+		myKeyword.push_back(subStr);
+		mySource = mySource.substr(0,_extensionPos);
+	}
+
 	do
 	{
-		findPos = mySource.find(L"_", startPos);
-		
+		findPos = mySource.find(L"_");
 		if (findPos != string::npos)
 		{
-			subStr = mySource.substr(startPos, (findPos - startPos));
-			myKeywordmyKeyword.push_back(subStr);
-			//wcout << subStr << endl;
+			subStr = mySource.substr(0, findPos);
+			myKeyword.push_back(subStr);
+			int newLength = mySource.length() - findPos;
+			mySource = mySource.substr(findPos+1, newLength);
 		}
-		else if (startPos != 0)
+		else
 		{
-			//last substring
-			subStr = mySource.substr(startPos, (mySource.length() - startPos));
-			if (subStr != L"")
-			{
-				//the last char is not '_'
-				myKeywordmyKeyword.push_back(subStr);
-				//wcout << subStr << endl;
-			}
+			subStr = mySource.substr(findPos + 1, mySource.length());
+			myKeyword.push_back(subStr);
+			mySource = L"";
 		}
-		startPos = findPos + 1;
-	} while (startPos != (mySource.length() + 1) && findPos != string::npos);
-	
+	} while (mySource != L"");
 }
 
 
@@ -107,8 +112,8 @@ short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap 
 		else
 		{
 			//found			
-			short _index = distance(_megaIDVector.begin(), _megaIDVectorItr)-1;
-			result = *_megaIDVectorItr+L"_"+ std::to_wstring(_index) ;
+			short _index = distance(_megaIDVector.begin(), _megaIDVectorItr);
+			result = _IDMapItr->first+L"_"+ std::to_wstring(_index) ;
 			_idExist = true;
 			break;
 		}
@@ -152,10 +157,15 @@ short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap 
 
 		if (megaIDCount != 1)
 		{
-			// problematic asset
-			success = 0;
-			wstring _info = L"KeywordManager :: generateObjectID : < problematic asset >: " + myMegaScaneID;
-			Log::log(_info);
+			// problematic keyword
+			if (result == L"")
+			{
+				//can not generate the keyword according to megaScane ID
+				success = 0;
+				result = L"";
+				wstring _info = L"KeywordManager :: generateObjectID : < problematic asset >: " + myMegaScaneID;
+				Log::log(_info);
+			}
 		}
 		else
 		{
@@ -196,19 +206,39 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 			//找不到，添加本megascaneID
 			_megaScanVector.push_back(myMegaScaneID);
 			_index = _megaScanVector.size()-1;
-			/*wcout << myObjectID << endl;
-			wcout << myMegaScaneID << endl;
-			wcout << _megaScanVector.size() << endl;*/
 			//替换megascen vector
 			myObjectIDMap[myObjectID] = _megaScanVector;
 		}
-		//else
-		//{
-		//	//找到,取得index
-		//	_index = std::distance(_megaScanVector.begin(), itr1);
-		//}
 	}
 	myObjectID = myObjectID + L"_" + std::to_wstring(_index - 1);
+}
+
+wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
+{
+	wstring result = L"";
+	//get keyword vector
+	vector <std::wstring> _keywordVector;
+	getKeywords(mySourceFile, _keywordVector);
+	wcout << "_________________________________________" << endl;
+	wcout << "objectID : " << myObjectID << endl;
+	wcout << "mySourceFile : " << mySourceFile << endl;
+	for (vector <std::wstring> ::iterator itr = _keywordVector.begin(); itr != _keywordVector.end(); itr++)
+	{
+		wcout << *itr ;
+		bool isKey = dictionarySearch(*itr);
+		if (isKey)
+		{
+			wcout << " : true" << endl;
+		}
+		else
+		{
+			wcout << " : false" << endl;
+		}
+	}
+	//analysis keyword usage
+	//gelete megaScaneID
+	//
+	return(result);
 }
 
 KeywordManager::~KeywordManager()
