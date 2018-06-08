@@ -17,8 +17,8 @@ using namespace rapidjson;
 class Serialize
 {
 public:
-	static void exportObjectID(map<wstring, vector<wstring>> );
-	static void importObjectID(map<wstring, vector<wstring>> &, const char *);
+	static void exportObjectID(map<wstring, vector<wstring>> , const char * );
+	static void importObjectID(map<wstring, vector<wstring>> &, const char * );
 	static void exportMap(map <wstring, short>);
 	static void importMap(map <wstring, short> & );
 	static void exportJsonFile(Document & , const char *  myPath = EXPORT_PATH);

@@ -67,7 +67,7 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 	//文件 etension
 	if (_extensionPos != string::npos)
 	{
-		subStr = mySource.substr(_extensionPos+1, mySource.length()-_extensionPos);
+		subStr = mySource.substr(_extensionPos, mySource.length()-_extensionPos);//".jpg"
 		myKeyword.push_back(subStr);
 		mySource = mySource.substr(0,_extensionPos);
 	}
@@ -217,61 +217,172 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
 {
 	wstring result = L"";
-	wstring _id = myObjectID;
-	wstring _usage = L"";
-	wstring _size = L"";
-	wstring _extension = L"";
+	fileKWStr _kwStr;
 	//get keyword vector
-	vector <std::wstring> _keywordVector;
-	getKeywords(mySourceFile, _keywordVector);
-	wcout << endl;
-	wcout << "_________________________________________" << endl;
-	wcout << "objectID : " << myObjectID << endl;
-	wcout << "mySourceFile : " << mySourceFile << endl;
-	for (vector <std::wstring> ::iterator itr = _keywordVector.begin(); itr != _keywordVector.end(); itr++)
+	vector <std::wstring> _kwVector;
+	vector <std::wstring> _wrongKwVector;
+	getKeywords(mySourceFile, _kwVector);
+	//wcout << endl;
+	//wcout << "_________________________________________" << endl;
+	//wcout << "objectID : " << myObjectID << endl;
+	//wcout << "mySourceFile : " << mySourceFile << endl;
+	for (vector <std::wstring> ::iterator itr = _kwVector.begin(); itr != _kwVector.end(); itr++)
 	{
 		//wcout << *itr ;
 		//analysis keyword usage
-		getfileKWType(*itr);
-		/*if (isKey)
+		wstring _kwType = getfileKWType(*itr , _kwStr);
+
+		if (_kwType == L"")
 		{
-			wcout << " : true" << endl;
+			_wrongKwVector.push_back(*itr);
 		}
-		else
-		{
-			wcout << " : false" << endl;
-		}*/
 	}
-	
+
+	if (_kwStr.extension != L".json" && (_kwStr.extension == L"" || _kwStr.use == L""))
+	{
+		wcout << L" < problem files >*************************************" << mySourceFile << endl;
+		for (vector<wstring>::iterator itr = _wrongKwVector.begin(); itr != _wrongKwVector.end(); itr++)
+		{
+			wcout << *itr <<endl;
+		}
+	}
 
 	//gelete megaScaneID
-
+	result = makeFileName(myObjectID , _kwStr);
+	wcout << "result : " << result <<endl;
 	//
 	return(result);
 }
 
-wstring KeywordManager::getfileKWType(wstring myKW)
+wstring KeywordManager::getfileKWType(wstring myKW, fileKWStr & myKWStr)
 {
+	//result 为 L"" 则是 wrongKW;
 	wstring result = L"";
-	KeywordManager * _kwManager = getInstance();
-	bool _idExist = false;;
-	for (map<wstring, vector<wstring>>::iterator itr = _kwManager->fileKWMap.begin(); itr != _kwManager->fileKWMap.end(); itr++)
+	bool _idExist = false;
+	std::transform(myKW.begin(), myKW.end(), myKW.begin(), ::tolower);
+	for (map<wstring, vector<wstring>>::iterator itr = fileKWMap.begin(); itr != fileKWMap.end(); itr++)
 	{
 		vector<wstring> kWVector = itr->second;
 		vector<wstring>::iterator itr2 = std::find(kWVector.begin(), kWVector.end(), myKW);
-		if (itr2 == kWVector.end()) 
-		{
-			wcout << "wrong keyword :"<< myKW << endl;
-		}
+		if (itr2 == kWVector.end()) {}
 		else
 		{
-			wcout << "[" << myKW << " , "<< itr->first<<"]"<<endl;
 			//found			
 			_idExist = true;
 			result = itr->first;
+
+			if (result == L"size")
+			{
+				myKWStr.size = myKW;
+			}
+			else if (result == L"use")
+			{
+				myKWStr.use = myKW;
+			}
+			else if (result == L"extension")
+			{
+				myKWStr.extension = myKW;
+			}
+			else if (result == L"lod")
+			{
+				myKWStr.lod = myKW;
+			}
+			else if (result == L"variation")
+			{
+				myKWStr.variation = myKW;
+			}
+
 			return(result);
 			break;
 		}
+	}
+	if (_idExist == false)
+	{
+		//遍历完整个fileKWMap找不到关键字的所属
+		//wcout << "wrong keywor *******************************************:" << myKW << endl;
+	}
+	return(result);
+}
+
+bool KeywordManager::makeFileKeyword()
+{
+	map<wstring, vector<wstring>> _fileKWMap;
+	vector<wstring> size;
+	vector<wstring> use;
+	vector<wstring> extension;
+	vector<wstring> lod;
+	vector<wstring> variation;
+	
+	size.push_back(L"2k");
+	size.push_back(L"4k");
+
+	use.push_back(L"albedo");
+	use.push_back(L"atlas");
+	use.push_back(L"ao");
+	use.push_back(L"billboard");
+	use.push_back(L"bump");
+	use.push_back(L"cavity");
+	use.push_back(L"displacement");
+	use.push_back(L"fuzz");
+	use.push_back(L"gloss");
+	use.push_back(L"normal");
+	use.push_back(L"opacity");
+	use.push_back(L"preview");
+	use.push_back(L"roughness");
+	use.push_back(L"specular");
+	use.push_back(L"translucency");
+
+	extension.push_back(L".exr");
+	extension.push_back(L".jpg");
+	extension.push_back(L".png");
+	extension.push_back(L".json");
+
+	lod.push_back(L".lod0");
+	lod.push_back(L".lod1");
+	lod.push_back(L".lod2");
+
+	variation.push_back(L".var1");
+	variation.push_back(L".var2");
+	variation.push_back(L".var3");
+
+	_fileKWMap[L"size"] = size;
+	_fileKWMap[L"use"] = use;
+	_fileKWMap[L"extension"] = extension;
+	_fileKWMap[L"lod"] = lod;
+	_fileKWMap[L"variation"] = variation;
+
+	Serialize::exportObjectID(_fileKWMap , "d:/fileKW.json");
+}
+
+wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
+{
+	wstring result;
+	vector<wstring> _fileKWResultVector;
+	result = myObjectID;
+	if (myKWStr.variation != L"")
+	{
+		result += (L"_");
+		result += myKWStr.variation;
+	}
+	if (myKWStr.use != L"")
+	{
+		result += (L"_");
+		result += myKWStr.use;
+	}
+	if (myKWStr.size != L"")
+	{
+		result += (L"_");
+		result += myKWStr.size;
+	}
+
+	if (myKWStr.lod != L"")
+	{
+		result += (L"_");
+		result += myKWStr.lod;
+	}
+	if (myKWStr.extension != L"")
+	{
+		result += myKWStr.extension;
 	}
 	return(result);
 }

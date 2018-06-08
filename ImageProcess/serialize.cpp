@@ -4,7 +4,7 @@
 #include <fstream>
 #define EXPORT_PATH "d:/JsonFile.Json"
 
-void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap)
+void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, const char * myPath)
 {
 	//把指定的<objectID : [megaID, megaID, ...]> 输出为 json格式
 	//todo : debug 检测， keywordmanager 输出相应的 map格式
@@ -55,7 +55,7 @@ void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap)
 	//	}
 	//}
 	//todo : 输出位置
-	Serialize::exportJsonFile(_document,"d:/test.Json");
+	Serialize::exportJsonFile(_document, myPath);
 }
 
 void Serialize::importObjectID(map<wstring, vector<wstring>> & result, const char * myFilePath)

@@ -9,11 +9,11 @@ FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager()
 {
-	////todo : 不使用常量使用传入值
+	//todo : 不使用常量使用传入值
 	////公司环境
 	wstring myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
-	////家里环境
-	////wstring myroot = L"F:/我的/surfaces/";
+	//家里环境
+	//wstring myroot = L"F:/我的/surfaces/";
 	setRoot(myroot);
 }
 
