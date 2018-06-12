@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="asset2D.h" />
     <ClInclude Include="fileManager.h" />
+    <ClInclude Include="image_w.h" />
     <ClInclude Include="keywordManager.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="serialize.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Asset2D.cpp" />
     <ClCompile Include="fileManager.cpp" />
     <ClCompile Include="ImageProcess.cpp" />
+    <ClCompile Include="image_w.cpp" />
     <ClCompile Include="keywordManager.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="serialize.cpp" />

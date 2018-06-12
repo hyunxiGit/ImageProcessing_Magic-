@@ -1,4 +1,4 @@
-class Asset2D
+﻿class Asset2D
 {
 public:
 	Asset2D();

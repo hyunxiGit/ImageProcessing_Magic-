@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "keywordManager.h"
+#include <algorithm>
 
 KeywordManager * KeywordManager::instance = nullptr;
 KeywordManager::KeywordManager()
