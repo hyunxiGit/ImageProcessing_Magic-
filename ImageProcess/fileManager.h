@@ -13,15 +13,17 @@ private:
 
 
 	wstring root;
+	wstring targetRoot;
 	//root
 	/*root = e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/*/
 
 public:
 	static FileManager* getInstance();
-	bool    setRoot(wstring);
+	bool    setRoot(wstring , wstring);
 	wstring getRoot();
-	void iterateFolder(std::vector <std::wstring> & , std::vector <std::wstring> &, wstring);
-	void createFolder();
+	wstring getTargetRoot();
+	void iterateFolder(vector <std::wstring> & , std::vector <std::wstring> &, wstring);
+	short createFolder(wstring);
 	int test;
 	
 };

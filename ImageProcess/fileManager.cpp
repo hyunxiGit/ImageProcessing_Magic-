@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include "stdafx.h"
 
+#include <direct.h>  
+#include <stdlib.h>  
+#include <stdio.h>  
+
 #define MAX_PROCESS_FOLDER_NUMBER 300
 using namespace std;
 //empty pointer assignment
@@ -12,9 +16,11 @@ FileManager::FileManager()
 	//todo : 不使用常量使用传入值
 	////公司环境
 	wstring myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
+	LPCWSTR myTarget = L"d:/MegascansExport/";
 	//家里环境
 	//wstring myroot = L"F:/我的/surfaces/";
-	setRoot(myroot);
+	//LPCWSTR myTarget = L"d:/MegascansExport/";
+	setRoot(myroot , myTarget);
 }
 
 FileManager* FileManager:: getInstance()
@@ -28,15 +34,22 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-bool FileManager::setRoot(wstring myPath)
+bool FileManager::setRoot(wstring myPath , wstring myTargetPath)
 {
+	//检测是否合法
 	root = myPath;
+	targetRoot = myTargetPath;
 	return (true);
 }
 
 wstring FileManager::getRoot()
 {
 	return (root);
+}
+
+wstring FileManager::getTargetRoot()
+{
+	return (targetRoot);
 }
 
 //vector string
@@ -80,20 +93,42 @@ void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring >
 	//输出 iterate 结果到 log
 }
 
-//todo 需要成为filemanager 的成员函数
-void fileManagement_createFolder()
+short FileManager::createFolder(wstring myFoldersPath)
 {
-	//support Unicode
-	//CreateDirectory part
-
-	TCHAR szDirName[] = L"D:\\我test";
-	bool flag = CreateDirectory(szDirName, NULL);
-	DWORD ERROR_File_Exist = 183;
-	DWORD err = GetLastError();
-	if (err == ERROR_File_Exist)
+	short result = -1;
+	//-1:失败
+	//0：已经存在
+	//1：成功创建
+	const wchar_t * myPath = (wchar_t *)myFoldersPath.data();
+	WIN32_FIND_DATA ffd;
+	bool rValue = false;
+	HANDLE hFind = FindFirstFile(myPath, &ffd);
+	if ((hFind != INVALID_HANDLE_VALUE) && (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
-		cout << "the file already exist" << endl;
+		//folder exist
+		result = 0;
+		wcout << L"this file exists : "<< myFoldersPath  << endl;
 	}
-	cout << "flag: " << flag << endl;
-	cout << "err: " << err << endl;
+	else
+	{
+		FindClose(hFind);
+		//can not find folder, make the folder
+		if (_wmkdir(myPath) == 0)
+		{
+			wcout << L"successfully created : " << myFoldersPath << endl;
+			result = 1;
+			//system("dir \\testtmp");
+			//删除文件夹
+			/*if (_wrmdir("\\testtmp") == 0)
+			printf("Directory '\\testtmp' was successfully removed\n");
+			else
+			printf("Problem removing directory '\\testtmp'\n");*/
+		}
+		else
+		{
+			printf("Problem creating directory '\\testtmp'\n");
+		}
+	}
+	
+	return(result);
 }

@@ -93,6 +93,7 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 
 
 short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap , std::wstring myMegaScaneID, wstring & result )
+//按照读入的objectIDMap 查询 或者 为 myMegaScaneID 产生object ID ，如果是产生ID  myObjectIDMap 更新
 {
 	//todo:支持查找中文
 	//两个英语单词拼接
