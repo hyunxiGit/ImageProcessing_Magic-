@@ -9,6 +9,7 @@ class Image_W
 {
 public:
 	Image data;
+	Image_W();
 	Image_W(string);
 	Image_W(wstring);
 	short write(string);

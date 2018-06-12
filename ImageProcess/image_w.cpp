@@ -5,6 +5,10 @@
 #include "serialize.h"
 
 using namespace Magick;
+Image_W::Image_W()
+{
+
+}
 
 Image_W::Image_W(string myPath)
 {

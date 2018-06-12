@@ -216,7 +216,7 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 	myObjectID = myObjectID + L"_" + std::to_wstring(_index - 1);
 }
 
-wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
+wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , fileKWStr  & resultKWStr)
 {
 	wstring result = L"";
 	fileKWStr _kwStr;
@@ -232,7 +232,7 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
 	{
 		//wcout << *itr ;
 		//analysis keyword usage
-		wstring _kwType = getfileKWType(*itr , _kwStr);
+		wstring _kwType = getfileKWType(*itr , resultKWStr);
 
 		if (_kwType == L"")
 		{
@@ -240,7 +240,7 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
 		}
 	}
 
-	if (_kwStr.extension != L".json" && (_kwStr.extension == L"" || _kwStr.use == L""))
+	if (resultKWStr.extension != L".json" && (resultKWStr.extension == L"" || resultKWStr.use == L""))
 	{
 		wcout << L" < problem files >*************************************" << mySourceFile << endl;
 		for (vector<wstring>::iterator itr = _wrongKwVector.begin(); itr != _wrongKwVector.end(); itr++)
@@ -250,7 +250,7 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile )
 	}
 
 	//gelete megaScaneID
-	result = makeFileName(myObjectID , _kwStr);
+	result = makeFileName(myObjectID , resultKWStr);
 	wcout << "result : " << result <<endl;
 	//
 	return(result);
@@ -384,7 +384,7 @@ wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
 	}
 	if (myKWStr.extension != L"")
 	{
-		result += myKWStr.extension;
+		//result += myKWStr.extension;
 	}
 	return(result);
 }

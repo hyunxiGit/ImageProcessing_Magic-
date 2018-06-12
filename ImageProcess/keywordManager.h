@@ -25,7 +25,7 @@ public:
 	void getKeywords(std::wstring , std::vector <std::wstring> & );
 	short getObjectID(map<wstring, vector<wstring>> & , wstring mySource, std::wstring & myTarget );
 	void generateObjectID(map<wstring, vector<wstring>> & , wstring , wstring &);
-	wstring getFileName(wstring , wstring);
+	wstring getFileName(wstring , wstring , fileKWStr &);
 	bool makeFileKeyword();
 private:
 	char dictionaryPath[MAX_PATH];
