@@ -16,8 +16,8 @@ Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPat
 
 	//wcout << "[Asset2D] -> sourcePath :" << sourcePath << endl;
 	//wcout << "[Asset2D] -> mySourceName :" << sourceName << endl;
-	//wcout << "[Asset2D] -> myTargetPath :" << targetPath << endl;
-	//wcout << "[Asset2D] -> myTargetName :" << targetName << endl;
+	wcout << "[Asset2D] -> myTargetPath :" << targetPath << endl;
+	wcout << "[Asset2D] -> myTargetName :" << targetName << endl;
 
 	//wcout << "[Asset2D] -> myStru " << str.extension << endl;
 	//wcout << "[Asset2D] -> myStru " << str.use << endl;
