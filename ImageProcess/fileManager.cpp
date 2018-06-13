@@ -11,17 +11,8 @@ using namespace std;
 void logFilesOut(WCHAR **, int);
 FileManager* FileManager::instance = nullptr;
 
-FileManager::FileManager()
-{
-	//todo : 不使用常量使用传入值
-	////公司环境
-	wstring myroot = L"e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces/";	
-	LPCWSTR myTarget = L"d:/MegascansExport/";
-	//家里环境
-	//wstring myroot = L"F:/我的/surfaces/";
-	//LPCWSTR myTarget = L"d:/MegascansExport/";
-	setRoot(myroot , myTarget);
-}
+FileManager::FileManager(): batchInputPath(L""), batchOutputPath(L""), toolFileStorePath(L"")
+{}
 
 FileManager* FileManager:: getInstance()
 {
@@ -34,25 +25,66 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-bool FileManager::setRoot(wstring myPath , wstring myTargetPath)
+short FileManager::init(wstring mySource, wstring myTarget)
+//after instantiate must call this function
 {
-	//检测是否合法
-	root = myPath;
-	targetRoot = myTargetPath;
+	//1 : success
+	//-1: source failed
+	//-2 : target failed
+	//-3 : both failed
+	//todo : 检测路径是否合法
+	short result = 1;
+	bool setSource = setBatchInputPath(mySource);
+	bool setTarget = setBatchExportPath(myTarget);
+	if (!setSource && !setTarget)
+	{
+		result = -3;
+	}
+	else if (!setSource)
+	{
+		result = -1;
+	}
+	else if (!setTarget)
+	{
+		result = -2;
+	}
+	else
+	{
+
+	}
+	return(result);
+}
+
+bool  FileManager::setToolFileStoragePath(wstring myStoragePath)
+{
+	bool result = false;
+	toolFileStorePath = myStoragePath;
+	return(result);
+}
+
+bool FileManager::setBatchInputPath(wstring myPath )
+{
+	batchInputPath = myPath;
+	
 	return (true);
 }
 
-wstring FileManager::getRoot()
+bool FileManager::setBatchExportPath(wstring myTargetPath)
 {
-	return (root);
+	batchOutputPath = myTargetPath;
+	return(true);
 }
 
-wstring FileManager::getTargetRoot()
+wstring FileManager::getBatchInputPath()
 {
-	return (targetRoot);
+	return (batchInputPath);
 }
 
-//vector string
+wstring FileManager::getBatchOutputPath()
+{
+	return (batchOutputPath);
+}
+
 void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders , wstring myTargetFolder )
 {
 	const TCHAR *t = myTargetFolder.c_str();
@@ -117,12 +149,6 @@ short FileManager::createFolder(wstring myFoldersPath)
 		{
 			wcout << L"successfully created : " << myFoldersPath << endl;
 			result = 1;
-			//system("dir \\testtmp");
-			//删除文件夹
-			/*if (_wrmdir("\\testtmp") == 0)
-			printf("Directory '\\testtmp' was successfully removed\n");
-			else
-			printf("Problem removing directory '\\testtmp'\n");*/
 		}
 		else
 		{
@@ -132,3 +158,30 @@ short FileManager::createFolder(wstring myFoldersPath)
 	
 	return(result);
 }
+
+bool FileManager::checkPath(wstring myPath)
+{
+	short result = -1;
+	//-1:路径不存在
+	//0：已经存在
+	//1：成功创建
+	const wchar_t * _path = (wchar_t *)myPath.data();
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind = FindFirstFile(_path, &ffd);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		//ilegal path
+		result = -1;
+	}
+	else if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	{
+		//this is a folder
+		wcout << L"directory found" << endl;
+	}
+	else
+	{
+		//this is a file
+		wcout << L"file found" << endl;
+	}
+}
+

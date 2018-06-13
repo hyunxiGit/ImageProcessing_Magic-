@@ -87,3 +87,13 @@ void wchatTestFunction()
 	wcstombs_s(&oncverted, mbs, BUFFER_SIZE, wc2, BUFFER_SIZE);
 
 }
+
+void deleteFolder()
+{
+	//system("dir \\testtmp");
+	//删除文件夹
+	/*if (_wrmdir("\\testtmp") == 0)
+	printf("Directory '\\testtmp' was successfully removed\n");
+	else
+	printf("Problem removing directory '\\testtmp'\n");*/
+}

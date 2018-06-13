@@ -245,7 +245,6 @@ std::wstring Serialize::UTF8ToWString(string myString)
 	return wstrReturn;
 }
 
-
 void Serialize::printUTF8(string myUTF8String)
 {
 	system("chcp 65001"); //设置字符集 （使用SetConsoleCP(65001)设置无效，原因未知）  
