@@ -17,12 +17,11 @@ using namespace rapidjson;
 class Serialize
 {
 public:
-	static void exportObjectID(map<wstring, vector<wstring>> , const char * );
-	static void importObjectID(map<wstring, vector<wstring>> &, const char * );
-	static void exportMap(map <wstring, short>);
-	static void importMap(map <wstring, short> & );
-	static void exportJsonFile(Document & , const char *  myPath = EXPORT_PATH);
-	static void importJsonFile(Document & result, const char *  myPath = EXPORT_PATH);
+	static void exportObjectID(map<wstring, vector<wstring>> , wstring);
+	static void importObjectID(map<wstring, vector<wstring>> &, wstring);
+	static void importMap(map <wstring, short> & , wstring);
+	static void exportJsonFile(Document & , wstring);
+	static void importJsonFile(Document & result, wstring);
 	//todo: 这里用不用分出去一个类
 	static std::string wStringToUTF8(std::wstring);
 	static std::wstring UTF8ToWString(std::string);

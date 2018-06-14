@@ -16,9 +16,10 @@ struct fileKWStr
 class KeywordManager
 {
 public:
-	set<std::wstring> dictionary;
-	map<std::wstring, short> idMap;
-	map<wstring, vector<wstring>> fileKWMap;
+	bool initJsonMap(wstring , wstring , wstring);
+	set<wstring> dictionary;
+	map<wstring, vector<wstring>> idMap;
+	map<wstring, vector<wstring>> kWMap;
 	
 	static KeywordManager* getInstance();
 	bool dictionarySearch(std::wstring);
@@ -33,8 +34,8 @@ private:
 
 	static KeywordManager* instance;
 	wstring getfileKWType(wstring , fileKWStr& );
-
 	wstring makeFileName(wstring, fileKWStr);
+	bool initDictionary(wstring myDictionPath);
 
 	KeywordManager();
 	~KeywordManager();

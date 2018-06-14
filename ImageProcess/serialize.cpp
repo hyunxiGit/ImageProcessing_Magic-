@@ -4,7 +4,7 @@
 #include <fstream>
 #define EXPORT_PATH "d:/JsonFile.Json"
 
-void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, const char * myPath)
+void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, wstring myPath)
 {
 	//把指定的<objectID : [megaID, megaID, ...]> 输出为 json格式
 	//todo : debug 检测， keywordmanager 输出相应的 map格式
@@ -58,7 +58,7 @@ void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, cons
 	Serialize::exportJsonFile(_document, myPath);
 }
 
-void Serialize::importObjectID(map<wstring, vector<wstring>> & result, const char * myFilePath)
+void Serialize::importObjectID(map<wstring, vector<wstring>> & result, wstring myFilePath)
 {
 	//import json 到 <objectID : [megaID, megaID, ...]> 
 	//<Vector>
@@ -82,32 +82,11 @@ void Serialize::importObjectID(map<wstring, vector<wstring>> & result, const cha
 	}
 }
 
-void Serialize::exportMap(std::map <std::wstring, short> myMap)
-{
-	Document document;
-	Document::AllocatorType &allocator = document.GetAllocator();
-	document.SetObject();
-	for (std::map <std::wstring, short>::iterator it = myMap.begin(); it != myMap.end(); it++)
-	{
-		Value objectId;
-		string myID = Serialize::wStringToUTF8(it->first);	
-		const char * myCha = myID.c_str();//string 转 字符串数组
-		char buffer[260];
-		int len = sprintf_s(buffer, "%s", myCha);
-
-		short myIndex = it->second;
-		//document.AddMember(myID, myIndex, allocator);
-		objectId.SetString(buffer, len, document.GetAllocator());
-		document.AddMember(objectId, myIndex, document.GetAllocator());
-	}
-	Serialize ::exportJsonFile(document);
-}
-
-void Serialize::importMap(std::map <std::wstring, short> & result)
+void Serialize::importMap(std::map <std::wstring, short> & result,wstring myPath)
 {
 	//todo : 现在这个东西还只支持  string : int 的格式，以后可能需要转换为多type支持
 	rapidjson::Document _document;
-	Serialize::importJsonFile(_document);
+	Serialize::importJsonFile(_document, myPath);
 
 	printf ("_document.IsObject() : %i", _document.IsObject());
 
@@ -121,19 +100,24 @@ void Serialize::importMap(std::map <std::wstring, short> & result)
 	}
 }
 
-void Serialize::importJsonFile(Document & result , const char * myPath)
+void Serialize::importJsonFile(Document & result , wstring myPath)
 {
 	//support both ASKII and Unicode
+	const wchar_t * _path = (wchar_t *)myPath.c_str();
+
 	errno_t err;
 	FILE *fp;
-	err = fopen_s(&fp, myPath, "r ");
+	
+	err = _wfopen_s(&fp, _path,L"r");
+	cout << "erroe code is  : " << err << endl;
+	wcout << "myPath : " << myPath << endl;
 	if (err == 0)
 	{
-		//printf("File open: %s\n", myPath);
+		wcout<<L"File open: "<< myPath <<endl;
 	}
 	else
 	{
-		printf("[error] File open: %s\n", myPath);
+		wcout << L"[error] failed open: " << myPath << endl;
 	}
 	char readBuffer[65536];
 	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -142,20 +126,22 @@ void Serialize::importJsonFile(Document & result , const char * myPath)
 	fclose(fp);
 }
 
-void Serialize :: exportJsonFile(rapidjson::Document & myDoc, const char * myPath)
+void Serialize :: exportJsonFile(rapidjson::Document & myDoc, wstring myPath)
 {
 	// Serialize::exportJsonFile(document);
+	const wchar_t * _path = (wchar_t *)myPath.c_str();
+
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer>  writer(buffer);
 	myDoc.Accept(writer);
 
 	std::string strJson = buffer.GetString();
 
-	wofstream myLog;
-	myLog.open(myPath, ios::trunc);
-	if (myLog.is_open())
+	wofstream myFile;
+	myFile.open(_path);
+	if (myFile.is_open())
 	{
-		myLog << buffer.GetString() << endl;
+		myFile << buffer.GetString() << endl;
 	}
 }
 

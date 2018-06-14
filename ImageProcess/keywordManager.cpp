@@ -4,31 +4,33 @@
 #include <algorithm>
 
 KeywordManager * KeywordManager::instance = nullptr;
+
 KeywordManager::KeywordManager()
 {
-	strcpy_s(dictionaryPath, MAX_PATH,"d:/en-dictionary.txt");
-	wstring line;
-	wifstream inFile;
-	bool found = false;
+	//strcpy_s(dictionaryPath, MAX_PATH,"d:/en-dictionary.txt");
+	//wstring line;
+	//wifstream inFile;
+	//bool found = false;
 
-	inFile.open(dictionaryPath);
-	//初始化字典
-	if (!inFile.is_open())
-	{
-		std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath  << endl;
-	}
-	else
-	{
-		while (!inFile.eof())
-		{
-			inFile >> line;
-			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+	//inFile.open(dictionaryPath);
+	////初始化字典
+	//if (!inFile.is_open())
+	//{
+	//	std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath  << endl;
+	//}
+	//else
+	//{
+	//	while (!inFile.eof())
+	//	{
+	//		inFile >> line;
+	//		std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
-			this->dictionary.insert(line);
-		}
-	}
-	inFile.close();
+	//		this->dictionary.insert(line);
+	//	}
+	//}
+	//inFile.close();
 }
+
 KeywordManager * KeywordManager::getInstance()
 {
 	KeywordManager * result; 
@@ -38,6 +40,40 @@ KeywordManager * KeywordManager::getInstance()
 	}
 	result = instance;
 	return (instance);
+}
+
+bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myDiction)
+{
+	Serialize::importObjectID(idMap, myIDPath);
+	Serialize::importObjectID(kWMap, myKWPath);
+	initDictionary(myDiction);
+}
+
+bool KeywordManager :: initDictionary(wstring myDictionPath)
+{
+	const wchar_t * _path = (wchar_t *)myDictionPath.c_str();
+	//strcpy_s(dictionaryPath, MAX_PATH, "d:/en-dictionary.txt");
+	wstring line;
+	wifstream inFile;
+	bool found = false;
+
+	inFile.open(_path);
+	//初始化字典
+	if (!inFile.is_open())
+	{
+		std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath << endl;
+	}
+	else
+	{
+		while (!inFile.eof())
+		{
+			inFile >> line;
+			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+
+			dictionary.insert(line);
+		}
+	}
+	inFile.close();
 }
 
 bool KeywordManager::dictionarySearch(std::wstring myCheck)
@@ -91,7 +127,6 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 		}
 	} while (mySource != L"");
 }
-
 
 short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap , std::wstring myMegaScaneID, wstring & result )
 //按照读入的objectIDMap 查询 或者 为 myMegaScaneID 产生object ID ，如果是产生ID  myObjectIDMap 更新
@@ -262,7 +297,7 @@ wstring KeywordManager::getfileKWType(wstring myKW, fileKWStr & myKWStr)
 	wstring result = L"";
 	bool _idExist = false;
 	std::transform(myKW.begin(), myKW.end(), myKW.begin(), ::tolower);
-	for (map<wstring, vector<wstring>>::iterator itr = fileKWMap.begin(); itr != fileKWMap.end(); itr++)
+	for (map<wstring, vector<wstring>>::iterator itr = kWMap.begin(); itr != kWMap.end(); itr++)
 	{
 		vector<wstring> kWVector = itr->second;
 		vector<wstring>::iterator itr2 = std::find(kWVector.begin(), kWVector.end(), myKW);
@@ -353,7 +388,7 @@ bool KeywordManager::makeFileKeyword()
 	_fileKWMap[L"lod"] = lod;
 	_fileKWMap[L"variation"] = variation;
 
-	Serialize::exportObjectID(_fileKWMap , "d:/fileKW.json");
+	Serialize::exportObjectID(_fileKWMap , L"d:/fileKW.json");
 }
 
 wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)

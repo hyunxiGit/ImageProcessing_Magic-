@@ -2,6 +2,10 @@
 #include <vector>
 #include <string>
 
+#define ILLEGAL_PATH -1
+#define FOLDER_EXIST 2
+#define FILE_EXIST 1
+
 //fileManager 的 singleton 用法:
 //FileManager*  myFileManager = FileManager::getInstance();
 using namespace std;
@@ -15,17 +19,26 @@ private:
 	wstring batchInputPath;
 	wstring batchOutputPath;
 	wstring toolFileStorePath;
+	wstring IDJsonPath;
+	wstring keyWordJsonPath;
+	wstring dictionJsonPath;
 
 public:
 	static FileManager* getInstance();
-	bool checkPath(wstring);
-	short init(wstring mySource, wstring myTarget);
+	short checkPath(wstring);
+	short initDirectory(wstring mySource, wstring myTarget, wstring myToolStoragePath);
+	short initFile();
 	bool setToolFileStoragePath(wstring);
 	bool setBatchInputPath(wstring);
 	bool setBatchExportPath(wstring);
+	bool createFile(wstring);
+	wstring getToolFileStoragePath();
 	wstring getBatchInputPath();
 	wstring getBatchOutputPath();
+	wstring getIDJasonPath();
+	wstring getKeywordJsonPath();
+	wstring getDictionTxtPath();
 	void iterateFolder(vector <std::wstring> & , std::vector <std::wstring> &, wstring);
-	short createFolder(wstring);
+	short createFolder(wstring, wstring);
 	
 };
