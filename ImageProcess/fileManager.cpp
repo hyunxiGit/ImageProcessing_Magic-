@@ -173,6 +173,11 @@ wstring FileManager::getDictionTxtPath()
 
 void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders , wstring myTargetFolder )
 {
+	if (myTargetFolder.rfind(L"/") != myTargetFolder.size() - 1)
+	{
+		myTargetFolder = myTargetFolder + L"/";
+	}
+
 	const TCHAR *t = myTargetFolder.c_str();
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	TCHAR szDir[MAX_PATH];
@@ -267,13 +272,11 @@ short FileManager::checkPath(wstring myPath)
 	else if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 	{
 		//path exist
-		wcout << L"directory found : " << myPath << endl;
 		result = 2;
 	}
 	else
 	{
 		//file exist
-		wcout << L"file found : " << myPath<< endl;
 		result = 1;
 	}
 	FindClose(hFind);

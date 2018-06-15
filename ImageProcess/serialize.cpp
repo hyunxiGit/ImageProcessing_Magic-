@@ -4,7 +4,7 @@
 #include <fstream>
 #define EXPORT_PATH "d:/JsonFile.Json"
 
-void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, wstring myPath)
+void Serialize::exportJson(map<wstring, vector<wstring>> myObjectIDMap, wstring myPath)
 {
 	//把指定的<objectID : [megaID, megaID, ...]> 输出为 json格式
 	//todo : debug 检测， keywordmanager 输出相应的 map格式
@@ -40,25 +40,10 @@ void Serialize::exportObjectID(map<wstring, vector<wstring>> myObjectIDMap, wstr
 
 		_document.AddMember(_objectId, _array, allocator);
 	}
-
-	
-	//for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
-	//{
-	//	const char * _key = itr->name.GetString();
-	//	cout << _key << endl;
-
-	//	const Value& b = _document[_key];
-	//	assert(b.IsArray());
-	//	for (SizeType i = 0; i < b.Size(); i++) // 使用 SizeType 而不是 size_t
-	//	{
-	//		cout << b[i].GetString() << endl;
-	//	}
-	//}
-	//todo : 输出位置
 	Serialize::exportJsonFile(_document, myPath);
 }
 
-void Serialize::importObjectID(map<wstring, vector<wstring>> & result, wstring myFilePath)
+void Serialize::importJson(map<wstring, vector<wstring>> & result, wstring myFilePath)
 {
 	//import json 到 <objectID : [megaID, megaID, ...]> 
 	//<Vector>
@@ -109,15 +94,12 @@ void Serialize::importJsonFile(Document & result , wstring myPath)
 	FILE *fp;
 	
 	err = _wfopen_s(&fp, _path,L"r");
-	cout << "erroe code is  : " << err << endl;
-	wcout << "myPath : " << myPath << endl;
 	if (err == 0)
 	{
-		wcout<<L"File open: "<< myPath <<endl;
 	}
 	else
 	{
-		wcout << L"[error] failed open: " << myPath << endl;
+		//wcout << L"[error] failed open: " << myPath << endl;
 	}
 	char readBuffer[65536];
 	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "keywordManager.h"
 #include <algorithm>
+using namespace std;
 
 KeywordManager * KeywordManager::instance = nullptr;
 
@@ -44,8 +45,8 @@ KeywordManager * KeywordManager::getInstance()
 
 bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myDiction)
 {
-	Serialize::importObjectID(idMap, myIDPath);
-	Serialize::importObjectID(kWMap, myKWPath);
+	Serialize::importJson(idMap, myIDPath);
+	Serialize::importJson(kWMap, myKWPath);
 	initDictionary(myDiction);
 }
 
@@ -59,11 +60,7 @@ bool KeywordManager :: initDictionary(wstring myDictionPath)
 
 	inFile.open(_path);
 	//初始化字典
-	if (!inFile.is_open())
-	{
-		std::cout << "KeywordManager :: KeywordManager() : <illegal dictionary path>" << dictionaryPath << endl;
-	}
-	else
+	if (inFile.is_open())
 	{
 		while (!inFile.eof())
 		{
@@ -90,6 +87,30 @@ bool KeywordManager::dictionarySearch(std::wstring myCheck)
 		}
 	}
 	return (found);
+}
+
+void KeywordManager::analyseID(vector <std::wstring> myMegaIDs, vector <std::wstring> & myObjIds)
+{
+	bool _updateJson = false;
+	FileManager * myFM = FileManager::getInstance();
+	for (vector < wstring >::iterator it = myMegaIDs.begin(); it != myMegaIDs.end(); it++)
+	{
+		wstring  _megaScanId = *it;
+		wstring  _objectID = L"";
+		short idState = instance->getObjectID(_megaScanId, _objectID);
+		if (idState == 2)
+		{
+			_updateJson = true;
+		}
+		if (_objectID != L"")
+		{
+			myObjIds.push_back(_objectID);
+		}
+	}
+	if (_updateJson)
+	{
+		Serialize::exportJson(idMap, myFM->getIDJasonPath());
+	}
 }
 
 void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> & myKeyword)
@@ -128,7 +149,7 @@ void KeywordManager::getKeywords( wstring mySource, std::vector <std::wstring> &
 	} while (mySource != L"");
 }
 
-short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap , std::wstring myMegaScaneID, wstring & result )
+short KeywordManager::getObjectID(std::wstring myMegaScaneID, wstring & result )
 //按照读入的objectIDMap 查询 或者 为 myMegaScaneID 产生object ID ，如果是产生ID  myObjectIDMap 更新
 {
 	//todo:支持查找中文
@@ -141,8 +162,8 @@ short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap 
 	map<wstring, vector<wstring>>::iterator _IDMapItr;
 	
 	bool _idExist = false;
-	if (myObjectIDMap.empty()){	}
-	for (_IDMapItr = myObjectIDMap.begin(); _IDMapItr != myObjectIDMap.end(); _IDMapItr++)
+	if (idMap.empty()){	}
+	for (_IDMapItr = idMap.begin(); _IDMapItr != idMap.end(); _IDMapItr++)
 	{
 		vector<wstring> _megaIDVector = _IDMapItr->second;
 		vector<wstring>::iterator _megaIDVectorItr = std::find(_megaIDVector.begin(), _megaIDVector.end(), myMegaScaneID);
@@ -199,19 +220,14 @@ short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap 
 			if (result == L"")
 			{
 				//can not generate the keyword according to megaScane ID
+				Log::log(L"<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :" + myMegaScaneID);
 				success = 0;
-				result = L"";
-				wstring _info = L"KeywordManager :: generateObjectID : < problematic asset >: " + myMegaScaneID;
-				Log::log(_info);
 			}
 		}
 		else
 		{
 			//succesful asset, generate number
-			generateObjectID(myObjectIDMap, myMegaScaneID, result);
-			//result = result + L"_" + std::to_wstring(number - 1);
-			//wstring _info = L"success generate object ID : " + myMegaScaneID;
-			//Log::log(_info);
+			generateObjectID(myMegaScaneID, result);
 		}
 	}
 	
@@ -219,18 +235,18 @@ short KeywordManager::getObjectID(map<wstring, vector<wstring>> & myObjectIDMap 
 	return(success);
 }
 
-void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectIDMap , wstring myMegaScaneID, wstring & myObjectID )
+void KeywordManager::generateObjectID( wstring myMegaScaneID, wstring & myObjectID )
 {	
 	short _index;
 
-	map<wstring, vector<wstring>>::iterator itr = myObjectIDMap.find(myObjectID);
-	if (itr == myObjectIDMap.end())
+	map<wstring, vector<wstring>>::iterator itr = idMap.find(myObjectID);
+	if (itr == idMap.end())
 	{
 		//cout << "There's no such object ID" << endl;
 		//create new key,  在最后加入idMap
 		vector<wstring> _newMegaID;
 		_newMegaID.push_back(myMegaScaneID);
-		myObjectIDMap[myObjectID] = _newMegaID;
+		idMap[myObjectID] = _newMegaID;
 		_index = 0;
 	}
 	else
@@ -245,7 +261,7 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 			_megaScanVector.push_back(myMegaScaneID);
 			_index = _megaScanVector.size()-1;
 			//替换megascen vector
-			myObjectIDMap[myObjectID] = _megaScanVector;
+			idMap[myObjectID] = _megaScanVector;
 		}
 	}
 	myObjectID = myObjectID + L"_" + std::to_wstring(_index);
@@ -277,10 +293,9 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , f
 
 	if (resultKWStr.extension != L".json" && (resultKWStr.extension == L"" || resultKWStr.use == L""))
 	{
-		wcout << L" < problem files >*************************************" << mySourceFile << endl;
 		for (vector<wstring>::iterator itr = _wrongKwVector.begin(); itr != _wrongKwVector.end(); itr++)
 		{
-			wcout << *itr <<endl;
+			//wcout << *itr <<endl;
 		}
 	}
 
@@ -388,7 +403,7 @@ bool KeywordManager::makeFileKeyword()
 	_fileKWMap[L"lod"] = lod;
 	_fileKWMap[L"variation"] = variation;
 
-	Serialize::exportObjectID(_fileKWMap , L"d:/fileKW.json");
+	Serialize::exportJson(_fileKWMap , L"d:/fileKW.json");
 }
 
 wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
@@ -422,6 +437,11 @@ wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
 		//result += myKWStr.extension;
 	}
 	return(result);
+}
+
+void KeywordManager::exportObjectID()
+{
+	Serialize::exportJson(idMap, FileManager::getInstance()->getIDJasonPath());
 }
 
 KeywordManager::~KeywordManager()

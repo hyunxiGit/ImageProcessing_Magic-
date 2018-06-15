@@ -28,7 +28,7 @@ private:
 
 public:
 	static FileManager* getInstance();
-	short checkPath(wstring);
+	static short checkPath(wstring);
 	short initDirectory(wstring mySource, wstring myTarget, wstring myToolStoragePath);
 	short initFile();
 	bool setToolFileStoragePath(wstring);
