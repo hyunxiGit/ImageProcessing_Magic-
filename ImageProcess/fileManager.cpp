@@ -7,11 +7,9 @@
 
 #define MAX_PROCESS_FOLDER_NUMBER 300
 using namespace std;
-//empty pointer assignment
-void logFilesOut(WCHAR **, int);
 FileManager* FileManager::instance = nullptr;
 
-FileManager::FileManager(): batchInputPath(L""), batchOutputPath(L""), toolFileStorePath(L""), IDJsonPath(L""), keyWordJsonPath(L"")
+FileManager::FileManager(): batchInputPath(L""), batchOutputPath(L""), toolFileStorePath(L""), IDJsonPath(L""), keyWordJsonPath(L""), logPath(L"")
 {}
 
 FileManager* FileManager:: getInstance()
@@ -38,38 +36,57 @@ short FileManager::initDirectory(wstring mySource, wstring myTarget , wstring my
 	bool setTool = setToolFileStoragePath(myToolStoragePath);
 	if (setSource && setTarget && setTool)
 	{
-		result = 1;
-	}
-	else if (!setSource)
-	{
-		result = -1;
-	}
-	else if (!setTarget)
-	{
-		result = -2;
-	}
-	else if (!setTool)
-	{
-		result = -3;
+		result = initFile();
 	}
 	return(result);
 }
 
 short FileManager::initFile()
 {
-	short result = -1;
+	short result = 0;
 	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
 	keyWordJsonPath = getToolFileStoragePath() +L"/" + KEYWORD_JSON;
 	dictionJsonPath = getToolFileStoragePath() + L"/" + DICTION_TXT;
+	logPath = getToolFileStoragePath() + L"/" + LOG_TXT;
+	
+
+	if (checkPath(logPath) != FILE_EXIST)
+	{
+		createFile(logPath);
+	}
+
+	if(checkPath(keyWordJsonPath)!= FILE_EXIST)
+	{
+		Log::log(L"<error> < FileManager::initFile> <missing file> : " + keyWordJsonPath);
+		//outputLog this file 必须存在
+		result = -1;
+	}
+
+	if (checkPath(dictionJsonPath) != FILE_EXIST)
+	{
+		//outputLog this file 必须存在
+		Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
+		result = -1;
+	}
+		
 	if (checkPath(IDJsonPath) != FILE_EXIST)
 	{
 		createFile(IDJsonPath);
 	}
 
-	if (checkPath(keyWordJsonPath) == FILE_EXIST && checkPath(IDJsonPath) == FILE_EXIST && checkPath(dictionJsonPath) == FILE_EXIST)
+	bool logExist = (checkPath(logPath) == FILE_EXIST);
+	bool keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
+	bool idExist = (checkPath(IDJsonPath) == FILE_EXIST);
+	bool dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
+
+	if (logExist && keyWordExist && idExist && dictionartExist)
 	{
-		result = 1;
+		KeywordManager * myKM = KeywordManager::getInstance();
+		Log * myLog = Log::getInstance();
+		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath);
+		myLog->setLogPath(logPath);
 	}
+
 	return(result);
 }
 
@@ -78,11 +95,13 @@ bool  FileManager::setToolFileStoragePath(wstring myStoragePath)
 	bool result = false;
 	if (checkPath(myStoragePath) == ILLEGAL_PATH)
 	{
-		wcout << L"This path does not exist" << endl;
+		wstring info = L"<error> < FileManager::setToolFileStoragePath> <ilegal path> : " + myStoragePath;
+		Log::log(info);
 	}
 	else
 	{
 		toolFileStorePath = myStoragePath;
+		Log::log(L"set tool folder : " + myStoragePath);
 		result = true;
 	}
 	return(result);
@@ -93,12 +112,14 @@ bool FileManager::setBatchInputPath(wstring myPath )
 	bool result = false;
 	if (checkPath(myPath) == ILLEGAL_PATH)
 	{
-		wcout << L"The source path does not exist" << endl;
+		wstring info = L"< FileManager::setBatchInputPath> ilegal path : "+ batchInputPath;
+		Log::log(info);
 	}
 	else
 	{
 		batchInputPath = myPath;
 		result = true;
+		Log::log(L"set source folder : " + batchInputPath);
 	}	
 	return (result);
 }
@@ -108,11 +129,13 @@ bool FileManager::setBatchExportPath(wstring myTargetPath)
 	bool result = false;
 	if (checkPath(myTargetPath) == ILLEGAL_PATH)
 	{
-		wcout << L"The target export path does not exist" << endl;
+		wstring info = L"< FileManager::myTargetPath> ilegal path : " + myTargetPath;
+		Log::log(info);
 	}
 	else
 	{
 		batchOutputPath = myTargetPath;
+		Log::log(L"set target folder : " + myTargetPath);
 		result = true;
 	}
 	return(true);
@@ -147,6 +170,7 @@ wstring FileManager::getDictionTxtPath()
 {
 	return(dictionJsonPath);
 }
+
 void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders , wstring myTargetFolder )
 {
 	const TCHAR *t = myTargetFolder.c_str();
@@ -258,14 +282,17 @@ short FileManager::checkPath(wstring myPath)
 
 bool FileManager::createFile(wstring myPath)
 {
+	bool result = false;
 	if (checkPath(myPath) == ILLEGAL_PATH)
 	{
 		wofstream myFile;
 		myFile.open(myPath);
 		if(myFile.is_open())
 		{
-			myFile <<L" ";
+			//myFile <<L" ";
 		}
 		myFile.close();
+		result = true;
 	}
+	return(result);
 }

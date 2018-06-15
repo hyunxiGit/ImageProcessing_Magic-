@@ -1,14 +1,14 @@
-#pragma once
+﻿#pragma once
 #include "stdafx.h"
 
 //todo : This class better use vector
+using namespace std;
 Log * Log::instance = nullptr;
 Log * Log::getInstance()
 {
 	if (instance == nullptr)
 	{
 		instance = new Log();
-		strcpy_s(instance->toolLogPath, MAX_PATH, "d:/assetToolLog.txt");
 	}
 	return(instance);
 }
@@ -17,14 +17,25 @@ Log::Log(){}
 
 void Log::log(std::wstring info)
 {
-	Log * _log = getInstance();
-	_log->toolLog.push_back(info);
+	//Log * _log = getInstance();
+	instance->toolLog.push_back(info);
+	//_log->toolLog.push_back(info);
+}
+
+int Log::setLogPath(wstring myPath)
+{
+	logPath = myPath;
+}
+
+wstring Log::getLogPath()
+{
+	return(logPath);
 }
 
 void Log::printLog()
 {
 	Log * _log = getInstance();
-	for (std::vector<std::wstring>::iterator it = _log->toolLog.begin(); it != _log->toolLog.end(); it++)
+	for (std::vector<std::wstring>::iterator it = instance->toolLog.begin(); it != instance->toolLog.end(); it++)
 	{
 		wcout << *it << endl;
 	}
@@ -33,67 +44,20 @@ void Log::printLog()
 void Log::exportLog()
 {
 	Log * _log = getInstance();
-	wcout << _log->toolLogPath << endl;
 
-	wofstream outFile;
 	std::locale chs("chs");
+	wofstream outFile;
 	outFile.imbue(chs);
 
-	outFile.open(instance->toolLogPath, ios::out);
+	outFile.open(instance->logPath);
 	if (outFile.is_open())
 	{
 		std::vector<std::wstring>::iterator it;
-		for (it = _log->toolLog.begin(); it != _log->toolLog.end(); it++)
-		{
-			outFile << *it << endl;
+		for (it = instance->toolLog.begin(); it != instance->toolLog.end(); it++)
+		{	
+			outFile<< *it << endl;
 		}
 		outFile.close();
 	}
 }
 
-void Log::logFileIn(std::vector <std::wstring> & myInVector)
-{
-	//todo : setlocale ony in one place
-	std::locale chs("chs");
-	wifstream myLog;
-	myLog.imbue(chs);
-
-	bool overFlow = false;
-
-	//open file
-	myLog.open(LOG_PATH, std::ifstream::in);
-	if (!myLog.is_open())
-	{
-		cout << "faild to open the file" << endl;
-		return;
-	}
-
-	std::wstring myInString;
-	while (!myLog.eof())
-	{
-		myLog >> myInString;
-		myInVector.push_back(myInString);	
-	}
-	myLog.close();	
-}
-
-void Log::logFilesOut(std::vector <std::wstring> & myOutVector)
-{
-	//todo : setlocale ony in one place
-	std::locale chs("chs");
-	wofstream myLog;
-	myLog.imbue(chs);
-
-	//open file
-	myLog.open(LOG_PATH, ios::app);
-
-	if (myLog.is_open())
-	{
-		std::vector<std::wstring>::iterator it;
-		for (it = myOutVector.begin(); it != myOutVector.end(); it++)
-		{
-			myLog << *it << endl;
-		}
-		myLog.close();
-	}
-}

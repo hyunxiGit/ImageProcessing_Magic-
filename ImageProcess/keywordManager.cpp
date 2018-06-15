@@ -248,7 +248,7 @@ void KeywordManager::generateObjectID(map<wstring, vector<wstring>> & myObjectID
 			myObjectIDMap[myObjectID] = _megaScanVector;
 		}
 	}
-	myObjectID = myObjectID + L"_" + std::to_wstring(_index - 1);
+	myObjectID = myObjectID + L"_" + std::to_wstring(_index);
 }
 
 wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , fileKWStr  & resultKWStr)
@@ -427,5 +427,6 @@ wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
 KeywordManager::~KeywordManager()
 {
 	dictionary.clear();
-	this->idMap.clear();
+	idMap.clear();
+	kWMap.clear();
 }

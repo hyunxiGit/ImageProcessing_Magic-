@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <vector>
 #include <string>
+#include "keywordManager.h";
+#include "log.h";
 
 #define ILLEGAL_PATH -1
 #define FOLDER_EXIST 2
@@ -22,6 +24,7 @@ private:
 	wstring IDJsonPath;
 	wstring keyWordJsonPath;
 	wstring dictionJsonPath;
+	wstring logPath;
 
 public:
 	static FileManager* getInstance();

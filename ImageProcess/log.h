@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <string>
 
@@ -6,15 +6,16 @@ class Log
 {
 public:
 	static Log * getInstance();
-	static void logFileIn  (std::vector <std::wstring> &);
-	static void logFilesOut (std::vector <std::wstring> &);
 	static void log(std::wstring);
 	static void printLog();
 	static void exportLog();
+	int setLogPath(std::wstring);
+	std::wstring getLogPath();
+	
 
 private:
-	char toolLogPath[MAX_PATH];
 	std::vector<std::wstring> toolLog;
+	wstring logPath;
 	Log();
 	static Log * instance;
 };
