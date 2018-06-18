@@ -2,25 +2,16 @@
 #include "stdafx.h"
 #include "asset2D.h"
 
-Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, wstring myTargetName, fileKWStr myStru)
+Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, wstring myTargetName, fileKWStr myStru) : Asset(mySourcePath, mySourceName, myTargetPath, myTargetName, myStru)
 {
-	sourcePath = mySourcePath;
-	sourceName = mySourceName;
-	targetPath = myTargetPath;
-	targetName = myTargetName;
+	image = Image_W(getSourcePath() + getSourceName());
 
-	str = myStru;
-
-	wcout << "source______________" << mySourcePath + mySourceName << endl;
-	image = Image_W(mySourcePath + mySourceName);
-
-	wcout << "[Asset2D] -> myTargetPath :" << targetPath << endl;
-	wcout << "[Asset2D] -> myTargetName :" << targetName << endl;
+	wcout << "[Asset2D] -> myTargetPath :" << getTargetPath() << endl;
+	wcout << "[Asset2D] -> myTargetName :" << getTargetName() << endl;
 }
 void Asset2D::exportAsset()
 {
-	wcout << "export : " << targetPath + targetName + str.extension << endl;
-	if (str.use == L"preview")
+	if (getStruct().use == L"preview")
 	{
 		//preview image
 		//copy image
@@ -28,8 +19,8 @@ void Asset2D::exportAsset()
 	else
 	{
 		//other images
-		wstring _path = targetPath + targetName + str.extension;
-		image.write(_path);
+		wstring _path = getTargetPath() + getTargetName() + getStruct().extension;
+		//image.write(_path);
 	}
 }
 
@@ -37,5 +28,5 @@ void Asset2D::exportAsset()
 void Asset2D::reformat(wstring myFormat)
 {
 	//todo : if myFormat 合法
-	str.extension = myFormat;
+	getStruct().extension = myFormat;
 }

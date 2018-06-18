@@ -14,11 +14,23 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 	FileManager * _FM = FileManager::getInstance();
 
 	megaScanId = megaScanID;
-	generateID();
+	bool idSet = generateID();
 	bool pathSet = setPath(mySourcePath, myTargetPath);
-	if (pathSet)
+	if (pathSet && idSet)
 	{
 		//analyse folder and collect all the asset files
+		analyseObjectSet();
+	}
+	else
+	{
+		if (!idSet)
+		{
+			Log::log(L"<error> < ObjectSet::init> <problematic ID> : " + megaScanID);
+		}
+		if (!pathSet)
+		{
+			Log::log(L"<error> < ObjectSet::init> <wrong path> : " + pathSet);
+		}
 	}
 }
 
@@ -26,7 +38,11 @@ bool ObjectSet::generateID()
 {
 	bool result = false;
 	KeywordManager * _KM = KeywordManager::getInstance();
-	_KM->getObjectID(megaScanId, objectId);
+	short getID = _KM->getObjectID(megaScanId, objectId);
+	if (getID == 1 || getID == 2)
+	{
+		result = true;
+	}
 	return(result);
 }
 
@@ -37,15 +53,42 @@ wstring ObjectSet::getObjectID()
 
 bool ObjectSet::setPath(wstring mySourcePath, wstring myTargetPath)
 {
-	bool result = false;
+	bool sourceSet = false;
+	bool targetSet = false;
 	if(FileManager::checkPath(sourcePath) == FOLDER_EXIST)
 	{
 		sourcePath = mySourcePath;
+		sourceSet = true;
+		//wcout << sourcePath << endl;
 	}
 	if (FileManager::checkPath(myTargetPath) == FOLDER_EXIST && objectId!=L"")
 	{
 		targetPath = myTargetPath + L"/"+objectId;
-		wcout << targetPath << endl;
+		targetSet = true;
+		//wcout << targetPath << endl;
+	}
+	return(sourceSet && targetSet);
+}
+
+short ObjectSet::analyseObjectSet()
+// -1: wrong asset , 1: 2D, 2:3D
+{
+	FileManager * _FM = FileManager::getInstance();
+	vector < wstring > _files;
+	vector < wstring > _folder;
+	wstring _objectFolder = sourcePath + L"/" + megaScanId+L"/";
+	wcout <<L"............"<< endl;
+	_FM->iterateFolder(_files, _folder, sourcePath, true);
+	bool has3Dasset = false;
+	for (vector < wstring >::iterator itr = _files.begin(); itr != _files.end(); itr++)
+	{
+		//wcout << *itr << endl;
+		if (_FM->getFileExtion(*itr) == L".fbx"|| _FM->getFileExtion(*itr) == L".obj")
+		{
+			has3Dasset = true;
+			wcout << L"3d asset : " << *itr<<endl;
+			break;
+		}
 	}
 }
 

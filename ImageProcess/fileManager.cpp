@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "stdafx.h"
-
+#include <string>
 #include <direct.h>  
 #include <stdlib.h>  
-#include <stdio.h>  
+#include <stdio.h>
+#include <algorithm>  
 
 #define MAX_PROCESS_FOLDER_NUMBER 300
+
 using namespace std;
 FileManager* FileManager::instance = nullptr;
 
@@ -171,7 +173,8 @@ wstring FileManager::getDictionTxtPath()
 	return(dictionJsonPath);
 }
 
-void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders , wstring myTargetFolder )
+void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders,  wstring myTargetFolder, bool mySubFolder)
+//mySubFolder == true : iterate subfolder
 {
 	if (myTargetFolder.rfind(L"/") != myTargetFolder.size() - 1)
 	{
@@ -204,6 +207,11 @@ void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring >
 			//folders
 			if (lstrcmpW(ffd.cFileName, L".") == 0 || lstrcmpW(ffd.cFileName, L"..") == 0) { continue; }
 			myFolders.push_back(myString);
+			if (mySubFolder == true)
+			{
+				wstring mySubTargetFolder = myTargetFolder + myString + L"/";
+				iterateFolder(myFiles, myFolders, mySubTargetFolder, mySubFolder);
+			}
 		}
 		else
 		{
@@ -296,6 +304,18 @@ bool FileManager::createFile(wstring myPath)
 		}
 		myFile.close();
 		result = true;
+	}
+	return(result);
+}
+
+wstring FileManager::getFileExtion(wstring myFileName)
+{
+	wstring result = L"";
+	transform(myFileName.begin(), myFileName.end(), myFileName.begin(), ::tolower);
+	int pos = myFileName.rfind(L".");
+	if (pos != string::npos)
+	{
+		result = myFileName.substr(pos, myFileName.size() - pos);
 	}
 	return(result);
 }

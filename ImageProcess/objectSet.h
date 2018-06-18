@@ -12,10 +12,11 @@ public :
 	void generateTextureSet();
 	bool setPath(wstring, wstring);
 	void exportSet();
-	bool analyseObjectSet(vector<wstring>);
+	short analyseObjectSet();
 private:
-	wstring sourcePath;
-	wstring targetPath;
+
+	wstring sourcePath;//object Folder
+	wstring targetPath;//object folder
 	wstring megaScanId;
 	wstring objectId;
 };
