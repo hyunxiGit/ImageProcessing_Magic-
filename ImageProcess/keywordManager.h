@@ -31,8 +31,11 @@ public:
 	wstring getFileName(wstring , wstring , fileKWStr &);
 	bool makeFileKeyword();
 	void exportObjectID();
+	short getFileType(wstring);
 private:
-
+	vector<wstring> extension2D;
+	vector<wstring> extension3D;
+	vector<wstring> extensionOther;
 	static KeywordManager* instance;
 	wstring getfileKWType(wstring , fileKWStr& );
 	wstring makeFileName(wstring, fileKWStr);

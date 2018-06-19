@@ -48,6 +48,34 @@ bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myD
 	Serialize::importJson(idMap, myIDPath);
 	Serialize::importJson(kWMap, myKWPath);
 	initDictionary(myDiction);
+	for (vector<wstring> ::iterator itr = kWMap[L"extension2D"].begin(); itr != kWMap[L"extension2D"].end(); itr++)
+	{
+		extension2D.push_back(*itr);
+	}
+	for (vector<wstring> ::iterator itr = kWMap[L"extension3D"].begin(); itr != kWMap[L"extension3D"].end(); itr++)
+	{
+		extension3D.push_back(*itr);
+	}
+	for (vector<wstring> ::iterator itr = kWMap[L"extensionOther"].begin(); itr != kWMap[L"extensionOther"].end(); itr++)
+	{
+		extensionOther.push_back(*itr);
+	}
+
+	wcout << "extension2D" << endl;
+	for (vector<wstring> ::iterator itr = extension2D.begin(); itr != extension2D.end(); itr++)
+	{
+		wcout << *itr << endl;
+	}
+	wcout << "extension3D" << endl;
+	for (vector<wstring> ::iterator itr = extension3D.begin(); itr != extension3D.end(); itr++)
+	{
+		wcout << *itr << endl;
+	}
+	wcout << "extensionOther" << endl;
+	for (vector<wstring> ::iterator itr = extensionOther.begin(); itr != extensionOther.end(); itr++)
+	{
+		wcout << *itr << endl;
+	}
 }
 
 bool KeywordManager :: initDictionary(wstring myDictionPath)
@@ -442,6 +470,37 @@ wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
 void KeywordManager::exportObjectID()
 {
 	Serialize::exportJson(idMap, FileManager::getInstance()->getIDJasonPath());
+}
+
+short KeywordManager::getFileType(wstring myFileName)
+//0：unknown, 1:other, 2 : 2D , 3:3d
+{
+	short result = 0;
+	FileManager * _FM = FileManager::getInstance();
+	wstring ext = _FM->getFileExtion(myFileName);
+	vector<wstring>::iterator itr;
+	itr = find(extension2D.begin(), extension2D.end(), ext);
+	if (itr != extension2D.end())
+	{
+		result = 2;
+	}
+	else
+	{
+		itr = find(extension3D.begin(), extension3D.end(), ext);
+		if (itr != extension3D.end())
+		{
+			result = 3;
+		}
+		else
+		{
+			itr = find(extensionOther.begin(), extensionOther.end(), ext);
+			if (itr != extensionOther.end())
+			{
+				result = 1;
+			}
+		}
+	}
+	return(result);
 }
 
 KeywordManager::~KeywordManager()

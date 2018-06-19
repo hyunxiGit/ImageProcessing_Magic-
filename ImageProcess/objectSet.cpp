@@ -11,8 +11,10 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 	sourcePath = mySourcePath;
 	targetPath = myTargetPath;
 
-	FileManager * _FM = FileManager::getInstance();
+	_FM = FileManager::getInstance();
+	_KM = KeywordManager::getInstance();
 
+	
 	megaScanId = megaScanID;
 	bool idSet = generateID();
 	bool pathSet = setPath(mySourcePath, myTargetPath);
@@ -74,21 +76,17 @@ short ObjectSet::analyseObjectSet()
 // -1: wrong asset , 1: 2D, 2:3D
 {
 	FileManager * _FM = FileManager::getInstance();
+	KeywordManager * _KM = KeywordManager::getInstance();
 	vector < wstring > _files;
 	vector < wstring > _folder;
 	wstring _objectFolder = sourcePath + L"/" + megaScanId+L"/";
-	wcout <<L"............"<< endl;
-	_FM->iterateFolder(_files, _folder, sourcePath, true);
-	bool has3Dasset = false;
+	_FM->iterateFolder(_files, _folder, _objectFolder, true);
+	short assetType = 0;
 	for (vector < wstring >::iterator itr = _files.begin(); itr != _files.end(); itr++)
 	{
-		//wcout << *itr << endl;
-		if (_FM->getFileExtion(*itr) == L".fbx"|| _FM->getFileExtion(*itr) == L".obj")
-		{
-			has3Dasset = true;
-			wcout << L"3d asset : " << *itr<<endl;
-			break;
-		}
+		assetType = _KM->getFileType(*itr);
+		wcout << *itr << endl;
+		wcout << assetType << endl;
 	}
 }
 

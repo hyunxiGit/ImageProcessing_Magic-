@@ -44,6 +44,7 @@ short FileManager::initDirectory(wstring mySource, wstring myTarget , wstring my
 }
 
 short FileManager::initFile()
+//initialize all needed objects from file
 {
 	short result = 0;
 	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
