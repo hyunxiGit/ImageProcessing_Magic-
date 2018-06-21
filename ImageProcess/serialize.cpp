@@ -67,24 +67,6 @@ void Serialize::importJson(map<wstring, vector<wstring>> & result, wstring myFil
 	}
 }
 
-void Serialize::importMap(std::map <std::wstring, short> & result,wstring myPath)
-{
-	//todo : 现在这个东西还只支持  string : int 的格式，以后可能需要转换为多type支持
-	rapidjson::Document _document;
-	Serialize::importJsonFile(_document, myPath);
-
-	printf ("_document.IsObject() : %i", _document.IsObject());
-
-	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr!= _document.MemberEnd(); ++itr)
-	{
-		string _key = itr->name.GetString();
-		short _value = itr->value.GetInt();
-
-		wstring _wKey = Serialize::UTF8ToWString(_key);
-		result[_wKey] = _value;
-	}
-}
-
 void Serialize::importJsonFile(Document & result , wstring myPath)
 {
 	//support both ASKII and Unicode
@@ -106,6 +88,45 @@ void Serialize::importJsonFile(Document & result , wstring myPath)
 
 	result.ParseStream(is);
 	fclose(fp);
+}
+
+void Serialize::importTst( wstring myPath)
+{
+	rapidjson::Document _document;
+	Serialize::importJsonFile(_document, myPath);
+	vector<Value> _source;
+	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	{
+		wstring _tag = Serialize::UTF8ToWString(itr->name.GetString());
+		wcout <<"_tag : "<< _tag << endl;
+
+		if (_tag == L"Version") 
+		{
+			wstring _v = Serialize::UTF8ToWString(itr->value.GetString());
+			wcout << L"version : " << _v << endl;
+		}
+		else if (_tag == L"Source")
+		{
+			const Value& source = _document["Source"];
+			wcout << "source size : "<< source.Size()<<endl;
+			for (SizeType i = 0; i < source.Size(); i++) 
+			{
+				const Value& _imageNode = source[i];
+				wcout<<"lalal :" << Serialize::UTF8ToWString(_imageNode.GetString())<<endl;
+				wcout << "ColorSpace :" << Serialize::UTF8ToWString(_imageNode["ColorSpace"].GetString())<<endl;
+				//printf("a[%d] = %d\n", i, source[i]->name);
+			}
+				
+		}
+		else if (_tag == L"Dest")
+		{
+			const Value& target = _document["Dest"];
+			wcout << "Dest size : " << target.Size() << endl;
+		}
+
+		wcout << _source.size();
+		
+	}
 }
 
 void Serialize :: exportJsonFile(rapidjson::Document & myDoc, wstring myPath)

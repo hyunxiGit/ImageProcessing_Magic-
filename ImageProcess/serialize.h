@@ -19,7 +19,7 @@ class Serialize
 public:
 	static void exportJson(map<wstring, vector<wstring>> , wstring);
 	static void importJson(map<wstring, vector<wstring>> &, wstring);
-	static void importMap(map <wstring, short> & , wstring);
+	static void importTst(wstring);
 	static void exportJsonFile(Document & , wstring);
 	static void importJsonFile(Document & result, wstring);
 	//todo: 这里用不用分出去一个类
