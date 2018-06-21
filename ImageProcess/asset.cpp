@@ -9,35 +9,59 @@ Asset::Asset(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, w
 	targetPath = myTargetPath;
 	targetName = myTargetName;
 
+	sourceImageFullPath = getSourcePath() + L"/" + getSourceName();
+	targerImageFullPath = getTargetPath() + L"/" + getTargetName() + str.extension;
+
 	str = myStru;
-
-	wcout << "source______________" << mySourcePath + mySourceName << endl;
-
-	wcout << "[Asset2D] -> myTargetPath :" << targetPath << endl;
-	wcout << "[Asset2D] -> myTargetName :" << targetName << endl;
 }
 void Asset::exportAsset()
 {
 	wcout << "export : " << targetPath + targetName + str.extension << endl;
 }
 
+wstring Asset::getUse()
+{
+	return(str.use);
+}
+
+void Asset::reformat(wstring myFormat)
+{
+	wcout << "parent reformat" << endl;
+}
+
+//todo : 这个函数最终要放在构造函数里面
+void Asset::createFile(){}
+
+void Asset::setExtension(wstring myExtension)
+{
+	str.extension = myExtension;
+}
+
 wstring Asset::getSourcePath()
 {
 	return(sourcePath);
 }
+
 wstring Asset::getSourceName()
 {
 	return(sourceName);
 }
+
 wstring Asset::getTargetPath()
 {
 	return(targetPath);
 }
+
 wstring Asset::getTargetName()
 {
 	return(targetName);
 }
+
 fileKWStr Asset::getStruct()
 {
 	return(str);
 }
+
+wstring Asset :: getFullSourcePath() {	return(sourceImageFullPath);}
+
+wstring Asset::getFullTargetPath() { return(targerImageFullPath); }

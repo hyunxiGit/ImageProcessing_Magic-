@@ -225,37 +225,35 @@ void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring >
 	//输出 iterate 结果到 log
 }
 
-short FileManager::createFolder(wstring myPath, wstring myFolderName)
+short FileManager::createFolder(wstring myullPath)
 {
 	short result = -1;
 	//-1:失败
 	//0：已经存在
 	//1：成功创建
-	wstring _targetPath = myPath + L"/"+myFolderName;
-	if (checkPath(myPath) != 2)
-	{
-		//ilegal target path
-	}
-	else if (checkPath(_targetPath) == 2)
+	wstring _targetPath = myullPath;
+	if (checkPath(_targetPath) == 2)
 	{
 		//folder exist
+		result = 0;
 	}
-	else 
+	else
 	{
 		const wchar_t * _path = (wchar_t *)_targetPath.c_str();
 		//create 
 		if (_wmkdir(_path) == 0)
 		{
 			//created
+			result = 1;
 		}
 		else
 		{
 			// can not create
 		}
 	}
-	
 	return(result);
 }
+
 
 short FileManager::checkPath(wstring myPath)
 {

@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="asset2D.h" />
     <ClInclude Include="asset.h" />
+    <ClInclude Include="asset3D.h" />
     <ClInclude Include="fileManager.h" />
     <ClInclude Include="image_w.h" />
     <ClInclude Include="keywordManager.h" />
@@ -181,7 +182,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asset.cpp" />
-    <ClCompile Include="Asset2D.cpp" />
+    <ClCompile Include="asset2D.cpp" />
+    <ClCompile Include="asset3D.cpp" />
     <ClCompile Include="fileManager.cpp" />
     <ClCompile Include="ImageProcess.cpp" />
     <ClCompile Include="image_w.cpp" />

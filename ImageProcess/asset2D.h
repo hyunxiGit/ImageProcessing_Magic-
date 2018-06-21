@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <string>
-#include "keywordManager.h"
 #include "image_w.h"
 #include "asset.h"
 
@@ -9,7 +8,8 @@ class Asset2D : public Asset
 {
 public:
 	Asset2D(wstring , wstring , wstring , wstring , fileKWStr );
-	void reformat( wstring myFormat);
+	virtual void reformat( wstring myFormat);
+	virtual void createFile();
 	void exportAsset();
 private:
 	Image_W image;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "keywordManager.h"
 #include "asset2D.h"
+#include "asset3D.h"
 #include <vector>
 using namespace std;
 class ObjectSet
@@ -13,11 +14,14 @@ public :
 	void generateTextureSet();
 	bool setPath(wstring, wstring);
 	void exportSet();
-	short analyseObjectSet();
+	void makeObjectTargetFolder();
+	
 private:
 	FileManager * _FM;
 	KeywordManager * _KM;
 	vector <Asset2D> asset2;
+	vector <Asset3D> asset3;
+	void generateAsset();
 	wstring sourcePath;//object Folder
 	wstring targetPath;//object folder
 	wstring megaScanId;

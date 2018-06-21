@@ -60,22 +60,6 @@ bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myD
 	{
 		extensionOther.push_back(*itr);
 	}
-
-	wcout << "extension2D" << endl;
-	for (vector<wstring> ::iterator itr = extension2D.begin(); itr != extension2D.end(); itr++)
-	{
-		wcout << *itr << endl;
-	}
-	wcout << "extension3D" << endl;
-	for (vector<wstring> ::iterator itr = extension3D.begin(); itr != extension3D.end(); itr++)
-	{
-		wcout << *itr << endl;
-	}
-	wcout << "extensionOther" << endl;
-	for (vector<wstring> ::iterator itr = extensionOther.begin(); itr != extensionOther.end(); itr++)
-	{
-		wcout << *itr << endl;
-	}
 }
 
 bool KeywordManager :: initDictionary(wstring myDictionPath)
@@ -242,16 +226,14 @@ short KeywordManager::getObjectID(std::wstring myMegaScaneID, wstring & result )
 			}
 		}
 
-		if (megaIDCount != 1)
+		// problematic keyword
+		if (result == L"")
 		{
-			// problematic keyword
-			if (result == L"")
-			{
-				//can not generate the keyword according to megaScane ID
-				Log::log(L"<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :" + myMegaScaneID);
-				success = 0;
-			}
+			//can not generate the keyword according to megaScane ID
+			Log::log(L"<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :" + myMegaScaneID);
+			success = 0;
 		}
+
 		else
 		{
 			//succesful asset, generate number
@@ -303,13 +285,9 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , f
 	vector <std::wstring> _kwVector;
 	vector <std::wstring> _wrongKwVector;
 	getKeywords(mySourceFile, _kwVector);
-	//wcout << endl;
-	//wcout << "_________________________________________" << endl;
-	//wcout << "objectID : " << myObjectID << endl;
-	//wcout << "mySourceFile : " << mySourceFile << endl;
+
 	for (vector <std::wstring> ::iterator itr = _kwVector.begin(); itr != _kwVector.end(); itr++)
 	{
-		//wcout << *itr ;
 		//analysis keyword usage
 		wstring _kwType = getfileKWType(*itr , resultKWStr);
 
@@ -329,8 +307,6 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , f
 
 	//gelete megaScaneID
 	result = makeFileName(myObjectID , resultKWStr);
-	wcout << "result : " << result <<endl;
-	//
 	return(result);
 }
 
@@ -359,7 +335,15 @@ wstring KeywordManager::getfileKWType(wstring myKW, fileKWStr & myKWStr)
 			{
 				myKWStr.use = myKW;
 			}
-			else if (result == L"extension")
+			else if (result == L"extension2D")
+			{
+				myKWStr.extension = myKW;
+			}
+			else if (result == L"extension3D")
+			{
+				myKWStr.extension = myKW;
+			}
+			else if (result == L"extensionOther")
 			{
 				myKWStr.extension = myKW;
 			}

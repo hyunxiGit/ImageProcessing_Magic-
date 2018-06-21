@@ -42,6 +42,6 @@ public:
 	wstring getKeywordJsonPath();
 	wstring getDictionTxtPath();
 	void iterateFolder(vector <std::wstring> & , std::vector <std::wstring> &, wstring, bool mySubFolder = false);
-	short createFolder(wstring, wstring);
+	short createFolder(wstring);
 	wstring getFileExtion(wstring);
 };

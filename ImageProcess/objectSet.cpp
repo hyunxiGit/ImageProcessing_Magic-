@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
+#include "objectSet.h"
+//#include "asset3D.h"
 
 using namespace std;
 
@@ -21,7 +23,7 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 	if (pathSet && idSet)
 	{
 		//analyse folder and collect all the asset files
-		analyseObjectSet();
+		generateAsset();
 	}
 	else
 	{
@@ -34,6 +36,7 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 			Log::log(L"<error> < ObjectSet::init> <wrong path> : " + pathSet);
 		}
 	}
+
 }
 
 bool ObjectSet::generateID() 
@@ -72,23 +75,58 @@ bool ObjectSet::setPath(wstring mySourcePath, wstring myTargetPath)
 	return(sourceSet && targetSet);
 }
 
-short ObjectSet::analyseObjectSet()
-// -1: wrong asset , 1: 2D, 2:3D
+void ObjectSet::generateAsset()
 {
 	FileManager * _FM = FileManager::getInstance();
 	KeywordManager * _KM = KeywordManager::getInstance();
 	vector < wstring > _files;
 	vector < wstring > _folder;
 	wstring _objectFolder = sourcePath + L"/" + megaScanId+L"/";
+	wstring _newFolder = targetPath + L"/" + objectId;
 	_FM->iterateFolder(_files, _folder, _objectFolder, true);
 	short assetType = 0;
 	for (vector < wstring >::iterator itr = _files.begin(); itr != _files.end(); itr++)
 	{
 		assetType = _KM->getFileType(*itr);
-		wcout << *itr << endl;
-		wcout << assetType << endl;
+		fileKWStr myKWStr;
+		wstring _fileName = _KM->getFileName(objectId, *itr, myKWStr);
+		
+		if (assetType == 2)
+		{
+			//create 2D asset 
+			Asset2D my2DAsset(sourcePath + L"/" + megaScanId, *itr, targetPath , _fileName, myKWStr);
+			asset2.push_back(my2DAsset);
+		}
+		else if (assetType == 3)
+		{
+			//todo : create 3D asset 
+			Asset3D my3DAsset(sourcePath + L"/" + megaScanId, *itr, targetPath, _fileName, myKWStr);
+			asset3.push_back(my3DAsset);
+			wcout << "source : " << my3DAsset .getFullSourcePath()<< endl;
+			wcout << "target : " << my3DAsset .getFullTargetPath()<< endl;
+			wcout << "fileName : " << _fileName << endl;
+
+		}
 	}
 }
 
+void ObjectSet::makeObjectTargetFolder() 
+{
+	wcout << "sourcePath : " << sourcePath <<endl;
+	wcout << "targetPath : " << targetPath <<endl;
+	_FM->createFolder(targetPath);
+}
+
 void ObjectSet::generateTextureSet() {}
-void ObjectSet::exportSet() {}
+void ObjectSet::exportSet() 
+{
+	//create file test
+	//for (vector<Asset2D>::iterator itr = asset2.begin(); itr != asset2.end(); itr++)
+	//{
+
+	//	(*itr).reformat(L".tga");
+	//	wcout << "new extension is :" << (*itr).getStruct().extension << endl;
+	//	(*itr).createFile();
+	//	(*itr).exportAsset();
+	//}
+}
