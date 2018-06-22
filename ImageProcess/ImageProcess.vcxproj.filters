@@ -51,6 +51,9 @@
     <ClInclude Include="asset3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="asset2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
