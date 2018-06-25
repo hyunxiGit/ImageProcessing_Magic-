@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "stdafx.h"
+#include "textureSetManager.h"
 #include <string>
 #include <direct.h>  
 #include <stdlib.h>  
@@ -11,7 +12,7 @@
 using namespace std;
 FileManager* FileManager::instance = nullptr;
 
-FileManager::FileManager(): batchInputPath(L""), batchOutputPath(L""), toolFileStorePath(L""), IDJsonPath(L""), keyWordJsonPath(L""), logPath(L"")
+FileManager::FileManager(): sourceDir(L""), targetDir(L""), batchInputPath(L""), batchOutputPath(L""), IDJsonPath(L""), keyWordJsonPath(L""), logPath(L"")
 {}
 
 FileManager* FileManager:: getInstance()
@@ -25,87 +26,152 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-short FileManager::initDirectory(wstring mySource, wstring myTarget , wstring myToolStoragePath)
+
+short FileManager::initDirectory(wstring myFolderNAme)
 //after instantiate must call this function
 {
 	//1 : success
 	//-1: source failed
 	//-2 : target failed
 	//-3 : tool failed
+
+	//取得config位置
+
+
 	short result = 0;
-	bool setSource = setBatchInputPath(mySource);
-	bool setTarget = setBatchExportPath(myTarget);
-	bool setTool = setToolFileStoragePath(myToolStoragePath);
-	if (setSource && setTarget && setTool)
+	bool toolDirSet = setToolConfigPath();
+	readIni();
+
+	if (toolDirSet)
 	{
-		result = initFile();
+		readIni();
+		bool sourceCheck;
+		bool targetCheck;
+		if (sourceDir != L"" && targetDir != L"")
+		{
+			batchInputPath = sourceDir + L"/" + myFolderNAme;
+			batchOutputPath = targetDir + L"/" + myFolderNAme;
+			sourceCheck = setBatchInputPath(batchInputPath);
+			targetCheck = setBatchExportPath(batchOutputPath);
+		}
+		if (sourceCheck && targetCheck)
+		{
+			result = initFile();
+		}
 	}
+	
 	return(result);
 }
 
 short FileManager::initFile()
 //initialize all needed objects from file
 {
-	short result = 0;
+	short result = 1;
 	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
 	keyWordJsonPath = getToolFileStoragePath() +L"/" + KEYWORD_JSON;
 	dictionJsonPath = getToolFileStoragePath() + L"/" + DICTION_TXT;
 	logPath = getToolFileStoragePath() + L"/" + LOG_TXT;
-	
 
-	if (checkPath(logPath) != FILE_EXIST)
+	
+	bool logExist = (checkPath(logPath) == FILE_EXIST);
+	bool keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
+	bool idExist = (checkPath(IDJsonPath) == FILE_EXIST);
+	bool dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
+
+
+
+	if (!logExist)
 	{
 		createFile(logPath);
 	}
 
-	if(checkPath(keyWordJsonPath)!= FILE_EXIST)
+	if(!keyWordExist)
 	{
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + keyWordJsonPath);
 		//outputLog this file 必须存在
 		result = -1;
 	}
 
-	if (checkPath(dictionJsonPath) != FILE_EXIST)
+	if (!dictionartExist)
 	{
 		//outputLog this file 必须存在
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
 		result = -1;
 	}
 		
-	if (checkPath(IDJsonPath) != FILE_EXIST)
+	if (!idExist)
 	{
 		createFile(IDJsonPath);
 	}
 
-	bool logExist = (checkPath(logPath) == FILE_EXIST);
-	bool keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
-	bool idExist = (checkPath(IDJsonPath) == FILE_EXIST);
-	bool dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
 
-	if (logExist && keyWordExist && idExist && dictionartExist)
+
+	if (logExist && keyWordExist && idExist && dictionartExist )
 	{
 		KeywordManager * myKM = KeywordManager::getInstance();
 		Log * myLog = Log::getInstance();
+		TextureSetManager * myTM = TextureSetManager::getInstance();
+
 		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath);
 		myLog->setLogPath(logPath);
+		myTM->initTstFile(tstPath);
 	}
 
 	return(result);
 }
 
-bool  FileManager::setToolFileStoragePath(wstring myStoragePath)
+bool  FileManager::readIni()
 {
-	bool result = false;
-	if (checkPath(myStoragePath) == ILLEGAL_PATH)
+
+	const wchar_t * _path = (wchar_t *)initDir.c_str();
+	string line;
+	ifstream inFile;
+	bool found = false;
+
+	vector<wstring> myInitVector;
+
+	inFile.open(_path);
+	//初始init
+	if (inFile.is_open())
 	{
-		wstring info = L"<error> < FileManager::setToolFileStoragePath> <ilegal path> : " + myStoragePath;
+		while (!inFile.eof())
+		{
+			inFile >> line;
+			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+
+			myInitVector.push_back(Serialize::UTF8ToWString(line));
+		}
+	}
+	inFile.close();
+	paseInitFile(myInitVector);
+}
+
+bool  FileManager::setToolConfigPath()
+{
+
+	TCHAR szFilePath[MAX_PATH + 1] = { 0 };
+	GetModuleFileName(NULL, szFilePath, MAX_PATH);
+	(_tcsrchr(szFilePath, _T('\\')))[1] = 0; // 删除文件名，只获得路径字串
+	wstring _path(szFilePath);
+	_path += L"config";
+
+	bool result = false;
+	if (checkPath(_path) == ILLEGAL_PATH)
+	{
+		wstring info = L"<error> < FileManager::setInitPath> <ilegal path> : " + _path;
 		Log::log(info);
 	}
 	else
 	{
-		toolFileStorePath = myStoragePath;
-		Log::log(L"set tool folder : " + myStoragePath);
-		result = true;
+
+		Log::log(L"set tool folder : " + _path);
+		configPath = _path;
+
+		initDir = getToolFileStoragePath() + L"/" + PATH_INI;
+		if (checkPath(initDir) == FILE_EXIST)
+		{
+			result = true;
+		}
 	}
 	return(result);
 }
@@ -146,7 +212,7 @@ bool FileManager::setBatchExportPath(wstring myTargetPath)
 
 wstring FileManager :: getToolFileStoragePath()
 {
-	return(toolFileStorePath);
+	return(configPath);
 }
 
 wstring FileManager::getBatchInputPath()
@@ -174,10 +240,44 @@ wstring FileManager::getDictionTxtPath()
 	return(dictionJsonPath);
 }
 
+//todo: 这里需要换成G2312编码
+void FileManager::paseInitFile(vector<wstring> myInit)
+{
+	for (vector<wstring>::iterator itr = myInit.begin(); itr != myInit.end(); itr++)
+	{
+		wstring _line = *itr ;
+		if (_line.find(L"--") == wstring::npos)
+		{
+			//wcout << "comment : " << _line;
+			//wcout << _line << endl;
+			wstring::size_type _equalPos = _line.find(L"=");
+			if (_equalPos != wstring::npos)
+			{	
+				wstring para = _line.substr(0, _equalPos);
+				wstring _value = _line.substr(_equalPos+1, _line.size());
+				if (para == L"sourcedir")
+				{
+					sourceDir = _value;
+				}
+				else if (para == L"targetdir")
+				{
+					targetDir = _value;
+				}
+				else if (para == L"tstdir")
+				{
+					tstPath = _value;
+					//targetDir = para;
+				}
+			}
+		}
+
+	}
+}
+
 void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders,  wstring myTargetFolder, bool mySubFolder)
 //mySubFolder == true : iterate subfolder
 {
-	if (myTargetFolder.rfind(L"/") != myTargetFolder.size() - 1)
+	if ((myTargetFolder.rfind(L"/") != myTargetFolder.size() - 1)&&((myTargetFolder.rfind(L"\\") != myTargetFolder.size() - 1)))
 	{
 		myTargetFolder = myTargetFolder + L"/";
 	}
@@ -253,7 +353,6 @@ short FileManager::createFolder(wstring myullPath)
 	}
 	return(result);
 }
-
 
 short FileManager::checkPath(wstring myPath)
 {

@@ -22,10 +22,13 @@ struct TstDest
 	wstring MipmapFilter;
 	wstring Scale;
 };
-class Tst
+struct Tst
 {
-public:
-	Tst();
 	vector<TstSource> sourceNodes;
 	vector<TstDest> destNodes;
+	wstring version;
+
+	Tst();
+	Tst(vector<TstSource> sourceNodes, vector<TstDest> destNodes);
+	~Tst();
 };

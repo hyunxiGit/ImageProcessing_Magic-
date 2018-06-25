@@ -16,32 +16,43 @@ class FileManager
 private:
 	static FileManager* instance;
 	FileManager();
+	void paseInitFile(vector<wstring>);
+	
+	
 
 
-	wstring batchInputPath;
-	wstring batchOutputPath;
-	wstring toolFileStorePath;
+	wstring configPath;//config folder
 	wstring IDJsonPath;
 	wstring keyWordJsonPath;
 	wstring dictionJsonPath;
 	wstring logPath;
+	
+
+	wstring initDir;//initFile directory
+	wstring targetDir;//converted megascane folder
+	wstring sourceDir;//megascane folder
+	wstring tstPath;
+
+	wstring batchInputPath;
+	wstring batchOutputPath;
 
 public:
 	static FileManager* getInstance();
 	static short checkPath(wstring);
-	short initDirectory(wstring mySource, wstring myTarget, wstring myToolStoragePath);
+	short initDirectory(wstring folderName);
 	short initFile();
-	bool setToolFileStoragePath(wstring);
+	bool setToolConfigPath();
 	bool setBatchInputPath(wstring);
 	bool setBatchExportPath(wstring);
 	bool createFile(wstring);
+	bool readIni();
 	wstring getToolFileStoragePath();
 	wstring getBatchInputPath();
 	wstring getBatchOutputPath();
 	wstring getIDJasonPath();
 	wstring getKeywordJsonPath();
 	wstring getDictionTxtPath();
-	void iterateFolder(vector <std::wstring> & , std::vector <std::wstring> &, wstring, bool mySubFolder = false);
+	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false);
 	short createFolder(wstring);
 	wstring getFileExtion(wstring);
 };

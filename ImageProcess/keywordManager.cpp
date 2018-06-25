@@ -489,7 +489,7 @@ short KeywordManager::getFileType(wstring myFileName)
 
 KeywordManager::~KeywordManager()
 {
-	dictionary.clear();
-	idMap.clear();
-	kWMap.clear();
+	set<wstring>().swap(dictionary);
+	map<wstring, vector<wstring>>().swap(idMap);
+	map<wstring, vector<wstring>>().swap(kWMap);
 }

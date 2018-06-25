@@ -23,7 +23,13 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 	if (pathSet && idSet)
 	{
 		//analyse folder and collect all the asset files
+		//makeObjectTargetFolder();
 		generateAsset();
+		if (asset2.size() != 0)
+		{
+			//产生textet
+			makeTextet();
+		}
 	}
 	else
 	{
@@ -36,7 +42,7 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 			Log::log(L"<error> < ObjectSet::init> <wrong path> : " + pathSet);
 		}
 	}
-
+	//exportSet();
 }
 
 bool ObjectSet::generateID() 
@@ -117,16 +123,21 @@ void ObjectSet::makeObjectTargetFolder()
 	_FM->createFolder(targetPath);
 }
 
+bool ObjectSet::makeTextet()
+{
+
+}
+
 void ObjectSet::generateTextureSet() {}
 void ObjectSet::exportSet() 
 {
 	//create file test
-	//for (vector<Asset2D>::iterator itr = asset2.begin(); itr != asset2.end(); itr++)
-	//{
+	for (vector<Asset2D>::iterator itr = asset2.begin(); itr != asset2.end(); itr++)
+	{
 
-	//	(*itr).reformat(L".tga");
-	//	wcout << "new extension is :" << (*itr).getStruct().extension << endl;
-	//	(*itr).createFile();
-	//	(*itr).exportAsset();
-	//}
+		(*itr).reformat(L".tga");
+		//wcout << "new extension is :" << (*itr).getStruct().extension << endl;
+		(*itr).createFile();
+		(*itr).exportAsset();
+	}
 }

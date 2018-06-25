@@ -54,6 +54,12 @@
     <ClInclude Include="tst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="textureSetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="textet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +102,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textureSetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

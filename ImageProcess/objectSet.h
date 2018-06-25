@@ -2,6 +2,7 @@
 #include "keywordManager.h"
 #include "asset2D.h"
 #include "asset3D.h"
+#include "textet.h"
 #include <vector>
 using namespace std;
 class ObjectSet
@@ -21,9 +22,11 @@ private:
 	KeywordManager * _KM;
 	vector <Asset2D> asset2;
 	vector <Asset3D> asset3;
+	Textet textet;
 	void generateAsset();
 	wstring sourcePath;//object Folder
 	wstring targetPath;//object folder
 	wstring megaScanId;
 	wstring objectId;
+	bool makeTextet();
 };
