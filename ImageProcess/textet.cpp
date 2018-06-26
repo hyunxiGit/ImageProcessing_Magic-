@@ -3,14 +3,16 @@
 #include "textet.h"
 #include "textureSetManager.h"
 
-Textet::Textet() : textureSetType(L""), version(L""){}
-Textet::Textet(wstring myTextureSetType) : version(L"0")
+Textet::Textet() : textureSetType(L""), version(L"0"){}
+Textet::Textet(wstring myTextureSetType , vector<TextetSource> mySourceNodes , vector<TextetDest> myDestNodes)
 {
+	version = L"0";
 	if (myTextureSetType != L"")
 	{
 		textureSetType = myTextureSetType;
 	}
-	init();
+	sourceNodes = mySourceNodes;
+	destNodes = myDestNodes;
 }
 Textet::~Textet()
 {

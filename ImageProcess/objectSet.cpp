@@ -25,11 +25,6 @@ bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetP
 		//analyse folder and collect all the asset files
 		//makeObjectTargetFolder();
 		generateAsset();
-		if (asset2.size() != 0)
-		{
-			//产生textet
-			makeTextet();
-		}
 	}
 	else
 	{
@@ -123,12 +118,17 @@ void ObjectSet::makeObjectTargetFolder()
 	_FM->createFolder(targetPath);
 }
 
-bool ObjectSet::makeTextet()
+bool ObjectSet::makeTextet(wstring tstName)
 {
-
+	//知道tst有几张source image, 并且知道每一张的名字就是用途
+	//筛选出本图包相应的megascane名字的图片（fileStru 里面的use）,得到名字和地址
+	//把这些图的地址按tst source node id 顺序打包入数组
+	//把ObjectId和数组传入Textet manage
+	//按照做出的textet文件进行图片转存(地址名字)source
+	//按照做出的textet文件进行图片转存(地址名字)targetOption
+	//通知texturemanager 输出textet文件
 }
 
-void ObjectSet::generateTextureSet() {}
 void ObjectSet::exportSet() 
 {
 	//create file test

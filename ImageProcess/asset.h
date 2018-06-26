@@ -7,7 +7,7 @@ using namespace std;
 class Asset
 {
 public:
-	Asset(wstring, wstring, wstring, wstring, fileKWStr);
+	Asset(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, wstring myTargetName, fileKWStr myStru);
 	wstring getFullSourcePath();//full image path
 	wstring getFullTargetPath();//full image path
 	wstring getSourcePath();//folder

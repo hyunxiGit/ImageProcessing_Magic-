@@ -44,6 +44,21 @@ Tst TextureSetManager::getTstByName(wstring myTstName)
 		}
 	}
 }
+
+Textet TextureSetManager::makeTextset(wstring objId, vector<wstring> imgDir, wstring tstName) 
+{
+	Textet _textet();
+	//按照tstName 取得tst
+	//取得tstdest node 的 ID , NameSuffix
+	//按照objectID NameSuffix 生成img名字
+	// 取imgDir相应的image 按照objectID 转化filePath信息 
+	//写dest node
+
+	//按照imgDir 以及 约定的path生成新source Path
+	//按照tstsource node 取得 name生成Name
+	//写入sourceNode
+}
+bool TextureSetManager::exportTextet(wstring path, Textet) {}
 TextureSetManager::TextureSetManager()
 {
 

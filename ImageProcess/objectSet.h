@@ -11,8 +11,8 @@ public :
 	ObjectSet();
 	bool init(wstring, wstring, wstring);
 	bool generateID();
+	bool setTst(Tst);
 	wstring getObjectID();
-	void generateTextureSet();
 	bool setPath(wstring, wstring);
 	void exportSet();
 	void makeObjectTargetFolder();
@@ -20,6 +20,7 @@ public :
 private:
 	FileManager * _FM;
 	KeywordManager * _KM;
+	Tst tst;
 	vector <Asset2D> asset2;
 	vector <Asset3D> asset3;
 	Textet textet;
@@ -28,5 +29,5 @@ private:
 	wstring targetPath;//object folder
 	wstring megaScanId;
 	wstring objectId;
-	bool makeTextet();
+	bool makeTextet(wstring);
 };

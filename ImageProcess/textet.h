@@ -23,7 +23,7 @@ public:
 	wstring version;
 
 	Textet();
-	Textet(wstring textureSetType);
+	Textet(wstring myTextureSetType, vector<TextetSource> mySourceNodes, vector<TextetDest> myDestNodes);
 	~Textet();
 private:
 	bool init();

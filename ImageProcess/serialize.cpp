@@ -159,6 +159,11 @@ void Serialize::importTst( wstring myPath , Tst & myTst)
 	}
 }
 
+void Serialize::exportTextet(wstring myPath, Textet myTextet)
+{
+
+}
+
 void Serialize :: exportJsonFile(rapidjson::Document & myDoc, wstring myPath)
 {
 	// Serialize::exportJsonFile(document);
