@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "stdafx.h"
-#include "TextureSetManager.h"
+#include "textureSetManager.h"
+#include "asset2D.h"
+
 
 TextureSetManager * TextureSetManager:: instance = nullptr;
 TextureSetManager * TextureSetManager::getInstance()
@@ -34,6 +36,20 @@ bool TextureSetManager::parseTstFile(wstring myPath)
 	Serialize::importTst(myPath, _tst);
 	tstFileMap.insert(std::pair<wstring, Tst>(_tstName, _tst));
 }
+bool TextureSetManager::checkTstByName(wstring myTstName)
+{
+	bool result = false;
+	for (map<wstring, Tst>::iterator itr = tstFileMap.begin(); itr != tstFileMap.end(); itr++)
+	{
+		if (myTstName == itr->first)
+		{
+			result = true;
+			break;
+		}
+	}
+	return(result);
+}
+
 Tst TextureSetManager::getTstByName(wstring myTstName)
 {
 	for (map<wstring, Tst>::iterator itr = tstFileMap.begin(); itr != tstFileMap.end(); itr++)
@@ -45,9 +61,14 @@ Tst TextureSetManager::getTstByName(wstring myTstName)
 	}
 }
 
-Textet TextureSetManager::makeTextset(wstring objId, vector<wstring> imgDir, wstring tstName) 
+Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset, wstring tstName)
 {
 	Textet _textet();
+	for (vector<Asset2D>::iterator itr = myAsset.begin(); itr != myAsset.end(); itr++)
+	{
+		wcout << "new name : " << (*itr).getTargetName() << endl;
+		wcout << "new source path : " << (*itr).getFullTargetPath() << endl;
+	}
 	//按照tstName 取得tst
 	//取得tstdest node 的 ID , NameSuffix
 	//按照objectID NameSuffix 生成img名字

@@ -25,6 +25,7 @@ private:
 	wstring IDJsonPath;
 	wstring keyWordJsonPath;
 	wstring dictionJsonPath;
+	wstring usageNamePath;
 	wstring logPath;
 	
 
@@ -52,6 +53,7 @@ public:
 	wstring getIDJasonPath();
 	wstring getKeywordJsonPath();
 	wstring getDictionTxtPath();
+	wstring getUsageNameJsonPath();
 	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false);
 	short createFolder(wstring);
 	wstring getFileExtion(wstring);

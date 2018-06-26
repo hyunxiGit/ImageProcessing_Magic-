@@ -43,10 +43,11 @@ KeywordManager * KeywordManager::getInstance()
 	return (instance);
 }
 
-bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myDiction)
+bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myDiction , wstring myNameUsagePath)
 {
 	Serialize::importJson(idMap, myIDPath);
 	Serialize::importJson(kWMap, myKWPath);
+	Serialize::importWstringMapJson(usageNameMap, myNameUsagePath);
 	initDictionary(myDiction);
 	for (vector<wstring> ::iterator itr = kWMap[L"extension2D"].begin(); itr != kWMap[L"extension2D"].end(); itr++)
 	{
@@ -277,7 +278,7 @@ void KeywordManager::generateObjectID( wstring myMegaScaneID, wstring & myObject
 	myObjectID = myObjectID + L"_" + std::to_wstring(_index);
 }
 
-wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , fileKWStr  & resultKWStr)
+wstring KeywordManager::makeFileName(wstring myObjectID, wstring mySourceFile , fileKWStr  & resultKWStr)
 {
 	wstring result = L"";
 	fileKWStr _kwStr;
@@ -307,6 +308,19 @@ wstring KeywordManager::getFileName(wstring myObjectID, wstring mySourceFile , f
 
 	//gelete megaScaneID
 	result = makeFileName(myObjectID , resultKWStr);
+	return(result);
+}
+
+wstring KeywordManager::usageNameConvert(wstring myUsage)
+{
+	wstring result = L"";
+	if (myUsage != L"")
+	{
+		if (usageNameMap.find(myUsage) != usageNameMap.end())
+		{
+			result = usageNameMap[myUsage];
+		}
+	}
 	return(result);
 }
 

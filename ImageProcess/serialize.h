@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "tst.h"
+#include "textet.h"
 #include <map>
 #include <string>
 //json
@@ -18,8 +19,11 @@ using namespace rapidjson;
 class Serialize
 {
 public:
+	
 	static void exportJson(map<wstring, vector<wstring>> , wstring);
 	static void importJson(map<wstring, vector<wstring>> &, wstring);
+	static void exportWstringMapJson(map<wstring, wstring> , wstring);
+	static void importWstringMapJson(map<wstring, wstring> &, wstring);
 	static void importTst(wstring, Tst &);
 	static void exportTextet(wstring, Textet);
 	static void exportJsonFile(Document & , wstring);

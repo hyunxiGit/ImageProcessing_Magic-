@@ -10,11 +10,12 @@ public:
 	Asset(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, wstring myTargetName, fileKWStr myStru);
 	wstring getFullSourcePath();//full image path
 	wstring getFullTargetPath();//full image path
+	bool renameByKW(wstring sKW , wstring tKW);
 	wstring getSourcePath();//folder
 	wstring getSourceName();
 	wstring getTargetPath();//folder
 	wstring getTargetName();
-	fileKWStr getStruct();
+	fileKWStr & getStruct();
 	wstring getUse();
 	void setExtension(wstring);
 	virtual void reformat(wstring myFormat);
@@ -27,5 +28,4 @@ private:
 	wstring targetPath;//folder name
 	wstring targetName;//file name no extension
 	wstring sourceImageFullPath;
-	wstring targerImageFullPath;
 };

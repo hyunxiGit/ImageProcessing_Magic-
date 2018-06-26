@@ -70,6 +70,7 @@ short FileManager::initFile()
 	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
 	keyWordJsonPath = getToolFileStoragePath() +L"/" + KEYWORD_JSON;
 	dictionJsonPath = getToolFileStoragePath() + L"/" + DICTION_TXT;
+	usageNamePath = getToolFileStoragePath() + L"/" + USAGENAME_JSON;
 	logPath = getToolFileStoragePath() + L"/" + LOG_TXT;
 
 	
@@ -77,6 +78,7 @@ short FileManager::initFile()
 	bool keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
 	bool idExist = (checkPath(IDJsonPath) == FILE_EXIST);
 	bool dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
+	bool nameUsageExist = (checkPath(usageNamePath) == FILE_EXIST);
 
 
 
@@ -98,21 +100,26 @@ short FileManager::initFile()
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
 		result = -1;
 	}
+
+	if (!nameUsageExist)
+	{
+		//name usage file 必须存在
+		Log::log(L"<error> < FileManager::initFile> <missing file> : " + usageNamePath);
+		result = -1;
+	}
 		
 	if (!idExist)
 	{
 		createFile(IDJsonPath);
 	}
 
-
-
-	if (logExist && keyWordExist && idExist && dictionartExist )
+	if (logExist && keyWordExist && idExist && dictionartExist && nameUsageExist)
 	{
 		KeywordManager * myKM = KeywordManager::getInstance();
 		Log * myLog = Log::getInstance();
 		TextureSetManager * myTM = TextureSetManager::getInstance();
 
-		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath);
+		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
 		myLog->setLogPath(logPath);
 		myTM->initTstFile(tstPath);
 	}
@@ -238,6 +245,11 @@ wstring FileManager::getKeywordJsonPath()
 wstring FileManager::getDictionTxtPath()
 {
 	return(dictionJsonPath);
+}
+
+wstring FileManager::getUsageNameJsonPath()
+{
+	return(usageNamePath);
 }
 
 //todo: 这里需要换成G2312编码

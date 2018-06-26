@@ -10,7 +10,6 @@ Asset::Asset(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, w
 	targetName = myTargetName;
 
 	sourceImageFullPath = getSourcePath() + L"/" + getSourceName();
-	targerImageFullPath = getTargetPath() + L"/" + getTargetName() + str.extension;
 
 	str = myStru;
 }
@@ -37,6 +36,20 @@ void Asset::setExtension(wstring myExtension)
 	str.extension = myExtension;
 }
 
+bool Asset::renameByKW(wstring sKW, wstring tKW)
+{
+	bool result = false;
+	wstring::size_type pos = targetName.find(sKW);
+	if (pos != wstring::npos)
+	{
+		wstring subStr1 = targetName.substr(0, pos);
+		wstring subStr2 = targetName.substr(pos + sKW.size(), tKW.size());
+		targetName = subStr1 + tKW + subStr2;
+		result = true;
+	}
+	return(result);
+}
+
 wstring Asset::getSourcePath()
 {
 	return(sourcePath);
@@ -57,11 +70,11 @@ wstring Asset::getTargetName()
 	return(targetName);
 }
 
-fileKWStr Asset::getStruct()
+fileKWStr & Asset::getStruct()
 {
 	return(str);
 }
 
 wstring Asset :: getFullSourcePath() {	return(sourceImageFullPath);}
 
-wstring Asset::getFullTargetPath() { return(targerImageFullPath); }
+wstring Asset::getFullTargetPath() { return(targetPath+L"/"+targetName+str.extension); }

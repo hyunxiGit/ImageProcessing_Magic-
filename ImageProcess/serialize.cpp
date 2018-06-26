@@ -68,6 +68,54 @@ void Serialize::importJson(map<wstring, vector<wstring>> & result, wstring myFil
 	}
 }
 
+void Serialize::exportWstringMapJson(map<wstring, wstring> myMap, wstring myPath)
+{
+	//把指定的<use : use> 输出为 json格式
+	//todo : debug 检测， keywordmanager 输出相应的 map格式
+	//<Vector>
+	Document _document;
+	Document::AllocatorType &allocator = _document.GetAllocator();
+	_document.SetObject();
+
+	for (map<wstring, wstring>::iterator itr = myMap.begin(); itr != myMap.end(); itr++)
+	{
+		Value name1;
+		string megaScanUse = Serialize::wStringToUTF8(itr->first);
+		const char * _cha1 = megaScanUse.c_str();
+		char buffer1[260];
+		int _len1 = sprintf_s(buffer1, "%s", _cha1);
+		name1.SetString(buffer1, _len1, allocator);
+
+
+		Value name2;
+		string textetUse = Serialize::wStringToUTF8(itr->second);
+		const char * _cha2 = textetUse.c_str();
+		char buffer2[260];
+		int _len2 = sprintf_s(buffer2, "%s", _cha2);
+		name2.SetString(buffer2, _len2, allocator);
+
+		_document.AddMember(name1, name2, allocator);
+	}
+	Serialize::exportJsonFile(_document, myPath);
+}
+
+void Serialize::importWstringMapJson(map<wstring, wstring> & result, wstring myFilePath)
+{
+	//import json 到 <wstring : wstring> 
+
+	rapidjson::Document _document;
+	//todo : path 修改
+	Serialize::importJsonFile(_document, myFilePath);
+
+	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	{
+		wstring _par1 = Serialize::UTF8ToWString(itr->name.GetString());
+		wstring _par2 = Serialize::UTF8ToWString(itr->value.GetString());
+
+		result[_par1] = _par2;
+	}
+}
+
 void Serialize::importJsonFile(Document & result , wstring myPath)
 {
 	//support both ASKII and Unicode
@@ -207,7 +255,6 @@ void makeJsonObj()
 	printf("%i", document["lalaji"].GetInt());
 
 }
-
 
 void makeJsonObj2() 
 {
