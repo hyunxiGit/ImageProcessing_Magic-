@@ -187,6 +187,8 @@ bool ObjectSet::makeTextet()
 
 				//未对应的image 换name
 				(*itr).renameByKW((*itr).getStruct().use, textetImgName);
+				//添加对应的textet名字
+				(*itr).setTextetImgName(textetImgName);
 				//wcout <<"new name : "<< (*itr).getTargetName()<<endl;
 				//筛选出本图包相应的megascane名字的图片（fileStru 里面的use）,得到名字和地址
 				//wcout << "target path : " << (*itr).getFullSourcePath()<< endl;
@@ -202,7 +204,8 @@ bool ObjectSet::makeTextet()
 
 		if (assetForTextet.size() > 0)
 		{
-			Textet _textet =_TM->makeTextset(objectId, assetForTextet, tstName);
+			wcout << "size1 :"<<assetForTextet.size() << endl;
+			textet =_TM->makeTextset(objectId, assetForTextet, tstName);
 		}
 		
 		//把ObjectId和数组传入Textet manage

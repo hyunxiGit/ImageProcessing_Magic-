@@ -18,21 +18,20 @@ private:
 	FileManager();
 	void paseInitFile(vector<wstring>);
 	
-	
-
-
 	wstring configPath;//config folder
 	wstring IDJsonPath;
 	wstring keyWordJsonPath;
 	wstring dictionJsonPath;
 	wstring usageNamePath;
 	wstring logPath;
-	
+	wstring textetSourceDir;
+	wstring textetDestDir;
 
 	wstring initDir;//initFile directory
 	wstring targetDir;//converted megascane folder
 	wstring sourceDir;//megascane folder
 	wstring tstPath;
+	wstring p4Root;
 
 	wstring batchInputPath;
 	wstring batchOutputPath;
@@ -54,6 +53,8 @@ public:
 	wstring getKeywordJsonPath();
 	wstring getDictionTxtPath();
 	wstring getUsageNameJsonPath();
+	wstring getTextetSourceDir();
+	wstring getTextetDestDir();
 	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false);
 	short createFolder(wstring);
 	wstring getFileExtion(wstring);

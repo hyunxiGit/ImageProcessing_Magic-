@@ -16,8 +16,6 @@ Textet::Textet(wstring myTextureSetType , vector<TextetSource> mySourceNodes , v
 }
 Textet::~Textet()
 {
-	vector<TextetSource>().swap(sourceNodes);
-	vector<TextetDest>().swap(destNodes);
 }
 
 bool Textet::init()

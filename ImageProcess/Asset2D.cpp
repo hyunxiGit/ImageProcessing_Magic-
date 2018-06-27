@@ -3,7 +3,9 @@
 #include "asset2D.h"
 
 Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPath, wstring myTargetName, fileKWStr myStru) : Asset(mySourcePath, mySourceName, myTargetPath, myTargetName, myStru)
-{}
+{
+	textetImgName = L"";
+}
 
 void Asset2D::exportAsset()
 {
@@ -17,6 +19,19 @@ void Asset2D::exportAsset()
 		//other images
 		wstring _path = getFullTargetPath()+ getStruct().extension;
 		image.write(_path);
+	}
+}
+
+wstring Asset2D::getTextetImgName()
+{
+	return(textetImgName);
+}
+
+void Asset2D::setTextetImgName(wstring myName)
+{
+	if (myName != L"")
+	{
+		textetImgName = myName;
 	}
 }
 

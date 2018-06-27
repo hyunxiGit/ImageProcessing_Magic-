@@ -121,7 +121,8 @@ short FileManager::initFile()
 
 		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
 		myLog->setLogPath(logPath);
-		myTM->initTstFile(tstPath);
+		myTM->initFile(tstPath , textetSourceDir , textetDestDir);
+
 	}
 
 	return(result);
@@ -217,40 +218,23 @@ bool FileManager::setBatchExportPath(wstring myTargetPath)
 	return(true);
 }
 
-wstring FileManager :: getToolFileStoragePath()
-{
-	return(configPath);
-}
+wstring FileManager :: getToolFileStoragePath() {		return(configPath);		}
 
-wstring FileManager::getBatchInputPath()
-{
-	return (batchInputPath);
-}
+wstring FileManager::getBatchInputPath(){	return (batchInputPath);	}
 
-wstring FileManager::getBatchOutputPath()
-{
-	return (batchOutputPath);
-}
+wstring FileManager::getBatchOutputPath(){   return (batchOutputPath);	}
 
-wstring FileManager::getIDJasonPath()
-{
-	return(IDJsonPath);
-}
+wstring FileManager::getIDJasonPath(){	return(IDJsonPath);		}
 
-wstring FileManager::getKeywordJsonPath()
-{
-	return(keyWordJsonPath);
-}
+wstring FileManager::getKeywordJsonPath(){	return(keyWordJsonPath); }
 
-wstring FileManager::getDictionTxtPath()
-{
-	return(dictionJsonPath);
-}
+wstring FileManager::getDictionTxtPath(){	return(dictionJsonPath);	}
 
-wstring FileManager::getUsageNameJsonPath()
-{
-	return(usageNamePath);
-}
+wstring FileManager::getUsageNameJsonPath(){	return(usageNamePath);}
+
+wstring FileManager::getTextetSourceDir() { return(textetSourceDir); }
+
+wstring FileManager::getTextetDestDir() { return(textetDestDir); }
 
 //todo: 这里需要换成G2312编码
 void FileManager::paseInitFile(vector<wstring> myInit)
@@ -278,6 +262,21 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 				else if (para == L"tstdir")
 				{
 					tstPath = _value;
+					//targetDir = para;
+				}
+				else if (para == L"P4root")
+				{
+					p4Root = _value;
+					//targetDir = para;
+				}
+				else if (para == L"textetsourcedir")
+				{
+					textetSourceDir = _value;
+					//targetDir = para;
+				}
+				else if (para == L"textetdestdir")
+				{
+					textetDestDir = _value;
 					//targetDir = para;
 				}
 			}

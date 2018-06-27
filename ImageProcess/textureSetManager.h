@@ -7,8 +7,12 @@ public:
 	Tst getTstByName(wstring tstName);
 	Textet makeTextset(wstring objId, vector<Asset2D> & asset, wstring tstName);
 	bool exportTextet(wstring path, Textet);
-	bool initTstFile(wstring initFileDir);
+	bool initFile(wstring tstDir , wstring textetImgSourceDir, wstring textetImgDesteDir);
 private:
+
+	FileManager * _FM;
+	wstring textetSourceDir;
+	wstring textetDestDir;
 	static TextureSetManager * instance;
 	map<wstring, Tst> tstFileMap;
 	TextureSetManager();
