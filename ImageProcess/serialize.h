@@ -28,6 +28,7 @@ public:
 	static void exportTextet(wstring, Textet);
 	static void exportJsonFile(Document & , wstring);
 	static void importJsonFile(Document & result, wstring);
+	static void setWstring(Value & myValue, Document & doc, wstring myWStr);
 	//todo: 这里用不用分出去一个类
 	static std::string wStringToUTF8(std::wstring);
 	static std::wstring UTF8ToWString(std::string);

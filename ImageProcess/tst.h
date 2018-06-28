@@ -24,6 +24,7 @@ struct TstDest
 };
 struct Tst
 {
+	wstring tstName;
 	vector<TstSource> sourceNodes;
 	vector<TstDest> destNodes;
 	wstring version;

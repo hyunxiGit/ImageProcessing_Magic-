@@ -201,14 +201,35 @@ bool ObjectSet::makeTextet()
 			}
 		}
 		
-
+		
 		if (assetForTextet.size() > 0)
 		{
-			wcout << "size1 :"<<assetForTextet.size() << endl;
 			textet =_TM->makeTextset(objectId, assetForTextet, tstName);
+			/*wcout << L"..............Textet....................." << endl;
+			wcout << "version : " <<textet.version <<endl;
+			wcout << "textureSetType : " <<textet.textureSetType <<endl;
+
+			wcout << "sourceNode" << endl;
+			for (vector<TextetSource>::iterator itr = textet.sourceNodes.begin(); itr != textet.sourceNodes.end(); itr++)
+			{
+				wcout << "FilePath　: " <<(*itr).FilePath << endl;
+				wcout << "Name : " <<(*itr).Name << endl;
+			}
+
+			wcout << "destNode" << endl;
+			for (vector<TextetDest>::iterator itr = textet.destNodes.begin(); itr != textet.destNodes.end(); itr++)
+			{
+				wcout << "FilePath :　" << (*itr).FilePath << endl;
+				wcout << "Id : " << (*itr).ID << endl;
+				wcout << "Scale :　" << (*itr).Scale << endl;
+			}
+		*/
 		}
 		
-		//把ObjectId和数组传入Textet manage
+		//serialize test
+		wstring textetExportDir = targetPath + L"/" + objectId + L".textet";
+		Serialize::exportTextet(textetExportDir,textet);
+
 		//按照做出的textet文件进行图片转存(地址名字)source
 		//按照做出的textet文件进行图片转存(地址名字)targetOption
 		//通知texturemanager 输出textet文件

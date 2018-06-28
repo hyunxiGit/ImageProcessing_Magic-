@@ -207,9 +207,71 @@ void Serialize::importTst( wstring myPath , Tst & myTst)
 	}
 }
 
+void Serialize::setWstring(Value & myValue , Document & doc , wstring myWStr)
+{
+	Document::AllocatorType &allocator = doc.GetAllocator();
+	string _str = Serialize :: wStringToUTF8(myWStr);
+	const char * _cha = _str.c_str();
+	char buffer[260];
+	int _len1 = sprintf_s(buffer, "%s", _cha);
+	myValue.SetString(buffer, _len1, allocator);
+}
+
 void Serialize::exportTextet(wstring myPath, Textet myTextet)
 {
+	//todo : 使用真正的path
+	wstring tempPath = L"d:/我的" + myPath.substr(myPath.rfind(L"/") , myPath.size());
+	//wstring tempPath = L"d:/我的/test.textet";
 
+	Document _document;
+	Document::AllocatorType &allocator = _document.GetAllocator();
+	_document.SetObject();
+
+	Value _destNodes(kArrayType);
+	for (vector<TextetDest>::iterator itr = myTextet.destNodes.begin(); itr != myTextet.destNodes.end(); itr++)
+	{
+		Value node(kObjectType);
+		Value filePath;
+		setWstring(filePath, _document, (*itr).FilePath);
+		node.AddMember("FilePath", filePath, allocator);
+
+		Value iD;
+		setWstring(iD, _document, (*itr).ID);
+		node.AddMember("ID", iD, allocator);
+		
+		Value scale;
+		setWstring(scale, _document, (*itr).Scale);
+		node.AddMember("Scale", scale, allocator);
+
+		_destNodes.PushBack(node, allocator);
+	}
+	_document.AddMember("Dest", _destNodes, allocator);
+
+	Value _sourceNodes(kArrayType);
+	for (vector<TextetSource>::iterator itr = myTextet.sourceNodes.begin(); itr != myTextet.sourceNodes.end(); itr++)
+	{
+		Value node(kObjectType);
+		Value filePath;
+		setWstring(filePath, _document, (*itr).FilePath);
+		node.AddMember("FilePath", filePath, allocator);
+
+
+		Value name;
+		setWstring(name, _document, (*itr).Name);
+		node.AddMember("Name", name, allocator);
+		_sourceNodes.PushBack(node, allocator);
+	}
+	_document.AddMember("Source", _sourceNodes, allocator);
+
+	Value textureSetType;
+	setWstring(textureSetType, _document, myTextet.textureSetType);
+	_document.AddMember("TextureSetType", textureSetType, allocator);
+
+	Value version;
+	setWstring(version, _document, myTextet.version);
+	_document.AddMember("Version", version, allocator);
+
+	Serialize::exportJsonFile(_document, tempPath);
 }
 
 void Serialize :: exportJsonFile(rapidjson::Document & myDoc, wstring myPath)

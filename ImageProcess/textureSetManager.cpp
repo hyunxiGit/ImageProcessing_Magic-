@@ -44,33 +44,23 @@ bool TextureSetManager::parseTstFile(wstring myPath)
 	wstring::size_type _pos2 = myPath.rfind(L".") ;
 	wstring _tstName = myPath.substr(_pos1, _pos2-_pos1);
 	Tst _tst = Tst();
+	_tst.tstName = _tstName;
 	Serialize::importTst(myPath, _tst);
-	tstFileMap.insert(std::pair<wstring, Tst>(_tstName, _tst));
+	tsts.push_back( _tst);
 }
 
 bool TextureSetManager::checkTstByName(wstring myTstName)
 {
 	bool result = false;
-	for (map<wstring, Tst>::iterator itr = tstFileMap.begin(); itr != tstFileMap.end(); itr++)
+	for (vector<Tst>::iterator itr = tsts.begin(); itr != tsts.end(); itr++)
 	{
-		if (myTstName == itr->first)
+		if (myTstName == (*itr).tstName)
 		{
 			result = true;
 			break;
 		}
 	}
 	return(result);
-}
-
-Tst TextureSetManager::getTstByName(wstring myTstName)
-{
-	for (map<wstring, Tst>::iterator itr = tstFileMap.begin(); itr != tstFileMap.end(); itr++)
-	{
-		if (myTstName == itr->first)
-		{
-			return(itr->second);
-		}
-	}
 }
 
 Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset, wstring tstName)
@@ -98,26 +88,39 @@ Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset,
 		}
 	}
 
+	//todo ： need to add default image when there's no image for the node
 	for (vector<TextetSource>::iterator itr = _textet.sourceNodes.begin(); itr != _textet.sourceNodes.end(); itr++)
 	{
 		if ((*itr).FilePath == L"")
 		{
-			wcout << "source  file Name : " << (*itr).Name << endl;
+			//wcout << "source  file Name : " << (*itr).Name << endl;
 		}
 	}
 
 	for (vector<TextetDest>::iterator itr = _textet.destNodes.begin(); itr != _textet.destNodes.end(); itr++)
 	{
-		(*itr).FilePath = textetDestDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + objId + L"_"+(*itr).FilePath+ L".dds";
+		(*itr).FilePath = textetDestDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + objId +(*itr).FilePath+ L".dds";
 	}
 
 	return(_textet);
 }
 
+Tst TextureSetManager::getTstByName(wstring myTstName)
+{
+	for (vector<Tst>::iterator itr = tsts.begin(); itr != tsts.end(); itr++)
+	{
+		if (myTstName == (*itr).tstName)
+		{
+			return(*itr);
+		}
+	}
+}
+
 Textet TextureSetManager::makeEmptyTextet(Tst myTst)
 {
 	Textet _textet;
-	_textet.version = 1.0;
+	_textet.version = myTst.version;
+	_textet.textureSetType = myTst.tstName;
 
 	for (vector<TstSource> ::iterator itr = myTst.sourceNodes.begin(); itr != myTst.sourceNodes.end(); itr++)
 	{
