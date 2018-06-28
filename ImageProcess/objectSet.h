@@ -16,9 +16,10 @@ public :
 	wstring getObjectID();
 	bool setPath(wstring, wstring);
 	void reformat2D(wstring myFormat);
-	void exportSet();
+	void export2D();
 	void makeObjectTargetFolder();
 	bool makeTextet();
+	void exportAsset(bool export2D, bool exportTextet , bool export3D = false);
 	
 private:
 	FileManager * _FM;

@@ -189,10 +189,6 @@ bool ObjectSet::makeTextet()
 				(*itr).renameByKW((*itr).getStruct().use, textetImgName);
 				//添加对应的textet名字
 				(*itr).setTextetImgName(textetImgName);
-				//wcout <<"new name : "<< (*itr).getTargetName()<<endl;
-				//筛选出本图包相应的megascane名字的图片（fileStru 里面的use）,得到名字和地址
-				//wcout << "target path : " << (*itr).getFullSourcePath()<< endl;
-
 				//把这些图的地址按tst source node id 顺序打包入数组
 				assetForTextet.push_back(*itr);
 			}
@@ -201,43 +197,34 @@ bool ObjectSet::makeTextet()
 			}
 		}
 		
-		
 		if (assetForTextet.size() > 0)
 		{
 			textet =_TM->makeTextset(objectId, assetForTextet, tstName);
-			/*wcout << L"..............Textet....................." << endl;
-			wcout << "version : " <<textet.version <<endl;
-			wcout << "textureSetType : " <<textet.textureSetType <<endl;
-
-			wcout << "sourceNode" << endl;
-			for (vector<TextetSource>::iterator itr = textet.sourceNodes.begin(); itr != textet.sourceNodes.end(); itr++)
-			{
-				wcout << "FilePath　: " <<(*itr).FilePath << endl;
-				wcout << "Name : " <<(*itr).Name << endl;
-			}
-
-			wcout << "destNode" << endl;
-			for (vector<TextetDest>::iterator itr = textet.destNodes.begin(); itr != textet.destNodes.end(); itr++)
-			{
-				wcout << "FilePath :　" << (*itr).FilePath << endl;
-				wcout << "Id : " << (*itr).ID << endl;
-				wcout << "Scale :　" << (*itr).Scale << endl;
-			}
-		*/
 		}
-		
-		//serialize test
-		wstring textetExportDir = targetPath + L"/" + objectId + L".textet";
-		Serialize::exportTextet(textetExportDir,textet);
-
-		//按照做出的textet文件进行图片转存(地址名字)source
-		//按照做出的textet文件进行图片转存(地址名字)targetOption
-		//通知texturemanager 输出textet文件
 	}
-		
-
-
 	return(result);
+}
+
+void ObjectSet::exportAsset(bool my2D , bool myTextet , bool my3D)
+{
+	//serialize testet
+	if (myTextet)
+	{
+		wstring textetExportDir = targetPath + L"/" + objectId + L".textet";
+		Serialize::exportTextet(textetExportDir, textet);
+	}
+
+	if (my2D)
+	{
+		reformat2D(L".tga");
+		export2D();
+	}
+
+	if (my3D)
+	{
+
+	}
+	
 }
 
 void ObjectSet::reformat2D(wstring myFormat/*L".tga"*/)
@@ -248,7 +235,7 @@ void ObjectSet::reformat2D(wstring myFormat/*L".tga"*/)
 	}
 }
 
-void ObjectSet::exportSet() 
+void ObjectSet::export2D() 
 {
 	//create file test
 	for (vector<Asset2D>::iterator itr = asset2.begin(); itr != asset2.end(); itr++)

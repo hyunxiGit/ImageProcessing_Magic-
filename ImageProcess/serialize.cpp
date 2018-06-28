@@ -220,8 +220,7 @@ void Serialize::setWstring(Value & myValue , Document & doc , wstring myWStr)
 void Serialize::exportTextet(wstring myPath, Textet myTextet)
 {
 	//todo : 使用真正的path
-	wstring tempPath = L"d:/我的" + myPath.substr(myPath.rfind(L"/") , myPath.size());
-	//wstring tempPath = L"d:/我的/test.textet";
+	//wstring tempPath = L"d:/我的" + myPath.substr(myPath.rfind(L"/") , myPath.size());
 
 	Document _document;
 	Document::AllocatorType &allocator = _document.GetAllocator();
@@ -271,7 +270,7 @@ void Serialize::exportTextet(wstring myPath, Textet myTextet)
 	setWstring(version, _document, myTextet.version);
 	_document.AddMember("Version", version, allocator);
 
-	Serialize::exportJsonFile(_document, tempPath);
+	Serialize::exportJsonFile(_document, myPath);
 }
 
 void Serialize :: exportJsonFile(rapidjson::Document & myDoc, wstring myPath)
