@@ -14,15 +14,3 @@ Textet::Textet(wstring myTextureSetType , vector<TextetSource> mySourceNodes , v
 	sourceNodes = mySourceNodes;
 	destNodes = myDestNodes;
 }
-Textet::~Textet()
-{
-}
-
-bool Textet::init()
-{
-	bool result = false;
-	TextureSetManager *myTM = TextureSetManager::getInstance();
-	vector<TstDest> _dest = myTM->getTstByName(textureSetType).destNodes;
-	vector<TstSource> _source = myTM->getTstByName(textureSetType).sourceNodes;
-	return(result);
-}

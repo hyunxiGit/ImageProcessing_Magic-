@@ -53,6 +53,7 @@ short FileManager::initDirectory(wstring myFolderNAme)
 			batchOutputPath = targetDir + L"/" + myFolderNAme;
 			sourceCheck = setBatchInputPath(batchInputPath);
 			targetCheck = setBatchExportPath(batchOutputPath);
+			subFolder = myFolderNAme;
 		}
 		if (sourceCheck && targetCheck)
 		{
@@ -235,6 +236,8 @@ wstring FileManager::getUsageNameJsonPath(){	return(usageNamePath);}
 wstring FileManager::getTextetSourceDir() { return(textetSourceDir); }
 
 wstring FileManager::getTextetDestDir() { return(textetDestDir); }
+
+wstring FileManager::getSubFolder() {return(subFolder);}
 
 //todo: 这里需要换成G2312编码
 void FileManager::paseInitFile(vector<wstring> myInit)

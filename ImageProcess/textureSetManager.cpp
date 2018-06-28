@@ -75,48 +75,88 @@ Tst TextureSetManager::getTstByName(wstring myTstName)
 
 Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset, wstring tstName)
 {
-	Textet _textet;
-	_textet.version = 1.0;
+	Tst _tst = getTstByName(tstName);
+	Textet _textet = makeEmptyTextet(_tst);
+
 	for (vector<Asset2D>::iterator itr = myAsset.begin(); itr != myAsset.end(); itr++)
 	{
 		Asset2D _asset = *itr;
-		/*wcout << "name : " << _asset.getTargetName() << endl;
-		wcout << "extension : " << _asset.getStruct().extension << endl;*/
 		wstring _assetPath = _asset.getTargetPath();
-	/*	wcout << _assetPath << endl;
-		wcout << textetSourceDir << endl;*/
 		wstring::size_type _pos = _assetPath.find(textetSourceDir);
 		if (_pos != wstring::npos)
 		{
-			wstring _fileName = _asset.getTargetName() + _asset.getStruct().extension;
-			//得到写入textet的Name
-			wstring sourceName = _asset.getTextetImgName();
-			wcout << "sourceName " << sourceName << endl;
-			//得到写入textet的相对路径
-			wstring sourceFilePath = _assetPath.substr(_pos, _assetPath.size())+ L"/" + _fileName;
-			wcout << "sourceFilePath: " << sourceFilePath << endl;
-			wstring destFilePath = textetDestDir + sourceFilePath.substr(textetSourceDir.size(), sourceFilePath.size()) ;
-			wcout << "new string 2: " << destFilePath << endl;
+			//textet source Name项
+			wstring sName = _asset.getTextetImgName();
+			int nodeIndex = getTexetSNodeIndxByName(sName, _textet);
+
+			if (nodeIndex != -1)
+			{
+				wstring _fileName = _asset.getTargetName() + _asset.getStruct().extension;
+				wstring sFilePath = textetSourceDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + _fileName;
+				_textet.sourceNodes[nodeIndex].FilePath = sFilePath;
+			}
 		}
-
-		//Tst _tst = getTstByName(tstName);
-		//for (vector<TstDest> itr = _tst.destNodes.begin(); itr != _tst.destNodes.end(); itr++)
-		//{
-
-		//}
-
 	}
-	//按照tstName 取得tst
-	//取得tstdest node 的 ID , NameSuffix
-	//按照objectID NameSuffix 生成img名字
-	// 取imgDir相应的image 按照objectID 转化filePath信息 
-	//写dest node
 
-	//按照imgDir 以及 约定的path生成新source Path
-	//按照tstsource node 取得 name生成Name
-	//写入sourceNode
+	for (vector<TextetSource>::iterator itr = _textet.sourceNodes.begin(); itr != _textet.sourceNodes.end(); itr++)
+	{
+		if ((*itr).FilePath == L"")
+		{
+			wcout << "source  file Name : " << (*itr).Name << endl;
+		}
+	}
+
+	for (vector<TextetDest>::iterator itr = _textet.destNodes.begin(); itr != _textet.destNodes.end(); itr++)
+	{
+		(*itr).FilePath = textetDestDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + objId + L"_"+(*itr).FilePath+ L".dds";
+	}
+
 	return(_textet);
 }
+
+Textet TextureSetManager::makeEmptyTextet(Tst myTst)
+{
+	Textet _textet;
+	_textet.version = 1.0;
+
+	for (vector<TstSource> ::iterator itr = myTst.sourceNodes.begin(); itr != myTst.sourceNodes.end(); itr++)
+	{
+		TextetSource sTextet;
+		TstSource sTst = *itr;
+		sTextet.Name = sTst.name;
+		sTextet.FilePath = L"";
+		_textet.sourceNodes.push_back(sTextet);
+	}
+
+	for (vector<TstDest> ::iterator itr = myTst.destNodes.begin(); itr != myTst.destNodes.end(); itr++)
+	{
+		TextetDest dTextet;
+		TstDest dTst = *itr;
+		dTextet.FilePath = dTst.NameSuffix;
+		dTextet.ID = dTst.ID;
+		dTextet.Scale = L"0.5";
+		_textet.destNodes.push_back(dTextet);
+	}
+	return(_textet);
+}
+
+int TextureSetManager::getTexetSNodeIndxByName( wstring myName , Textet myTextet)
+{
+	int i = 0;
+	int result = -1;
+	for (vector<TextetSource> ::iterator itr = myTextet.sourceNodes.begin(); itr != myTextet.sourceNodes.end(); itr++)
+	{
+		if ((*itr).Name == myName)
+		{
+			result = i;
+			break;
+		}
+		i++;
+	}
+	return(result);
+}
+
+
 bool TextureSetManager::exportTextet(wstring path, Textet) {}
 
 TextureSetManager::TextureSetManager()

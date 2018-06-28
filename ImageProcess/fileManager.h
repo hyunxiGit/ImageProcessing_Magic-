@@ -33,6 +33,7 @@ private:
 	wstring tstPath;
 	wstring p4Root;
 
+	wstring subFolder;
 	wstring batchInputPath;
 	wstring batchOutputPath;
 
@@ -55,6 +56,7 @@ public:
 	wstring getUsageNameJsonPath();
 	wstring getTextetSourceDir();
 	wstring getTextetDestDir();
+	wstring getSubFolder();
 	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false);
 	short createFolder(wstring);
 	wstring getFileExtion(wstring);

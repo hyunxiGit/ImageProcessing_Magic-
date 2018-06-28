@@ -6,13 +6,13 @@ using namespace std;
 struct TextetSource
 {
 	wstring FilePath;
-	wstring id;
-	wstring scale;
+	wstring Name;
 };
 struct TextetDest
 {
 	wstring FilePath;
-	wstring name;
+	wstring ID;
+	wstring Scale;
 };
 struct Textet
 {
@@ -24,7 +24,4 @@ public:
 
 	Textet();
 	Textet(wstring myTextureSetType, vector<TextetSource> mySourceNodes, vector<TextetDest> myDestNodes);
-	~Textet();
-private:
-	bool init();
 };
