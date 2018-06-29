@@ -17,9 +17,7 @@ Log::Log(){}
 
 void Log::log(std::wstring info)
 {
-	//Log * _log = getInstance();
 	instance->toolLog.push_back(info);
-	//_log->toolLog.push_back(info);
 }
 
 int Log::setLogPath(wstring myPath)

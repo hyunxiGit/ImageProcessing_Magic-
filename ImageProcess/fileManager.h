@@ -24,6 +24,7 @@ private:
 	wstring dictionJsonPath;
 	wstring usageNamePath;
 	wstring logPath;
+	//textetSourceDir 是 targetDir 的一部分是记录在textet文件里面的相对路径
 	wstring textetSourceDir;
 	wstring textetDestDir;
 
@@ -40,8 +41,8 @@ private:
 public:
 	static FileManager* getInstance();
 	static short checkPath(wstring);
-	short initDirectory(wstring folderName);
-	short initFile();
+	bool initDirectory(wstring folderName);
+	bool initFile();
 	bool setToolConfigPath();
 	bool setBatchInputPath(wstring);
 	bool setBatchExportPath(wstring);
@@ -57,7 +58,7 @@ public:
 	wstring getTextetSourceDir();
 	wstring getTextetDestDir();
 	wstring getSubFolder();
-	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false);
+	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false , wstring subPath = L"");
 	short createFolder(wstring);
 	wstring getFileExtion(wstring);
 };

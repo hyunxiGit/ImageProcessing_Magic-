@@ -26,7 +26,7 @@ public:
 	static KeywordManager* getInstance();
 	bool dictionarySearch(std::wstring);
 	void getKeywords(std::wstring , std::vector <std::wstring> & );
-	void analyseID(vector < std::wstring > , vector <std::wstring> &);
+	void analyseID(vector < std::wstring > , map <wstring , wstring> &);
 	short getObjectID(wstring mySource, std::wstring & myTarget );
 	void generateObjectID(wstring , wstring &);
 	wstring makeFileName(wstring objectID, wstring sourceFile, fileKWStr  & resultKWStr);
@@ -40,7 +40,7 @@ private:
 	vector<wstring> extensionOther;
 	static KeywordManager* instance;
 	wstring getfileKWType(wstring , fileKWStr& );
-	wstring makeFileName(wstring, fileKWStr);
+	wstring nameFromFileKWStr(wstring, fileKWStr);
 	bool initDictionary(wstring myDictionPath);
 
 	KeywordManager();

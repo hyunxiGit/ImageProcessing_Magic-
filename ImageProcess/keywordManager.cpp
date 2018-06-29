@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "keywordManager.h"
 #include <algorithm>
+#include <map>
 using namespace std;
 
 KeywordManager * KeywordManager::instance = nullptr;
@@ -102,7 +103,7 @@ bool KeywordManager::dictionarySearch(std::wstring myCheck)
 	return (found);
 }
 
-void KeywordManager::analyseID(vector <std::wstring> myMegaIDs, vector <std::wstring> & myObjIds)
+void KeywordManager::analyseID(vector <std::wstring> myMegaIDs, map<wstring , wstring> & myObjIds)
 {
 	bool _updateJson = false;
 	FileManager * myFM = FileManager::getInstance();
@@ -117,7 +118,7 @@ void KeywordManager::analyseID(vector <std::wstring> myMegaIDs, vector <std::wst
 		}
 		if (_objectID != L"")
 		{
-			myObjIds.push_back(_objectID);
+			myObjIds[_megaScanId] = _objectID;
 		}
 	}
 	if (_updateJson)
@@ -174,8 +175,6 @@ short KeywordManager::getObjectID(std::wstring myMegaScaneID, wstring & result )
 	//检测当前megaScan ID 在 map里是否存在
 	map<wstring, vector<wstring>>::iterator _IDMapItr;
 	
-	bool _idExist = false;
-	if (idMap.empty()){	}
 	for (_IDMapItr = idMap.begin(); _IDMapItr != idMap.end(); _IDMapItr++)
 	{
 		vector<wstring> _megaIDVector = _IDMapItr->second;
@@ -186,62 +185,57 @@ short KeywordManager::getObjectID(std::wstring myMegaScaneID, wstring & result )
 			//found			
 			short _index = distance(_megaIDVector.begin(), _megaIDVectorItr);
 			result = _IDMapItr->first+L"_"+ std::to_wstring(_index) ;
-			_idExist = true;
-			break;
+			return(success);
 		}
 	}
 
-	if (_idExist == false)
+	//can not be found generate ID
+	success = 2;
+
+	result = L"";
+	bool isKey;
+
+	//get all the keyword from source in order
+	std::vector <std::wstring> _keywordVector;
+	getKeywords(myMegaScaneID, _keywordVector);
+
+	int megaIDCount = 0;
+	for (std::vector <std::wstring>::iterator it = _keywordVector.begin(); it != _keywordVector.end(); it++)
 	{
-		success = 2;
-		//can not be found generate ID
+		//check all of them through dictionary
 
-		result = L"";
-		bool isKey;
-
-		//get all the keyword from source in order
-		std::vector <std::wstring> _keywordVector;
-		getKeywords(myMegaScaneID, _keywordVector);
-
-		int megaIDCount = 0;
-		for (std::vector <std::wstring>::iterator it = _keywordVector.begin(); it != _keywordVector.end(); it++)
+		isKey = dictionarySearch(*it);
+		if (isKey)
 		{
-			//check all of them through dictionary
-
-			isKey = dictionarySearch(*it);
-			if (isKey)
+			//make new temp ID
+			if (result == L"")
 			{
-				//make new temp ID
-				if (result == L"")
-				{
-					result = result + *it;
-				}
-				else
-				{
-					result = result + L"_" + *it;
-				}
+				result = result + *it;
 			}
 			else
 			{
-				megaIDCount++;
+				result = result + L"_" + *it;
 			}
 		}
-
-		// problematic keyword
-		if (result == L"")
-		{
-			//can not generate the keyword according to megaScane ID
-			Log::log(L"<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :" + myMegaScaneID);
-			success = 0;
-		}
-
 		else
 		{
-			//succesful asset, generate number
-			generateObjectID(myMegaScaneID, result);
+			megaIDCount++;
 		}
 	}
-	
+
+	// problematic keyword
+	if (result == L"")
+	{
+		//can not generate the keyword according to megaScane ID
+		Log::log(L"<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :" + myMegaScaneID);
+		success = 0;
+	}
+
+	else
+	{
+		//succesful asset, generate index
+		generateObjectID(myMegaScaneID, result);
+	}
 
 	return(success);
 }
@@ -253,7 +247,6 @@ void KeywordManager::generateObjectID( wstring myMegaScaneID, wstring & myObject
 	map<wstring, vector<wstring>>::iterator itr = idMap.find(myObjectID);
 	if (itr == idMap.end())
 	{
-		//cout << "There's no such object ID" << endl;
 		//create new key,  在最后加入idMap
 		vector<wstring> _newMegaID;
 		_newMegaID.push_back(myMegaScaneID);
@@ -262,7 +255,6 @@ void KeywordManager::generateObjectID( wstring myMegaScaneID, wstring & myObject
 	}
 	else
 	{
-		//cout << "object ID found " <<endl;
 		//查找对应 megascan ID Vector 然后 ，查找 是否已经存在
 		vector<wstring> _megaScanVector = itr->second ;
 		vector<wstring>::iterator itr1 = std::find(_megaScanVector.begin(), _megaScanVector.end(), myMegaScaneID);
@@ -291,24 +283,17 @@ wstring KeywordManager::makeFileName(wstring myObjectID, wstring mySourceFile , 
 	{
 		//analysis keyword usage
 		wstring _kwType = getfileKWType(*itr , resultKWStr);
-
-		if (_kwType == L"")
-		{
-			_wrongKwVector.push_back(*itr);
-		}
 	}
 
-	if (resultKWStr.extension != L".json" && (resultKWStr.extension == L"" || resultKWStr.use == L""))
+	if ((resultKWStr.extension == L".jpg" )|| (resultKWStr.extension == L".fbx"))
 	{
-		for (vector<wstring>::iterator itr = _wrongKwVector.begin(); itr != _wrongKwVector.end(); itr++)
-		{
-			//wcout << *itr <<endl;
-		}
+		result = nameFromFileKWStr(myObjectID, resultKWStr);
+		return(result);
 	}
-
-	//gelete megaScaneID
-	result = makeFileName(myObjectID , resultKWStr);
-	return(result);
+	else
+	{
+		wcout << "ignoreing file : " << mySourceFile <<endl; 
+	}
 }
 
 wstring KeywordManager::usageNameConvert(wstring myUsage)
@@ -432,7 +417,7 @@ bool KeywordManager::makeFileKeyword()
 	Serialize::exportJson(_fileKWMap , L"d:/fileKW.json");
 }
 
-wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
+wstring KeywordManager::nameFromFileKWStr(wstring myObjectID, fileKWStr myKWStr)
 {
 	wstring result;
 	vector<wstring> _fileKWResultVector;
@@ -442,21 +427,20 @@ wstring KeywordManager::makeFileName(wstring myObjectID, fileKWStr myKWStr)
 		result += (L"_");
 		result += myKWStr.variation;
 	}
-	if (myKWStr.use != L"")
-	{
-		result += (L"_");
-		result += myKWStr.use;
-	}
 	if (myKWStr.size != L"")
 	{
 		result += (L"_");
 		result += myKWStr.size;
 	}
-
 	if (myKWStr.lod != L"")
 	{
 		result += (L"_");
 		result += myKWStr.lod;
+	}
+	if (myKWStr.use != L"")
+	{
+		result += (L"_");
+		result += myKWStr.use;
 	}
 	if (myKWStr.extension != L"")
 	{

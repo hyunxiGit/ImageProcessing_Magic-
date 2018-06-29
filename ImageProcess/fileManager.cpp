@@ -26,9 +26,7 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-
-short FileManager::initDirectory(wstring myFolderNAme)
-//after instantiate must call this function
+bool FileManager::initDirectory(wstring myFolderName)
 {
 	//1 : success
 	//-1: source failed
@@ -37,23 +35,47 @@ short FileManager::initDirectory(wstring myFolderNAme)
 
 	//取得config位置
 
-
-	short result = 0;
+	bool result = false;
 	bool toolDirSet = setToolConfigPath();
-	readIni();
-
 	if (toolDirSet)
 	{
 		readIni();
+	}
+
+	//检测从 initFile 里面读入的信息的正确性
+	bool sourceDirGood = checkPath(sourceDir);
+	bool targetDirGood = checkPath(targetDir);
+	bool tstDirGood = checkPath(tstPath);
+	bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
+
+	if (!sourceDirGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + sourceDir);
+	}
+	if (!targetDirGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + targetDir);
+	}
+	if (!tstDirGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + tstPath);
+	}
+	if (!textetDirGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetSourceDir);
+	}
+
+	if (sourceDirGood && targetDirGood && tstDirGood && textetDirGood)
+	{
 		bool sourceCheck;
 		bool targetCheck;
 		if (sourceDir != L"" && targetDir != L"")
 		{
-			batchInputPath = sourceDir + L"/" + myFolderNAme;
-			batchOutputPath = targetDir + L"/" + myFolderNAme;
+			batchInputPath = sourceDir + L"/" + myFolderName;
+			batchOutputPath = targetDir + L"/" + myFolderName;
 			sourceCheck = setBatchInputPath(batchInputPath);
 			targetCheck = setBatchExportPath(batchOutputPath);
-			subFolder = myFolderNAme;
+			subFolder = myFolderName;
 		}
 		if (sourceCheck && targetCheck)
 		{
@@ -64,10 +86,10 @@ short FileManager::initDirectory(wstring myFolderNAme)
 	return(result);
 }
 
-short FileManager::initFile()
+bool FileManager::initFile()
 //initialize all needed objects from file
 {
-	short result = 1;
+	bool result = true;
 	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
 	keyWordJsonPath = getToolFileStoragePath() +L"/" + KEYWORD_JSON;
 	dictionJsonPath = getToolFileStoragePath() + L"/" + DICTION_TXT;
@@ -86,32 +108,34 @@ short FileManager::initFile()
 	if (!logExist)
 	{
 		createFile(logPath);
+		logExist = true;
 	}
 
 	if(!keyWordExist)
 	{
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + keyWordJsonPath);
 		//outputLog this file 必须存在
-		result = -1;
+		result = false;
 	}
 
 	if (!dictionartExist)
 	{
 		//outputLog this file 必须存在
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
-		result = -1;
+		result = false;
 	}
 
 	if (!nameUsageExist)
 	{
 		//name usage file 必须存在
 		Log::log(L"<error> < FileManager::initFile> <missing file> : " + usageNamePath);
-		result = -1;
+		result = false;
 	}
 		
 	if (!idExist)
 	{
 		createFile(IDJsonPath);
+		idExist = true;
 	}
 
 	if (logExist && keyWordExist && idExist && dictionartExist && nameUsageExist)
@@ -123,7 +147,6 @@ short FileManager::initFile()
 		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
 		myLog->setLogPath(logPath);
 		myTM->initFile(tstPath , textetSourceDir , textetDestDir);
-
 	}
 
 	return(result);
@@ -146,8 +169,8 @@ bool  FileManager::readIni()
 		while (!inFile.eof())
 		{
 			inFile >> line;
+			//这里有个路径转化。。。看中国需要保留还是去掉
 			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
-
 			myInitVector.push_back(Serialize::UTF8ToWString(line));
 		}
 	}
@@ -157,7 +180,7 @@ bool  FileManager::readIni()
 
 bool  FileManager::setToolConfigPath()
 {
-
+	//取得本工具下configfolder
 	TCHAR szFilePath[MAX_PATH + 1] = { 0 };
 	GetModuleFileName(NULL, szFilePath, MAX_PATH);
 	(_tcsrchr(szFilePath, _T('\\')))[1] = 0; // 删除文件名，只获得路径字串
@@ -172,7 +195,6 @@ bool  FileManager::setToolConfigPath()
 	}
 	else
 	{
-
 		Log::log(L"set tool folder : " + _path);
 		configPath = _path;
 
@@ -239,7 +261,7 @@ wstring FileManager::getTextetDestDir() { return(textetDestDir); }
 
 wstring FileManager::getSubFolder() {return(subFolder);}
 
-//todo: 这里需要换成G2312编码
+//todo: 这里需要换成G2312编码？或者不用？
 void FileManager::paseInitFile(vector<wstring> myInit)
 {
 	for (vector<wstring>::iterator itr = myInit.begin(); itr != myInit.end(); itr++)
@@ -247,8 +269,6 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 		wstring _line = *itr ;
 		if (_line.find(L"--") == wstring::npos)
 		{
-			//wcout << "comment : " << _line;
-			//wcout << _line << endl;
 			wstring::size_type _equalPos = _line.find(L"=");
 			if (_equalPos != wstring::npos)
 			{	
@@ -288,15 +308,15 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 	}
 }
 
-void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders,  wstring myTargetFolder, bool mySubFolder)
+void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring > & myFolders,  wstring myTargetDir, bool mySubFolder , wstring subPath)
 //mySubFolder == true : iterate subfolder
 {
-	if ((myTargetFolder.rfind(L"/") != myTargetFolder.size() - 1)&&((myTargetFolder.rfind(L"\\") != myTargetFolder.size() - 1)))
+	if ((myTargetDir.rfind(L"/") != myTargetDir.size() - 1)&&((myTargetDir.rfind(L"\\") != myTargetDir.size() - 1)))
 	{
-		myTargetFolder = myTargetFolder + L"/";
+		myTargetDir = myTargetDir + L"/";
 	}
 
-	const TCHAR *t = myTargetFolder.c_str();
+	const TCHAR *t = myTargetDir.c_str();
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 	TCHAR szDir[MAX_PATH];
 	WIN32_FIND_DATA ffd;
@@ -321,17 +341,30 @@ void FileManager::iterateFolder(vector < wstring > & myFiles, vector < wstring >
 		{
 			//folders
 			if (lstrcmpW(ffd.cFileName, L".") == 0 || lstrcmpW(ffd.cFileName, L"..") == 0) { continue; }
-			myFolders.push_back(myString);
-			if (mySubFolder == true)
+			
+			if (mySubFolder != true)
 			{
-				wstring mySubTargetFolder = myTargetFolder + myString + L"/";
-				iterateFolder(myFiles, myFolders, mySubTargetFolder, mySubFolder);
+				myFolders.push_back(myString);
+			}
+			else
+			{
+				myFolders.push_back(subPath + myString);
+				subPath = subPath + myString + L"/";
+				wstring mySubTargetFolder = myTargetDir + myString + L"/";
+				iterateFolder(myFiles, myFolders, mySubTargetFolder, mySubFolder, subPath);
 			}
 		}
 		else
 		{
 			//files
-			myFiles.push_back(myString);
+			if (mySubFolder != true)
+			{
+				myFiles.push_back(myString);
+			}
+			else
+			{
+				myFiles.push_back(subPath + myString);
+			}
 		}
 
 	} while (FindNextFile(hFind, &ffd) != 0);

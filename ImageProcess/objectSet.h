@@ -10,17 +10,17 @@ class ObjectSet
 {
 public :
 	ObjectSet();
-	bool init(wstring, wstring, wstring);
+	bool init(pair<wstring, wstring> myIdPaire, FileManager * myFM, KeywordManager * myKM, TextureSetManager * myTM);
+	bool setIDPath(wstring myMegaId, wstring myObjId, wstring mySourcePath, wstring myTargetPath);
 	bool generateID();
-	bool setTst(wstring tst);
 	wstring getObjectID();
-	bool setPath(wstring, wstring);
-	void reformat2D(wstring myFormat);
-	void export2D();
-	void makeObjectTargetFolder();
+	bool setTst(wstring tst);
 	bool makeTextet();
-	void exportAsset(bool export2D, bool exportTextet , bool export3D = false);
-	
+	void reformat2D(wstring myFormat);
+	void makeObjectTargetFolder();
+	void exportAsset(bool export2D, bool exportTextet, bool export3D = false);
+	void export2D();
+
 private:
 	FileManager * _FM;
 	KeywordManager * _KM;

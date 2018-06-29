@@ -19,8 +19,7 @@ bool TextureSetManager::initFile(wstring myTstDir , wstring myTextetSourceImgDir
 {
 	vector <std::wstring> _files;
 	vector <std::wstring> _folders;
-	FileManager * myFM = FileManager::getInstance();
-	myFM->iterateFolder(_files, _folders, myTstDir);
+	_FM->iterateFolder(_files, _folders, myTstDir);
 	for (vector<wstring> ::iterator itr = _files.begin(); itr != _files.end(); itr++)
 	{
 		//wcout << *itr << endl;
@@ -165,9 +164,4 @@ bool TextureSetManager::exportTextet(wstring path, Textet) {}
 TextureSetManager::TextureSetManager()
 {
 	_FM = FileManager::getInstance();
-}
-
-TextureSetManager::~TextureSetManager()
-{
-
 }

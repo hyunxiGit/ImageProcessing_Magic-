@@ -6,62 +6,39 @@
 
 using namespace std;
 
-ObjectSet::ObjectSet():megaScanId(L""), objectId(L""), sourcePath(L""), targetPath(L"")
+ObjectSet::ObjectSet() :megaScanId(L""), objectId(L""), sourcePath(L""), targetPath(L"")
 {}
 
-bool ObjectSet::init(wstring megaScanID, wstring mySourcePath, wstring myTargetPath)
+bool ObjectSet::init(pair<wstring, wstring> myIdPair, FileManager * myFM, KeywordManager * myKM, TextureSetManager * myTM /*wstring mySourcePath, wstring myTargetPath*/)
 //init 函数里面只能使用内存操作，不能使用磁盘操作
+//设置路径.产生新ID,产生内存中的assets
 {
+	_FM = myFM;
+	_KM = myKM;
+	_TM = myTM;
+
 	bool result = false;
-	sourcePath = mySourcePath;
-	targetPath = myTargetPath;
+	bool pathSet = setIDPath(myIdPair.first , myIdPair.second, _FM->getBatchInputPath(), _FM->getBatchOutputPath());
 
-	_FM = FileManager::getInstance();
-	_KM = KeywordManager::getInstance();
-	_TM = TextureSetManager::getInstance();
-
-	
-	megaScanId = megaScanID;
-	bool idSet = generateID();
-	wcout << "idSet : " << idSet << endl;
-	bool pathSet = setPath(mySourcePath, myTargetPath);
-	if (pathSet && idSet)
+	if (!pathSet)
 	{
-		//analyse folder and collect all the asset files
-		//makeObjectTargetFolder();
-		generateAsset();
+		Log::log(L"<error> < ObjectSet::init> <wrong path> : " + pathSet);
 	}
 	else
 	{
-		if (!idSet)
+		generateAsset();
+		if (asset2.size() > 0 || asset3.size() > 0)
 		{
-			Log::log(L"<error> < ObjectSet::init> <problematic ID> : " + megaScanID);
-		}
-		if (!pathSet)
-		{
-			Log::log(L"<error> < ObjectSet::init> <wrong path> : " + pathSet);
+			result = true;
 		}
 	}
-
-	if (asset2.size() != 0)
-	{
-		result = true;
-	}
-	else if (asset3.size() != 0)
-	{
-		result = true;
-	}
-	//exportSet();
-
 	return(result);
 }
 
 bool ObjectSet::generateID() 
 {
 	bool result = false;
-	KeywordManager * _KM = KeywordManager::getInstance();
 	short getID = _KM->getObjectID(megaScanId, objectId);
-	wcout << getID << endl;
 	if (getID == 1 || getID == 2)
 	{
 		result = true;
@@ -74,18 +51,20 @@ wstring ObjectSet::getObjectID()
 	return(objectId);
 }
 
-bool ObjectSet::setPath(wstring mySourcePath, wstring myTargetPath)
+bool ObjectSet::setIDPath(wstring myMegaId, wstring myObjId , wstring mySourcePath, wstring myTargetPath)
 {
 	bool sourceSet = false;
 	bool targetSet = false;
-	if(FileManager::checkPath(sourcePath) == FOLDER_EXIST)
+	megaScanId = myMegaId;
+	if(FileManager::checkPath(mySourcePath) == FOLDER_EXIST)
 	{
 		sourcePath = mySourcePath;
 		sourceSet = true;
 		//wcout << sourcePath << endl;
 	}
-	if (FileManager::checkPath(myTargetPath) == FOLDER_EXIST && objectId!=L"")
+	if (FileManager::checkPath(myTargetPath) == FOLDER_EXIST && myObjId !=L"")
 	{
+		objectId = myObjId;
 		targetPath = myTargetPath + L"/"+objectId;
 		targetSet = true;
 	}
@@ -100,13 +79,11 @@ bool ObjectSet::setPath(wstring mySourcePath, wstring myTargetPath)
 
 void ObjectSet::generateAsset()
 {
-	FileManager * _FM = FileManager::getInstance();
-	KeywordManager * _KM = KeywordManager::getInstance();
 	vector < wstring > _files;
 	vector < wstring > _folder;
-	wstring _objectFolder = sourcePath + L"/" + megaScanId+L"/";
+	wstring _sourceDir = sourcePath + L"/" + megaScanId+L"/";
 	wstring _newFolder = targetPath + L"/" + objectId;
-	_FM->iterateFolder(_files, _folder, _objectFolder, true);
+	_FM->iterateFolder(_files, _folder, _sourceDir, true);
 	short assetType = 0;
 	for (vector < wstring >::iterator itr = _files.begin(); itr != _files.end(); itr++)
 	{
@@ -130,10 +107,6 @@ void ObjectSet::generateAsset()
 			//todo : create 3D asset 
 			Asset3D my3DAsset(sourcePath + L"/" + megaScanId, *itr, targetPath, _fileName, myKWStr);
 			asset3.push_back(my3DAsset);
-			wcout << "source : " << my3DAsset .getFullSourcePath()<< endl;
-			wcout << "target : " << my3DAsset .getFullTargetPath()<< endl;
-			wcout << "fileName : " << _fileName << endl;
-
 		}
 	}
 }
@@ -148,7 +121,7 @@ void ObjectSet::makeObjectTargetFolder()
 bool ObjectSet::setTst(wstring myTst)
 {
 	bool result = false;
-	if (_TM->checkTstByName(myTst))
+	if (_TM->checkTstByName(myTst) && asset2.size()>0)
 	{
 		tstName = myTst;
 		tst = _TM->getTstByName(tstName);
@@ -207,7 +180,7 @@ bool ObjectSet::makeTextet()
 
 void ObjectSet::exportAsset(bool my2D , bool myTextet , bool my3D)
 {
-	//serialize testet
+	//serialize
 	if (myTextet)
 	{
 		wstring textetExportDir = targetPath + L"/" + objectId + L".textet";
