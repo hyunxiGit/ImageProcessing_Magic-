@@ -2,4 +2,8 @@
 x64/
 Debug/
 ImageProcess/ImageProcess.vcxproj.user
-ImageProcess/x64
+ImageProcess/x64/Debug
+ImageProcess/x64/Release/ImageProcess.exe
+ImageProcess/x64/Release/ImageProcess.iobj
+ImageProcess/x64/Release/ImageProcess.ipdb
+ImageProcess/x64/Release/ImageProcess.pdb
