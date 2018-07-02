@@ -82,7 +82,7 @@ Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset,
 			{
 				wstring _fileName = _asset.getTargetName() + _asset.getStruct().extension;
 				wstring sFilePath = textetSourceDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + _fileName;
-				_textet.sourceNodes[nodeIndex].FilePath = sFilePath;
+				_textet.sourceNodes[nodeIndex].FilePath = formatPath(sFilePath,L"/",L"//");
 			}
 		}
 	}
@@ -98,7 +98,8 @@ Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset,
 
 	for (vector<TextetDest>::iterator itr = _textet.destNodes.begin(); itr != _textet.destNodes.end(); itr++)
 	{
-		(*itr).FilePath = textetDestDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + objId +(*itr).FilePath+ L".dds";
+		wstring dFilePath = textetDestDir + L"/" + _FM->getSubFolder() + L"/" + objId + L"/" + objId + (*itr).FilePath + L".dds";
+		(*itr).FilePath = formatPath(dFilePath, L"/", L"//");
 	}
 
 	return(_textet);
@@ -119,7 +120,7 @@ Textet TextureSetManager::makeEmptyTextet(Tst myTst)
 {
 	Textet _textet;
 	_textet.version = myTst.version;
-	_textet.textureSetType = myTst.tstName;
+	_textet.textureSetType = myTst.tstName + L".tst";
 
 	for (vector<TstSource> ::iterator itr = myTst.sourceNodes.begin(); itr != myTst.sourceNodes.end(); itr++)
 	{
@@ -164,4 +165,27 @@ bool TextureSetManager::exportTextet(wstring path, Textet) {}
 TextureSetManager::TextureSetManager()
 {
 	_FM = FileManager::getInstance();
+}
+
+wstring TextureSetManager::formatPath(wstring myPath , wstring mySStr , wstring myDStr)
+{
+	wstring result = L"";
+	int findPos = 0;
+	
+	do
+	{ 
+		findPos = myPath.find(mySStr);
+		if (findPos != wstring::npos)
+		{
+			result = result + myPath.substr(0, findPos) + myDStr;
+			myPath = myPath.substr(findPos+ mySStr.size(), myPath.size());
+		}
+		else
+		{
+			result = result + myPath;
+			myPath = L"";
+		}
+	} 
+	while (myPath!=L"");
+	return(result);
 }

@@ -10,6 +10,7 @@ public:
 	bool initFile(wstring tstDir , wstring textetImgSourceDir, wstring textetImgDesteDir);
 	Textet makeEmptyTextet(Tst myTst);
 	int getTexetSNodeIndxByName(wstring name ,Textet );
+	wstring formatPath(wstring path, wstring sStr, wstring dStr);
 private:
 
 	FileManager * _FM;
