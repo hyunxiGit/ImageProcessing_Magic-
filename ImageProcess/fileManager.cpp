@@ -73,6 +73,10 @@ bool FileManager::initDirectory(wstring myFolderName)
 		{
 			batchInputPath = sourceDir + L"/" + myFolderName;
 			batchOutputPath = targetDir + L"/" + myFolderName;
+			if (checkPath(batchOutputPath) == ILLEGAL_PATH)
+			{
+				createFolder(batchOutputPath);
+			}
 			sourceCheck = setBatchInputPath(batchInputPath);
 			targetCheck = setBatchExportPath(batchOutputPath);
 			subFolder = myFolderName;

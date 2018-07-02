@@ -82,7 +82,7 @@ void ObjectSet::generateAsset()
 	vector < wstring > _files;
 	vector < wstring > _folder;
 	wstring _sourceDir = sourcePath + L"/" + megaScanId+L"/";
-	wstring _newFolder = targetPath + L"/" + objectId;
+	wstring _newFolder = targetPath + L"/"/* + objectId*/;
 	_FM->iterateFolder(_files, _folder, _sourceDir, true);
 	short assetType = 0;
 	for (vector < wstring >::iterator itr = _files.begin(); itr != _files.end(); itr++)

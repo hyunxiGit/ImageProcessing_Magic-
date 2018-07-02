@@ -22,6 +22,9 @@ public :
 	void export2D();
 	wstring getTargetPath();
 
+	wstring megaScanId;
+	wstring objectId;
+
 private:
 	FileManager * _FM;
 	KeywordManager * _KM;
@@ -34,6 +37,5 @@ private:
 	void generateAsset();
 	wstring sourcePath;//object Folder
 	wstring targetPath;//object folder
-	wstring megaScanId;
-	wstring objectId;
+
 };
