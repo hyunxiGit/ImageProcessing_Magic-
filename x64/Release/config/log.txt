@@ -1,0 +1,3 @@
+set tool folder : D:\work\assetProcess\ImageProcessing_Magic-\x64\Release\config
+set source folder : e:/nicholas_rwc_jx4_data/depot/jx4_sourcedata/graphics/megascans/surfaces
+set target folder : e:/nicholas_rwc_jx4_data/depot/jx4_sourcedata/graphics/materiallib/scans/surfaces
