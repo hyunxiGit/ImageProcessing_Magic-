@@ -98,7 +98,7 @@ void ObjectSet::generateAsset()
 			{
 				//只处理jpg文件
 				Asset2D my2DAsset(sourcePath + L"/" + megaScanId, *itr, targetPath, _fileName, myKWStr);
-				asset2.push_back(my2DAsset);
+				asset2.push_back (my2DAsset);
 			}
 			
 		}
@@ -113,8 +113,6 @@ void ObjectSet::generateAsset()
 
 void ObjectSet::makeObjectTargetFolder() 
 {
-	wcout << "sourcePath : " << sourcePath <<endl;
-	wcout << "targetPath : " << targetPath <<endl;
 	_FM->createFolder(targetPath);
 }
 
@@ -134,8 +132,6 @@ bool ObjectSet::setTst(wstring myTst)
 bool ObjectSet::makeTextet()
 {
 	bool result = false;
-	wcout << "............................." << endl;
-	wcout << "megaScanId : " << megaScanId << endl;
 	if (asset2.size()>0)
 	{
 		vector <Asset2D> assetForTextet;
@@ -147,6 +143,7 @@ bool ObjectSet::makeTextet()
 				continue;
 			}
 
+			//对属于textet的图片名字进行加工
 			//未对应的image 换stru
 			wstring textetImgName = _KM->usageNameConvert(_use);
 			
@@ -155,9 +152,8 @@ bool ObjectSet::makeTextet()
 
 			//wcout << (*itr).getSourceName() << endl;
 			if (textetImgName != L"")
+			//这是textureet img 文件
 			{
-				//这是textureet img 文件
-
 				//未对应的image 换name
 				(*itr).renameByKW((*itr).getStruct().use, textetImgName);
 				//添加对应的textet名字
@@ -173,6 +169,7 @@ bool ObjectSet::makeTextet()
 		if (assetForTextet.size() > 0)
 		{
 			textet =_TM->makeTextset(objectId, assetForTextet, tstName);
+			result = true;
 		}
 	}
 	return(result);
@@ -217,4 +214,9 @@ void ObjectSet::export2D()
 		(*itr).createFile();
 		(*itr).exportAsset();
 	}
+}
+
+wstring ObjectSet::getTargetPath()
+{
+	return(targetPath);
 }

@@ -14,6 +14,6 @@ public:
 	virtual void createFile();
 	void exportAsset();
 private:
-	wstring textetImgName;
+	wstring textetImgName; //textet source node name
 	Image_W image;
 };

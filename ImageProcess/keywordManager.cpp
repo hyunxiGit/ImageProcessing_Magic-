@@ -284,15 +284,11 @@ wstring KeywordManager::makeFileName(wstring myObjectID, wstring mySourceFile , 
 		//analysis keyword usage
 		wstring _kwType = getfileKWType(*itr , resultKWStr);
 	}
-
+	//这里过滤除了jpg fbx以外的格式，以后可能休要添加新格式
 	if ((resultKWStr.extension == L".jpg" )|| (resultKWStr.extension == L".fbx"))
 	{
 		result = nameFromFileKWStr(myObjectID, resultKWStr);
 		return(result);
-	}
-	else
-	{
-		wcout << "ignoreing file : " << mySourceFile <<endl; 
 	}
 }
 
@@ -444,6 +440,7 @@ wstring KeywordManager::nameFromFileKWStr(wstring myObjectID, fileKWStr myKWStr)
 	}
 	if (myKWStr.extension != L"")
 	{
+		//之所以不加extention是因为之后会有程序改变
 		//result += myKWStr.extension;
 	}
 	return(result);

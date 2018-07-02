@@ -9,17 +9,8 @@ Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPat
 
 void Asset2D::exportAsset()
 {
-	if (getStruct().use == L"preview")
-	{
-		//preview image
-		//copy image
-	}
-	else
-	{
-		//other images
-		wstring _path = getFullTargetPath()+ getStruct().extension;
-		image.write(_path);
-	}
+	wstring _path = getFullTargetPath();
+	image.write(_path);
 }
 
 wstring Asset2D::getTextetImgName()

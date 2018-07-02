@@ -20,6 +20,7 @@ public :
 	void makeObjectTargetFolder();
 	void exportAsset(bool export2D, bool exportTextet, bool export3D = false);
 	void export2D();
+	wstring getTargetPath();
 
 private:
 	FileManager * _FM;
