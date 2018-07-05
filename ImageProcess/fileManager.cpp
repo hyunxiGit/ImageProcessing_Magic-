@@ -24,7 +24,7 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-bool FileManager::initDirectory(wstring myFolderName)
+bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 {
 	//1 : success
 	//-1: source failed
@@ -32,7 +32,6 @@ bool FileManager::initDirectory(wstring myFolderName)
 	//-3 : tool failed
 
 	//取得config位置
-
 	bool result = false;
 	bool toolDirSet = setToolConfigPath();
 	if (toolDirSet)
@@ -77,7 +76,13 @@ bool FileManager::initDirectory(wstring myFolderName)
 		if (sourceDir != L"" && targetDir != L"")
 		{
 			batchInputPath = sourceDir + L"/" + myFolderName;
-			batchOutputPath = targetDir + L"/" + myFolderName;
+			batchOutputPath = targetDir;
+			if (useSubFolder)
+			{
+				batchOutputPath = batchOutputPath +L"/" + myFolderName;
+				textetDestDir = textetDestDir + L"/" + myFolderName;
+				textetSourceDir = textetSourceDir + L"/" + myFolderName;
+			}
 			if (checkPath(batchOutputPath) == ILLEGAL_PATH)
 			{
 				createFolder(batchOutputPath);
