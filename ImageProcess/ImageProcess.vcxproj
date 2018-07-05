@@ -206,6 +206,16 @@
     <ClCompile Include="tst.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\ImageProcessConfig\en-dictionary.txt" />
+    <Text Include="..\ImageProcessConfig\log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ImageProcessConfig\fileKW.json" />
+    <None Include="..\ImageProcessConfig\IDMAP.json" />
+    <None Include="..\ImageProcessConfig\usageNameMap.json" />
+    <None Include="..\ImageProcessConfig\WorkingPath.ini" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

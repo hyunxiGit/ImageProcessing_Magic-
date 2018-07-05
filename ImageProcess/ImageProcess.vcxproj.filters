@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{ab7d6dc2-b1b0-4d06-a9a1-9afd1f9184df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -110,5 +113,27 @@
     <ClCompile Include="textet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\ImageProcessConfig\en-dictionary.txt">
+      <Filter>config</Filter>
+    </Text>
+    <Text Include="..\ImageProcessConfig\log.txt">
+      <Filter>config</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ImageProcessConfig\fileKW.json">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\ImageProcessConfig\IDMAP.json">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\ImageProcessConfig\usageNameMap.json">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\ImageProcessConfig\WorkingPath.ini">
+      <Filter>config</Filter>
+    </None>
   </ItemGroup>
 </Project>

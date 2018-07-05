@@ -47,10 +47,6 @@ bool FileManager::initDirectory(wstring myFolderName)
 	bool targetDirGood = checkPath(targetDir);
 	bool tstDirGood = checkPath(tstPath);
 	bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
-	wcout << "targetDir : " << targetDir << endl;
-	wcout << "textetSourceDir : " << textetSourceDir << endl;
-	wcout << "textetDirGood : " << textetDirGood << endl;
-
 
 	if (!sourceDirGood)
 	{
@@ -188,12 +184,15 @@ bool  FileManager::readIni()
 
 bool  FileManager::setToolConfigPath()
 {
+	wstring toolFolderName = L"ImageProcessing_Magic-";
 	//取得本工具下configfolder
 	TCHAR szFilePath[MAX_PATH + 1] = { 0 };
+
 	GetModuleFileName(NULL, szFilePath, MAX_PATH);
-	(_tcsrchr(szFilePath, _T('\\')))[1] = 0; // 删除文件名，只获得路径字串
 	wstring _path(szFilePath);
-	_path += L"config";
+	wstring::size_type pos = _path.find(toolFolderName) + toolFolderName.size();
+	_path = _path.substr(0, pos) + L"\\ImageProcessConfig";
+	wcout << _path << endl;
 
 	bool result = false;
 	if (checkPath(_path) == ILLEGAL_PATH)

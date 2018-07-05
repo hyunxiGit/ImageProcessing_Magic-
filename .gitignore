@@ -3,8 +3,4 @@ Debug/
 ImageProcess/x64
 ImageProcess/ImageProcess.vcxproj.user
 ImageProcess/Debug
-x64/Release/ImageProcess.exe
-x64/Release/ImageProcess.iobj
-x64/Release/ImageProcess.ipdb
-x64/Release/ImageProcess.pdb
-x64/Debug
+x64/
