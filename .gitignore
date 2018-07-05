@@ -5,3 +5,4 @@ ImageProcess/ImageProcess.vcxproj.user
 ImageProcess/Debug
 x64/
 ImageProcessConfig/log.txt
+ImageProcessConfig/WorkingPath.ini

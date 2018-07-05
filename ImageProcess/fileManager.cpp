@@ -272,7 +272,9 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 				wstring _value = _line.substr(_equalPos+1, _line.size());
 				if (para == L"sourceDir")
 				{
+					wcout << _value << endl;
 					sourceDir = _value;
+					wcout << sourceDir << endl;
 				}
 				else if (para == L"targetDir")
 				{
