@@ -42,7 +42,6 @@ public:
 	static FileManager* getInstance();
 	static short checkPath(wstring);
 	bool initDirectory(wstring folderName);
-	bool initFile();
 	bool setToolConfigPath();
 	bool setBatchInputPath(wstring);
 	bool setBatchExportPath(wstring);

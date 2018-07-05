@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <algorithm>  
 
-#define MAX_PROCESS_FOLDER_NUMBER 300
-
 using namespace std;
 FileManager* FileManager::instance = nullptr;
 
@@ -69,6 +67,13 @@ bool FileManager::initDirectory(wstring myFolderName)
 	{
 		bool sourceCheck;
 		bool targetCheck;
+
+		bool keyWordExist;
+		bool logExist;
+		bool idExist;
+		bool dictionartExist;
+		bool nameUsageExist;
+
 		if (sourceDir != L"" && targetDir != L"")
 		{
 			batchInputPath = sourceDir + L"/" + myFolderName;
@@ -83,76 +88,61 @@ bool FileManager::initDirectory(wstring myFolderName)
 		}
 		if (sourceCheck && targetCheck)
 		{
-			result = initFile();
+			keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
+			logExist = (checkPath(logPath) == FILE_EXIST);
+			idExist = (checkPath(IDJsonPath) == FILE_EXIST);
+			dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
+			nameUsageExist = (checkPath(usageNamePath) == FILE_EXIST);
+
+			if (!logExist)
+			{
+				createFile(logPath);
+				logExist = true;
+			}
+
+			if (!idExist)
+			{
+				createFile(IDJsonPath);
+				idExist = true;
+			}
+
+			if (!keyWordExist)
+			{
+				Log::log(L"<error> < FileManager::initFile> <missing file> : " + keyWordJsonPath);
+				//outputLog this file 必须存在
+				result = false;
+			}
+
+			if (!dictionartExist)
+			{
+				//outputLog this file 必须存在
+				Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
+				result = false;
+			}
+
+			if (!nameUsageExist)
+			{
+				//name usage file 必须存在
+				Log::log(L"<error> < FileManager::initFile> <missing file> : " + usageNamePath);
+				result = false;
+			}
+
+
+			if (logExist && keyWordExist && idExist && dictionartExist && nameUsageExist)
+			{
+				KeywordManager * myKM = KeywordManager::getInstance();
+				Log * myLog = Log::getInstance();
+				TextureSetManager * myTM = TextureSetManager::getInstance();
+
+				myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
+				myLog->setLogPath(logPath);
+				myTM->initFile(tstPath, textetSourceDir, textetDestDir);
+
+				result = true;
+			}
 		}
 	}
 	
-	return(result);
-}
-
-bool FileManager::initFile()
-//initialize all needed objects from file
-{
-	bool result = true;
-	IDJsonPath = getToolFileStoragePath() +L"/" + IDMAP_JSON;
-	keyWordJsonPath = getToolFileStoragePath() +L"/" + KEYWORD_JSON;
-	dictionJsonPath = getToolFileStoragePath() + L"/" + DICTION_TXT;
-	usageNamePath = getToolFileStoragePath() + L"/" + USAGENAME_JSON;
-	logPath = getToolFileStoragePath() + L"/" + LOG_TXT;
-
-	
-	bool logExist = (checkPath(logPath) == FILE_EXIST);
-	bool keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
-	bool idExist = (checkPath(IDJsonPath) == FILE_EXIST);
-	bool dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
-	bool nameUsageExist = (checkPath(usageNamePath) == FILE_EXIST);
-
-
-
-	if (!logExist)
-	{
-		createFile(logPath);
-		logExist = true;
-	}
-
-	if(!keyWordExist)
-	{
-		Log::log(L"<error> < FileManager::initFile> <missing file> : " + keyWordJsonPath);
-		//outputLog this file 必须存在
-		result = false;
-	}
-
-	if (!dictionartExist)
-	{
-		//outputLog this file 必须存在
-		Log::log(L"<error> < FileManager::initFile> <missing file> : " + dictionJsonPath);
-		result = false;
-	}
-
-	if (!nameUsageExist)
-	{
-		//name usage file 必须存在
-		Log::log(L"<error> < FileManager::initFile> <missing file> : " + usageNamePath);
-		result = false;
-	}
-		
-	if (!idExist)
-	{
-		createFile(IDJsonPath);
-		idExist = true;
-	}
-
-	if (logExist && keyWordExist && idExist && dictionartExist && nameUsageExist)
-	{
-		KeywordManager * myKM = KeywordManager::getInstance();
-		Log * myLog = Log::getInstance();
-		TextureSetManager * myTM = TextureSetManager::getInstance();
-
-		myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
-		myLog->setLogPath(logPath);
-		myTM->initFile(tstPath , textetSourceDir , textetDestDir);
-	}
-
 	return(result);
 }
 
@@ -192,7 +182,6 @@ bool  FileManager::setToolConfigPath()
 	wstring _path(szFilePath);
 	wstring::size_type pos = _path.find(toolFolderName) + toolFolderName.size();
 	_path = _path.substr(0, pos) + L"\\ImageProcessConfig";
-	wcout << _path << endl;
 
 	bool result = false;
 	if (checkPath(_path) == ILLEGAL_PATH)
@@ -292,22 +281,38 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 				else if (para == L"tstDir")
 				{
 					tstPath = _value;
-					//targetDir = para;
 				}
 				else if (para == L"P4root")
 				{
 					p4Root = _value;
-					//targetDir = para;
 				}
 				else if (para == L"textetSourceDir")
 				{
 					textetSourceDir = _value;
-					//targetDir = para;
 				}
 				else if (para == L"textetDestDir")
 				{
 					textetDestDir = _value;
-					//targetDir = para;
+				}
+				else if (para == L"kwJson")
+				{
+					keyWordJsonPath = configPath + L"/" + _value;
+				}
+				else if (para == L"idMapJson")
+				{
+					IDJsonPath = configPath + L"/" + _value;
+				}
+				else if (para == L"dictTxt")
+				{
+					dictionJsonPath = configPath + L"/" + _value;
+				}
+				else if (para == L"usageNameJson")
+				{
+					usageNamePath = configPath + L"/" + _value;
+				}
+				else if (para == L"logTxt")
+				{
+					logPath = configPath + L"/" + _value;
 				}
 			}
 		}

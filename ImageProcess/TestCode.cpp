@@ -108,7 +108,7 @@ void logFileIn(std::vector <std::wstring> & myInVector)
 	bool overFlow = false;
 
 	//open file
-	myLog.open(LOG_PATH, std::ifstream::in);
+	myLog.open(L"d:/test.txt", std::ifstream::in);
 	if (!myLog.is_open())
 	{
 		cout << "faild to open the file" << endl;
@@ -132,7 +132,7 @@ void logFilesOut(std::vector <std::wstring> & myOutVector)
 	myLog.imbue(chs);
 
 	//open file
-	myLog.open(LOG_PATH, ios::app);
+	myLog.open(L"d:/test.txt", ios::app);
 
 	if (myLog.is_open())
 	{
