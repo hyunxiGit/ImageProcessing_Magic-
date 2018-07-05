@@ -47,6 +47,10 @@ bool FileManager::initDirectory(wstring myFolderName)
 	bool targetDirGood = checkPath(targetDir);
 	bool tstDirGood = checkPath(tstPath);
 	bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
+	wcout << "targetDir : " << targetDir << endl;
+	wcout << "textetSourceDir : " << textetSourceDir << endl;
+	wcout << "textetDirGood : " << textetDirGood << endl;
+
 
 	if (!sourceDirGood)
 	{
@@ -173,8 +177,8 @@ bool  FileManager::readIni()
 		while (!inFile.eof())
 		{
 			inFile >> line;
-			//这里有个路径转化。。。看中国需要保留还是去掉
-			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+			//这里有个路径转化。。。看中国需要保留还是去掉.
+			//std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 			myInitVector.push_back(Serialize::UTF8ToWString(line));
 		}
 	}
@@ -265,7 +269,7 @@ wstring FileManager::getTextetDestDir() { return(textetDestDir); }
 
 wstring FileManager::getSubFolder() {return(subFolder);}
 
-//todo: 这里需要换成G2312编码？或者不用？
+//todo: 加读ini的api不使用自己解析
 void FileManager::paseInitFile(vector<wstring> myInit)
 {
 	for (vector<wstring>::iterator itr = myInit.begin(); itr != myInit.end(); itr++)
@@ -278,15 +282,15 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 			{	
 				wstring para = _line.substr(0, _equalPos);
 				wstring _value = _line.substr(_equalPos+1, _line.size());
-				if (para == L"sourcedir")
+				if (para == L"sourceDir")
 				{
 					sourceDir = _value;
 				}
-				else if (para == L"targetdir")
+				else if (para == L"targetDir")
 				{
 					targetDir = _value;
 				}
-				else if (para == L"tstdir")
+				else if (para == L"tstDir")
 				{
 					tstPath = _value;
 					//targetDir = para;
@@ -296,12 +300,12 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 					p4Root = _value;
 					//targetDir = para;
 				}
-				else if (para == L"textetsourcedir")
+				else if (para == L"textetSourceDir")
 				{
 					textetSourceDir = _value;
 					//targetDir = para;
 				}
-				else if (para == L"textetdestdir")
+				else if (para == L"textetDestDir")
 				{
 					textetDestDir = _value;
 					//targetDir = para;
