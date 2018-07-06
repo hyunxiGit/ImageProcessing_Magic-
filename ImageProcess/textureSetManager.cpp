@@ -69,7 +69,7 @@ Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset,
 	for (vector<Asset2D>::iterator itr = myAsset.begin(); itr != myAsset.end(); itr++)
 	{
 		Asset2D _asset = *itr;
-		wstring _assetPath = _asset.getTargetPath();
+		wstring _assetPath = _asset.getSourcePath();
 		wstring::size_type _pos = _assetPath.find(textetSourceDir);
 		if (_pos != wstring::npos)
 		{
@@ -79,11 +79,26 @@ Textet TextureSetManager::makeTextset(wstring objId, vector<Asset2D>  & myAsset,
 
 			if (nodeIndex != -1)
 			{
-				wstring _fileName = _asset.getTargetName() + _asset.getStruct().extension;
-				wstring sFilePath =  _assetPath.substr(_pos, _assetPath.size())+ L"/" + _fileName;
+				_assetPath = _assetPath.substr(_pos, _assetPath.size());
+				wstring sFilePath = _assetPath + L"/" + _asset.getSourceName();
 				_textet.sourceNodes[nodeIndex].FilePath = formatPath(sFilePath,L"/",L"//");
 			}
 		}
+		//wstring _assetPath = _asset.getTargetPath();
+		//wstring::size_type _pos = _assetPath.find(textetSourceDir);
+		//if (_pos != wstring::npos)
+		//{
+		//	//textet source Name项
+		//	wstring sName = _asset.getTextetImgName();
+		//	int nodeIndex = getTexetSNodeIndxByName(sName, _textet);
+
+		//	if (nodeIndex != -1)
+		//	{
+		//		wstring _fileName = _asset.getTargetName() + _asset.getStruct().extension;
+		//		wstring sFilePath =  _assetPath.substr(_pos, _assetPath.size())+ L"/" + _fileName;
+		//		_textet.sourceNodes[nodeIndex].FilePath = formatPath(sFilePath,L"/",L"//");
+		//	}
+		//}
 	}
 
 	//todo ： need to add default image when there's no image for the node

@@ -43,7 +43,7 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	bool sourceDirGood = checkPath(sourceDir);
 	bool targetDirGood = checkPath(targetDir);
 	bool tstDirGood = checkPath(tstPath);
-	bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
+	//bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
 
 	if (!sourceDirGood)
 	{
@@ -57,12 +57,12 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	{
 		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + tstPath);
 	}
-	if (!textetDirGood)
-	{
-		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetSourceDir);
-	}
+	//if (!textetDirGood)
+	//{
+	//	Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetSourceDir);
+	//}
 
-	if (sourceDirGood && targetDirGood && tstDirGood && textetDirGood)
+	if (sourceDirGood && targetDirGood && tstDirGood /*&& textetDirGood*/)
 	{
 		bool sourceCheck;
 		bool targetCheck;

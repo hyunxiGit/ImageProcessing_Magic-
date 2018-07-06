@@ -18,7 +18,7 @@ public :
 	bool makeTextet();
 	void reformat2D(wstring myFormat);
 	void makeObjectTargetFolder();
-	void exportAsset(bool export2D, bool exportTextet, bool export3D = false);
+	void exportAsset(bool my2D, bool myTextet, wstring myTextetPath, bool my3D = false);
 	void export2D();
 	wstring getTargetPath();
 

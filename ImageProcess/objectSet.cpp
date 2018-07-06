@@ -175,12 +175,22 @@ bool ObjectSet::makeTextet()
 	return(result);
 }
 
-void ObjectSet::exportAsset(bool my2D , bool myTextet , bool my3D)
+void ObjectSet::exportAsset(bool my2D , bool myTextet , wstring myTextetPath , bool my3D)
 {
 	//serialize
 	if (myTextet)
 	{
-		wstring textetExportDir = targetPath + L"/" + objectId + L".textet";
+		wstring textetExportDir;
+		if (myTextetPath != L"")
+		{
+			textetExportDir = myTextetPath + L"/" + objectId + L".textet";
+		}
+		else
+		{
+			textetExportDir = targetPath + L"/" + objectId + L".textet";
+		}
+		
+		wcout << textetExportDir << endl;
 		Serialize::exportTextet(textetExportDir, textet);
 	}
 
