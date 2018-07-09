@@ -43,7 +43,8 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	bool sourceDirGood = checkPath(sourceDir);
 	bool targetDirGood = checkPath(targetDir);
 	bool tstDirGood = checkPath(tstPath);
-	//bool textetDirGood = targetDir.find(textetSourceDir) != wstring::npos;
+	bool textetExportGood = checkPath(textetExportDir)==FOLDER_EXIST;
+	bool textetDirGood = sourceDir.find(textetSourceDir) != wstring::npos;
 
 	if (!sourceDirGood)
 	{
@@ -57,12 +58,15 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	{
 		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + tstPath);
 	}
-	//if (!textetDirGood)
-	//{
-	//	Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetSourceDir);
-	//}
-
-	if (sourceDirGood && targetDirGood && tstDirGood /*&& textetDirGood*/)
+	if (!textetExportGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetExportGood);
+	}
+	if (!textetDirGood)
+	{
+		Log::log(L"<error> < FileManager::initDirectory> <illegal path> : WorkingPath.ini -> " + textetExportGood);
+	}
+	if (sourceDirGood && targetDirGood && tstDirGood && textetExportGood)
 	{
 		bool sourceCheck;
 		bool targetCheck;
@@ -168,7 +172,7 @@ bool  FileManager::readIni()
 		while (!inFile.eof())
 		{
 			inFile >> line;
-			//这里有个路径转化。。。看中国需要保留还是去掉.
+			//这里有个路径转化大小写。。。
 			//std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 			myInitVector.push_back(Serialize::UTF8ToWString(line));
 		}
@@ -256,6 +260,8 @@ wstring FileManager::getDictionTxtPath(){	return(dictionJsonPath);	}
 
 wstring FileManager::getUsageNameJsonPath(){	return(usageNamePath);}
 
+wstring FileManager::getTextetExportDir() { return(textetExportDir); }
+
 wstring FileManager::getTextetSourceDir() { return(textetSourceDir); }
 
 wstring FileManager::getTextetDestDir() { return(textetDestDir); }
@@ -300,6 +306,10 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 				else if (para == L"textetDestDir")
 				{
 					textetDestDir = _value;
+				}
+				else if (para == L"textetExport")
+				{
+					textetExportDir = _value;
 				}
 				else if (para == L"kwJson")
 				{

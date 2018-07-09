@@ -175,36 +175,20 @@ bool ObjectSet::makeTextet()
 	return(result);
 }
 
-void ObjectSet::exportAsset(bool my2D , bool myTextet , wstring myTextetPath , bool my3D)
+void ObjectSet::exportTextet(wstring myExportPath)
 {
-	//serialize
-	if (myTextet)
+	wstring textetExportDir;
+	if (myExportPath != L"")
 	{
-		wstring textetExportDir;
-		if (myTextetPath != L"")
-		{
-			textetExportDir = myTextetPath + L"/" + objectId + L".textet";
-		}
-		else
-		{
-			textetExportDir = targetPath + L"/" + objectId + L".textet";
-		}
-		
-		wcout << textetExportDir << endl;
-		Serialize::exportTextet(textetExportDir, textet);
+		textetExportDir = myExportPath + L"/" + objectId + L".textet";
+	}
+	else
+	{
+		textetExportDir = targetPath + L"/" + objectId + L".textet";
 	}
 
-	if (my2D)
-	{
-		reformat2D(L".tga");
-		export2D();
-	}
-
-	if (my3D)
-	{
-
-	}
-	
+	wcout << textetExportDir << endl;
+	Serialize::exportTextet(textetExportDir, textet);
 }
 
 void ObjectSet::reformat2D(wstring myFormat/*L".tga"*/)
@@ -215,14 +199,23 @@ void ObjectSet::reformat2D(wstring myFormat/*L".tga"*/)
 	}
 }
 
-void ObjectSet::export2D() 
+void ObjectSet::export2D( wstring myFormat) 
 {
 	//create file test
 	for (vector<Asset2D>::iterator itr = asset2.begin(); itr != asset2.end(); itr++)
 	{
 		//wcout << "new extension is :" << (*itr).getStruct().extension << endl;
-		(*itr).createFile();
-		(*itr).exportAsset();
+		if (myFormat != L"")
+		{
+			(*itr).reformat(myFormat);
+			(*itr).createFile();
+			(*itr).exportAsset();
+		}
+		else
+		{
+			wcout << "The format is ilegal";
+		}
+
 	}
 }
 

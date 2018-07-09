@@ -18,9 +18,9 @@ public :
 	bool makeTextet();
 	void reformat2D(wstring myFormat);
 	void makeObjectTargetFolder();
-	void exportAsset(bool my2D, bool myTextet, wstring myTextetPath, bool my3D = false);
-	void export2D();
+	void export2D(wstring myFormat);
 	wstring getTargetPath();
+	void exportTextet(wstring exportPath);
 
 	wstring megaScanId;
 	wstring objectId;

@@ -38,6 +38,8 @@ private:
 	wstring batchInputPath;
 	wstring batchOutputPath;
 
+	wstring textetExportDir;
+
 public:
 	static FileManager* getInstance();
 	static short checkPath(wstring);
@@ -55,6 +57,7 @@ public:
 	wstring getDictionTxtPath();
 	wstring getUsageNameJsonPath();
 	wstring getTextetSourceDir();
+	wstring getTextetExportDir();
 	wstring getTextetDestDir();
 	wstring getSubFolder();
 	void iterateFolder(vector <std::wstring> & files, std::vector <std::wstring> & folders, wstring targetFolder, bool mySubFolder = false , wstring subPath = L"");
