@@ -46,6 +46,8 @@ KeywordManager * KeywordManager::getInstance()
 
 bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myDiction , wstring myNameUsagePath)
 {
+	bool result = false;
+
 	Serialize::importJson(idMap, myIDPath);
 	Serialize::importJson(kWMap, myKWPath);
 	Serialize::importWstringMapJson(usageNameMap, myNameUsagePath);
@@ -66,6 +68,7 @@ bool KeywordManager::initJsonMap(wstring myIDPath, wstring myKWPath, wstring myD
 
 bool KeywordManager :: initDictionary(wstring myDictionPath)
 {
+	bool result = false;
 	const wchar_t * _path = (wchar_t *)myDictionPath.c_str();
 	//strcpy_s(dictionaryPath, MAX_PATH, "d:/en-dictionary.txt");
 	wstring line;
@@ -85,6 +88,11 @@ bool KeywordManager :: initDictionary(wstring myDictionPath)
 		}
 	}
 	inFile.close();
+	if (dictionary.size() > 0)
+	{
+		result = true;
+	}
+	return(result);
 }
 
 bool KeywordManager::dictionarySearch(std::wstring myCheck)
@@ -288,8 +296,8 @@ wstring KeywordManager::makeFileName(wstring myObjectID, wstring mySourceFile , 
 	if ((resultKWStr.extension == L".jpg" )|| (resultKWStr.extension == L".fbx"))
 	{
 		result = nameFromFileKWStr(myObjectID, resultKWStr);
-		return(result);
 	}
+	return (result);
 }
 
 wstring KeywordManager::usageNameConvert(wstring myUsage)
@@ -410,7 +418,9 @@ bool KeywordManager::makeFileKeyword()
 	_fileKWMap[L"lod"] = lod;
 	_fileKWMap[L"variation"] = variation;
 
-	Serialize::exportJson(_fileKWMap , L"d:/fileKW.json");
+	//Serialize::exportJson(_fileKWMap , L"d:/fileKW.json");
+
+	return true;
 }
 
 wstring KeywordManager::nameFromFileKWStr(wstring myObjectID, fileKWStr myKWStr)

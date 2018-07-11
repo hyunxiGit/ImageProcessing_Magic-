@@ -21,13 +21,13 @@ class Serialize
 public:
 	
 	static void exportJson(map<wstring, vector<wstring>> , wstring);
-	static void importJson(map<wstring, vector<wstring>> &, wstring);
+	static bool importJson(map<wstring, vector<wstring>> &, wstring);
 	static void exportWstringMapJson(map<wstring, wstring> , wstring);
 	static void importWstringMapJson(map<wstring, wstring> &, wstring);
-	static void importTst(wstring, Tst &);
+	static bool importTst(wstring, Tst &);
 	static void exportTextet(wstring, Textet);
 	static void exportJsonFile(Document & , wstring);
-	static void importJsonFile(Document & result, wstring);
+	static bool importJsonFile(Document & result, wstring);
 	static void setWstring(Value & myValue, Document & doc, wstring myWStr);
 	//todo: 这里用不用分出去一个类
 	static std::string wStringToUTF8(std::wstring);

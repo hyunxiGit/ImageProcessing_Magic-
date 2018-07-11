@@ -22,7 +22,13 @@ void Log::log(std::wstring info)
 
 int Log::setLogPath(wstring myPath)
 {
-	logPath = myPath;
+	bool result = false;
+	if (myPath !=L"")
+	{
+		logPath = myPath;
+		result = true;
+	}
+	return (result);
 }
 
 wstring Log::getLogPath()

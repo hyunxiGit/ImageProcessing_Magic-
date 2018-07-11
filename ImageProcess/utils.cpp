@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "stdafx.h"#
+#include "stdafx.h"
 extern locale loc;
 //wchar_t ** Utils::make2dArray(int myLength , int myCount )
 //{

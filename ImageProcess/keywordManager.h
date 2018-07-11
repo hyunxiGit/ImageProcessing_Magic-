@@ -7,11 +7,20 @@
 using namespace std;
 struct fileKWStr
 {
-	wstring use = L"";
-	wstring extension = L"";
-	wstring size = L"";
-	wstring lod = L"";
-	wstring variation = L"";
+	wstring use;
+	wstring extension;
+	wstring size;
+	wstring lod;
+	wstring variation;
+
+	fileKWStr()
+	{
+		use = L"";
+		extension = L"";
+		size = L"";
+		lod = L"";
+		variation = L"";
+	}
 };
 
 class KeywordManager

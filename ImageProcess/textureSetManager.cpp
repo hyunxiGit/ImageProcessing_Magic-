@@ -17,6 +17,8 @@ TextureSetManager * TextureSetManager::getInstance()
 bool TextureSetManager::initFile(wstring myTstDir , wstring myTextetSourceImgDir , wstring myTextetDestImgDir)
 //myTstDir ： tst文件在磁盘上的位置  ， myTextetSourceImgDir 和 myTextetDestImgDir为固定的需要写入textet source img 和 dest img 的相对路径
 {
+	bool result = false;
+
 	vector <std::wstring> _files;
 	vector <std::wstring> _folders;
 	_FM->iterateFolder(_files, _folders, myTstDir);
@@ -34,17 +36,25 @@ bool TextureSetManager::initFile(wstring myTstDir , wstring myTextetSourceImgDir
 	{
 		textetDestDir = myTextetDestImgDir;
 	}
+	if (_files.size() > 0 && myTextetSourceImgDir != L"" && myTextetDestImgDir != L"")
+	{
+		result = true;
+	}
+
+	return(result);
 }
 
 bool TextureSetManager::parseTstFile(wstring myPath)
 {
+	bool result = false;
 	wstring::size_type _pos1 = myPath.rfind(L"/") + 1;
 	wstring::size_type _pos2 = myPath.rfind(L".") ;
 	wstring _tstName = myPath.substr(_pos1, _pos2-_pos1);
 	Tst _tst = Tst();
 	_tst.tstName = _tstName;
-	Serialize::importTst(myPath, _tst);
+	result = Serialize::importTst(myPath, _tst);
 	tsts.push_back( _tst);
+	return(result);
 }
 
 bool TextureSetManager::checkTstByName(wstring myTstName)
@@ -134,7 +144,7 @@ Textet TextureSetManager::makeEmptyTextet(Tst myTst)
 {
 	Textet _textet;
 	_textet.version = myTst.version;
-	_textet.textureSetType = myTst.tstName + L".tst";
+	_textet.textureSetType = myTst.tstName /*+ L".tst"*/;
 
 	for (vector<TstSource> ::iterator itr = myTst.sourceNodes.begin(); itr != myTst.sourceNodes.end(); itr++)
 	{
@@ -174,7 +184,10 @@ int TextureSetManager::getTexetSNodeIndxByName( wstring myName , Textet myTextet
 }
 
 
-bool TextureSetManager::exportTextet(wstring path, Textet) {}
+bool TextureSetManager::exportTextet(wstring path, Textet) 
+{
+	return true;
+}
 
 TextureSetManager::TextureSetManager()
 {

@@ -44,28 +44,31 @@ void Serialize::exportJson(map<wstring, vector<wstring>> myObjectIDMap, wstring 
 	Serialize::exportJsonFile(_document, myPath);
 }
 
-void Serialize::importJson(map<wstring, vector<wstring>> & result, wstring myFilePath)
+bool Serialize::importJson(map<wstring, vector<wstring>> & resultDoc, wstring myFilePath)
 {
 	//import json 到 <objectID : [megaID, megaID, ...]> 
 	//<Vector>
-
+	bool result = false;
 	rapidjson::Document _document;
 	//todo : path 修改
-	Serialize::importJsonFile(_document, myFilePath);
-
-	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	result = Serialize::importJsonFile(_document, myFilePath);
+	if (result)
 	{
-		wstring _wObjectID = Serialize::UTF8ToWString(itr->name.GetString());
-		vector<wstring> _megaScanID;
-
-		const Value& _a = itr->value;
-		for (Value::ConstValueIterator itrA = _a.Begin(); itrA != _a.End(); itrA++)
+		for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
 		{
-			wstring _megaID = Serialize::UTF8ToWString((itrA->GetString()));
-			_megaScanID.push_back(_megaID);
+			wstring _wObjectID = Serialize::UTF8ToWString(itr->name.GetString());
+			vector<wstring> _megaScanID;
+
+			const Value& _a = itr->value;
+			for (Value::ConstValueIterator itrA = _a.Begin(); itrA != _a.End(); itrA++)
+			{
+				wstring _megaID = Serialize::UTF8ToWString((itrA->GetString()));
+				_megaScanID.push_back(_megaID);
+			}
+			resultDoc[_wObjectID] = _megaScanID;
 		}
-		result[_wObjectID] = _megaScanID;
 	}
+	return(result);
 }
 
 void Serialize::exportWstringMapJson(map<wstring, wstring> myMap, wstring myPath)
@@ -116,8 +119,9 @@ void Serialize::importWstringMapJson(map<wstring, wstring> & result, wstring myF
 	}
 }
 
-void Serialize::importJsonFile(Document & result , wstring myPath)
+bool Serialize::importJsonFile(Document & resultDoc , wstring myPath)
 {
+	bool result = false;
 	//support both ASKII and Unicode
 	const wchar_t * _path = (wchar_t *)myPath.c_str();
 
@@ -127,6 +131,7 @@ void Serialize::importJsonFile(Document & result , wstring myPath)
 	err = _wfopen_s(&fp, _path,L"r");
 	if (err == 0)
 	{
+		result = true;
 	}
 	else
 	{
@@ -135,76 +140,83 @@ void Serialize::importJsonFile(Document & result , wstring myPath)
 	char readBuffer[65536];
 	rapidjson :: FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
-	result.ParseStream(is);
+	resultDoc.ParseStream(is);
 	fclose(fp);
+	return(result);
 }
 
-void Serialize::importTst( wstring myPath , Tst & myTst)
+bool Serialize::importTst( wstring myPath , Tst & myTst)
 {
+	bool result = false;
 	rapidjson::Document _document;
-	Serialize::importJsonFile(_document, myPath);
-	vector<Value> _source;
-	for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+	result = Serialize::importJsonFile(_document, myPath);
+	if (result)
 	{
-		wstring _tag = Serialize::UTF8ToWString(itr->name.GetString());
+		vector<Value> _source;
+		for (Value::ConstMemberIterator itr = _document.MemberBegin(); itr != _document.MemberEnd(); ++itr)
+		{
+			wstring _tag = Serialize::UTF8ToWString(itr->name.GetString());
 
-		if (_tag == L"Version") 
-		{
-			wstring _v = Serialize::UTF8ToWString(itr->value.GetString());
-		}
-		else if (_tag == L"Source")
-		{
-			const Value& source = _document["Source"];
-			for (SizeType i = 0; i < source.Size(); i++) 
+			if (_tag == L"Version")
 			{
-				TstSource _tstSStru;
-				const Value& _imageNode = source[i];
-
-				const char * myStrNa = "Name";
-				_tstSStru.name = Serialize::UTF8ToWString(_imageNode[myStrNa].GetString());
-				const char * myStrFor = "Format";
-				_tstSStru.format = Serialize::UTF8ToWString(_imageNode[myStrFor].GetString());
-				const char * myStrCS = "ColorSpace";
-				_tstSStru.colorSpace = Serialize::UTF8ToWString(_imageNode[myStrCS].GetString());
-				const char * myStrID = "DestID";
-				_tstSStru.destID = Serialize::UTF8ToWString(_imageNode[myStrID].GetString());
-				const char * myStrDc = "DestChannel";
-				_tstSStru.destChannerl = Serialize::UTF8ToWString(_imageNode[myStrDc].GetString());
-				myTst.sourceNodes.push_back(_tstSStru);
+				wstring _v = Serialize::UTF8ToWString(itr->value.GetString());
 			}
-				
-		}
-		else if (_tag == L"Dest")
-		{
-			const Value& target = _document["Dest"];
-			for (SizeType i = 0; i < target.Size(); i++)
+			else if (_tag == L"Source")
 			{
-				TstDest _tstTStru;
-				const Value& _imageNode = target[i];
+				const Value& source = _document["Source"];
+				for (SizeType i = 0; i < source.Size(); i++)
+				{
+					TstSource _tstSStru;
+					const Value& _imageNode = source[i];
 
-				const char * myStrID = "ID";
-				_tstTStru.ID = Serialize::UTF8ToWString(_imageNode[myStrID].GetString());
-				const char * myStrNS = "NameSuffix";
-				_tstTStru.NameSuffix = Serialize::UTF8ToWString(_imageNode[myStrNS].GetString());
-				const char * myStrFo = "Format";
-				_tstTStru.Format = Serialize::UTF8ToWString(_imageNode[myStrFo].GetString());
-				const char * myStrFT = "FileType";
-				_tstTStru.FileType = Serialize::UTF8ToWString(_imageNode[myStrFT].GetString());
-				const char * myStrCS = "ColorSpace";
-				_tstTStru.ColorSpace = Serialize::UTF8ToWString(_imageNode[myStrCS].GetString());
-				const char * myStrFi = "Filter";
-				_tstTStru.Filter = Serialize::UTF8ToWString(_imageNode[myStrFi].GetString());
-				const char * myStrGM = "GenarateMipmap";
-				_tstTStru.GenarateMipmap = Serialize::UTF8ToWString(_imageNode[myStrGM].GetString());
-				const char * myStrMF = "MipmapFilter";
-				_tstTStru.MipmapFilter = Serialize::UTF8ToWString(_imageNode[myStrMF].GetString());
-				const char * myStrSc = "Scale";
-				_tstTStru.Scale = Serialize::UTF8ToWString(_imageNode[myStrSc].GetString());
-				myTst.destNodes.push_back(_tstTStru);
+					const char * myStrNa = "Name";
+					_tstSStru.name = Serialize::UTF8ToWString(_imageNode[myStrNa].GetString());
+					const char * myStrFor = "Format";
+					_tstSStru.format = Serialize::UTF8ToWString(_imageNode[myStrFor].GetString());
+					const char * myStrCS = "ColorSpace";
+					_tstSStru.colorSpace = Serialize::UTF8ToWString(_imageNode[myStrCS].GetString());
+					const char * myStrID = "DestID";
+					_tstSStru.destID = Serialize::UTF8ToWString(_imageNode[myStrID].GetString());
+					const char * myStrDc = "DestChannel";
+					_tstSStru.destChannerl = Serialize::UTF8ToWString(_imageNode[myStrDc].GetString());
+					myTst.sourceNodes.push_back(_tstSStru);
+				}
+
+			}
+			else if (_tag == L"Dest")
+			{
+				const Value& target = _document["Dest"];
+				for (SizeType i = 0; i < target.Size(); i++)
+				{
+					TstDest _tstTStru;
+					const Value& _imageNode = target[i];
+
+					const char * myStrID = "ID";
+					_tstTStru.ID = Serialize::UTF8ToWString(_imageNode[myStrID].GetString());
+					const char * myStrNS = "NameSuffix";
+					_tstTStru.NameSuffix = Serialize::UTF8ToWString(_imageNode[myStrNS].GetString());
+					const char * myStrFo = "Format";
+					_tstTStru.Format = Serialize::UTF8ToWString(_imageNode[myStrFo].GetString());
+					const char * myStrFT = "FileType";
+					_tstTStru.FileType = Serialize::UTF8ToWString(_imageNode[myStrFT].GetString());
+					const char * myStrCS = "ColorSpace";
+					_tstTStru.ColorSpace = Serialize::UTF8ToWString(_imageNode[myStrCS].GetString());
+					const char * myStrFi = "Filter";
+					_tstTStru.Filter = Serialize::UTF8ToWString(_imageNode[myStrFi].GetString());
+					const char * myStrGM = "GenarateMipmap";
+					_tstTStru.GenarateMipmap = Serialize::UTF8ToWString(_imageNode[myStrGM].GetString());
+					const char * myStrMF = "MipmapFilter";
+					_tstTStru.MipmapFilter = Serialize::UTF8ToWString(_imageNode[myStrMF].GetString());
+					const char * myStrSc = "Scale";
+					_tstTStru.Scale = Serialize::UTF8ToWString(_imageNode[myStrSc].GetString());
+					myTst.destNodes.push_back(_tstTStru);
+				}
 			}
 		}
-		
 	}
+
+	return(result);
+
 }
 
 void Serialize::setWstring(Value & myValue , Document & doc , wstring myWStr)
