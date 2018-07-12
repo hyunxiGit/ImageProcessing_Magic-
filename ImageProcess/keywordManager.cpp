@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "keywordManager.h"
+#include "fileManager.h"
+#include "serialize.h"
 #include <algorithm>
 #include <map>
-using namespace std;
 
 KeywordManager * KeywordManager::instance = nullptr;
 

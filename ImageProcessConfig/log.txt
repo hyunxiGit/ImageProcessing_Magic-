@@ -1,3 +1,4 @@
 set tool folder : C:\MyGit\ImageProcess\ImageProcessConfig
+error> < FileManager::initDirectory> <illegal path> : WorkingPath.ini -> 
 set source folder : D:/megaScan项目数据/surfaces
 set target folder : D:/megaScan项目数据/Output

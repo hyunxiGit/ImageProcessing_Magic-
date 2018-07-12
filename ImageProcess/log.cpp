@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "stdafx.h"
+#include "log.h"
 
 //todo : This class better use vector
-using namespace std;
 Log * Log::instance = nullptr;
 Log * Log::getInstance()
 {

@@ -2,15 +2,12 @@
 #include "stdafx.h"
 #include "tst.h"
 #include "textet.h"
-#include <map>
-#include <string>
 //json
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/writer.h"
-#include <stdio.h> //json file读
 
 #define EXPORT_PATH "d:/JsonFile.Json"
 using namespace std;

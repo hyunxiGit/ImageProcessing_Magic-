@@ -10,7 +10,7 @@ Asset2D::Asset2D(wstring mySourcePath, wstring mySourceName, wstring myTargetPat
 void Asset2D::exportAsset()
 {
 	wstring _path = getFullTargetPath();
-	image.write(_path);
+	//image.write(_path);
 }
 
 wstring Asset2D::getTextetImgName()
@@ -29,7 +29,7 @@ void Asset2D::setTextetImgName(wstring myName)
 void Asset2D::createFile()
 {
 	wstring sourceImagePath = getFullSourcePath();
-	image = Image_W(sourceImagePath);
+	//image = Image_W(sourceImagePath);
 }
 
 void Asset2D::reformat(wstring myFormat)

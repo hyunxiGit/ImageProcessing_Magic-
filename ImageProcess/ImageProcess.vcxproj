@@ -181,7 +181,6 @@
     <ClInclude Include="textet.h" />
     <ClInclude Include="textureSetManager.h" />
     <ClInclude Include="tst.h" />
-    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asset.cpp" />
@@ -204,7 +203,6 @@
     <ClCompile Include="textet.cpp" />
     <ClCompile Include="textureSetManager.cpp" />
     <ClCompile Include="tst.cpp" />
-    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\ImageProcessConfig\en-dictionary.txt" />

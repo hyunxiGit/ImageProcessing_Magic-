@@ -1,10 +1,5 @@
 ﻿#pragma once
-#include <set>
-#include <vector>
-#include <string>
-#include <map>
 
-using namespace std;
 struct fileKWStr
 {
 	wstring use;

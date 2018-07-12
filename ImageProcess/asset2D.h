@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include <string>
-#include "image_w.h"
+//#include "image_w.h"
 #include "asset.h"
 
-using namespace std;
 class Asset2D : public Asset
 {
 public:
@@ -15,5 +14,5 @@ public:
 	void exportAsset();
 private:
 	wstring textetImgName; //textet source node name
-	Image_W image;
+	//Image_W image;
 };

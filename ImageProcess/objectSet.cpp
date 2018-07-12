@@ -2,7 +2,8 @@
 #include "stdafx.h"
 #include "objectSet.h"
 #include "TextureSetManager.h"
-//#include "asset3D.h"
+#include "fileManager.h"
+#include "serialize.h"
 
 using namespace std;
 
@@ -181,11 +182,11 @@ void ObjectSet::exportTextet(wstring myExportPath)
 	if (myExportPath != L"")
 	{
 		wcout << sourcePath + L"/" + megaScanId + L"/" << endl;
-		textetExportDir = myExportPath + L"/" + megaScanId + L".texset";
+		textetExportDir = myExportPath + L"/" + megaScanId + L".texet";
 	}
 	else
 	{
-		textetExportDir = targetPath + L"/" + objectId + L".texset";
+		textetExportDir = targetPath + L"/" + objectId + L".texet";
 	}
 
 	wcout << textetExportDir << endl;
@@ -209,8 +210,8 @@ void ObjectSet::export2D( wstring myFormat)
 		if (myFormat != L"")
 		{
 			(*itr).reformat(myFormat);
-			(*itr).createFile();
-			(*itr).exportAsset();
+			//(*itr).createFile();
+			//(*itr).exportAsset();
 		}
 		else
 		{

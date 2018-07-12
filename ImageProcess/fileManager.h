@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <vector>
-#include <string>
 #include "keywordManager.h";
 #include "log.h";
 
@@ -10,7 +8,6 @@
 
 //fileManager 的 singleton 用法:
 //FileManager*  myFileManager = FileManager::getInstance();
-using namespace std;
 class FileManager
 {
 private:

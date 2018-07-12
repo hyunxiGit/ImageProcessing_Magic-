@@ -1,13 +1,11 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "textureSetManager.h"
-#include <string>
-#include <direct.h>  
-#include <stdlib.h>  
-#include <stdio.h>
+#include "fileManager.h"
+#include "serialize.h"
+#include <direct.h>   
 #include <algorithm>  
 
-using namespace std;
 FileManager* FileManager::instance = nullptr;
 
 FileManager::FileManager(): sourceDir(L""), targetDir(L""), batchInputPath(L""), batchOutputPath(L""), IDJsonPath(L""), keyWordJsonPath(L""), logPath(L"")
@@ -45,7 +43,7 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	bool tstDirGood = checkPath(tstPath);
 	bool textetExportGood = checkPath(textetExportDir)==FOLDER_EXIST;
 	bool textetDirGood = sourceDir.find(textetSourceDir) != wstring::npos;
-
+	textetDirGood = false;
 	if (!sourceDirGood)
 	{
 		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + sourceDir);

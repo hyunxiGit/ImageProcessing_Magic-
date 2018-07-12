@@ -4,8 +4,8 @@
 #include "asset3D.h"
 #include "textureSetManager.h"
 #include "textet.h"
-#include <vector>
-using namespace std;
+#include "fileManager.h"
+
 class ObjectSet
 {
 public :

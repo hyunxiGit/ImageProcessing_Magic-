@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "textureSetManager.h"
 #include "asset2D.h"
+#include "fileManager.h"
+#include "serialize.h"
 
 TextureSetManager * TextureSetManager:: instance = nullptr;
 

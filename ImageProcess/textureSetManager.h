@@ -1,4 +1,9 @@
 ﻿#pragma once
+#include "tst.h"
+#include "textet.h"
+#include "asset2D.h"
+#include "fileManager.h"
+
 class TextureSetManager
 {
 public:

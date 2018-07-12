@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "tst.h"
+
 Tst::Tst():version(L"0"){}
 Tst::Tst(vector<TstSource> mySourceNode, vector<TstDest> myDestNodes)
 {
