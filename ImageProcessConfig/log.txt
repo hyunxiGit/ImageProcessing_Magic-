@@ -1,4 +1,3 @@
-set tool folder : D:\work\assetProcess\ImageProcessing_Magic-\ImageProcessConfig
-set source folder : e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/Megascans/surfaces
-set target folder : e:/nicholas_rwc_jx4_data/depot/JX4_SourceData/Graphics/MaterialLib/Scans
-<error> <KeywordManager::generateObjectID> <2Dasset> can not generate ID for :Riverdebris_pfijbfp0
+set tool folder : C:\MyGit\ImageProcess\ImageProcessConfig
+set source folder : D:/megaScan项目数据/surfaces
+set target folder : D:/megaScan项目数据/Output

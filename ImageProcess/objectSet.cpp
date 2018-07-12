@@ -180,7 +180,8 @@ void ObjectSet::exportTextet(wstring myExportPath)
 	wstring textetExportDir;
 	if (myExportPath != L"")
 	{
-		textetExportDir = myExportPath + L"/" + objectId + L".texset";
+		wcout << sourcePath + L"/" + megaScanId + L"/" << endl;
+		textetExportDir = myExportPath + L"/" + megaScanId + L".texset";
 	}
 	else
 	{
