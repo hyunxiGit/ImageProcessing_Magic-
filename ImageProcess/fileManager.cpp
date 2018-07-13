@@ -33,21 +33,14 @@ bool FileManager::initDirectory()
 	//取得config位置
 	bool result = false;
 	bool toolDirSet = setToolConfigPath();
+	if (!toolDirSet)
+	{
+		wcout << L"-- config Path initialize failed." << endl;
+		return(result);
+	}
 	wcout << "toolDirSet : " << toolDirSet << endl;
 	if (toolDirSet)
 	{
-		//make log
-		logPath = configPath + L"/" + L"log.txt";
-		bool logExist = (checkPath(logPath) == FILE_EXIST);
-
-		if (!logExist)
-		{
-			createFile(logPath);
-			logExist = true;
-		}
-		Log* _myLog = Log::getInstance();
-		_myLog->setLogPath(logPath);
-
 		readIni();
 	}
 
@@ -206,14 +199,19 @@ bool  FileManager::readIni()
 
 bool  FileManager::setToolConfigPath()
 {
-	wstring toolFolderName = L"ImageProcessing_Magic-";
-	//取得本工具下configfolder
-	TCHAR szFilePath[MAX_PATH + 1] = { 0 };
+	wstring configFolderName = L"config";
+	//取得本工具下config folder
 
-	GetModuleFileName(NULL, szFilePath, MAX_PATH);
+	TCHAR szFilePath[MAX_PATH + 1] = { 0 };
+	_wgetcwd(szFilePath, MAX_PATH);
+
 	wstring _path(szFilePath);
-	wstring::size_type pos = _path.find(toolFolderName) + toolFolderName.size();
-	_path = _path.substr(0, pos) + L"\\ImageProcessConfig";
+
+	//get module path
+	//GetModuleFileName(NULL, szFilePath, MAX_PATH);
+	//wstring _path(szFilePath);
+	
+	_path = _path + L"\\config" ;
 
 	bool result = false;
 	if (checkPath(_path) == ILLEGAL_PATH)
@@ -226,11 +224,34 @@ bool  FileManager::setToolConfigPath()
 		Log::log(L"set tool folder : " + _path);
 		configPath = _path;
 
+		//init log
+		logPath = configPath + L"\\" + L"log.txt";
+		bool logExist = (checkPath(logPath) == FILE_EXIST);
+		if (!logExist)
+		{
+			logExist = createFile(logPath);
+		}
+		if (logExist)
+		{
+			Log* _myLog = Log::getInstance();
+			_myLog->setLogPath(logPath);
+		}
+		else
+		{
+			wcout << "--can not create Log file :" << logPath << endl;
+		}
+
 		initDir = getToolFileStoragePath() + L"/" + PATH_INI;
 		if (checkPath(initDir) == FILE_EXIST)
 		{
+			Log::log(L"set tool folder : " + _path);
 			result = true;
 		}
+		else
+		{
+			wstring info = L"<error> < FileManager::setInitPath> <missing file> : \n--" + initDir;
+			Log::log(info);
+		}	
 	}
 	return(result);
 }
@@ -496,9 +517,9 @@ bool FileManager::createFile(wstring myPath)
 		if(myFile.is_open())
 		{
 			//myFile <<L" ";
+			result = true;
 		}
 		myFile.close();
-		result = true;
 	}
 	return(result);
 }

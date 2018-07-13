@@ -165,6 +165,9 @@
       <AdditionalLibraryDirectories>C:\ImageMagick\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CORE_RL_Magick++_.lib;CORE_RL_MagickCore_.lib;CORE_RL_MagickWand_.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(CodeAnalysisInputAssembly) D:\work\assetProcess\ImageProcessing_Magic-\imageProcessTextet</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="asset2D.h" />

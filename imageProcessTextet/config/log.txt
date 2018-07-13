@@ -1,0 +1,4 @@
+This is my first log
+set tool folder : D:\work\assetProcess\ImageProcessing_Magic-\imageProcessTextet\config
+<error> < FileManager::setInitPath> <missing file> : 
+--D:\work\assetProcess\ImageProcessing_Magic-\imageProcessTextet\config/WorkingPath.ini
