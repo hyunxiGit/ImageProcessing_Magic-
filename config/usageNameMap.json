@@ -1,9 +1,0 @@
-{
-    "albedo": "BaseColor",
-    "displacement": "Height",
-    "metalic": "Metallic",
-    "normal": "NormalMap",
-    "translucency": "Translucency",
-	"ao": "AmbientOcclusion",
-	"roughness": "Roughness"
-}
