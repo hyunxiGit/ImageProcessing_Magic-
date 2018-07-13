@@ -401,3 +401,17 @@ void Serialize::printUTF8(string myUTF8String)
 	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), NULL, &info);
 	printf("%s\n", myUTF8String);
 }
+
+wstring Serialize::mbToWcs(const string &myString)
+{
+	std::string curLocale = setlocale(LC_ALL, "");
+	const char * _Source = myString.c_str();
+	size_t _Dsize = mbstowcs(NULL, _Source, 0) + 1;
+	wchar_t *_Dest = new wchar_t[_Dsize];
+	wmemset(_Dest, 0, _Dsize);
+	mbstowcs(_Dest, _Source, _Dsize);
+	std::wstring result = _Dest;
+	delete[]_Dest;
+	setlocale(LC_ALL, curLocale.c_str());
+	return result;
+}

@@ -1,4 +1,15 @@
+This is my first log
 set tool folder : C:\MyGit\ImageProcess\ImageProcessConfig
-error> < FileManager::initDirectory> <illegal path> : WorkingPath.ini -> 
-set source folder : D:/megaScan项目数据/surfaces
+set source path
+--D:/megaScan项目数据/surfaces
+set asset target path
+--D:/megaScan项目数据/Output
+set tst folder path
+--D:/megaScan项目数据/TextureSetType
+set textet file export path 
+--d:/megaScan项目数据/Output/textset
+set textet relative source path
+--megaScan项目数据
+set source folder : 
+--D:/megaScan项目数据/surfaces
 set target folder : D:/megaScan项目数据/Output

@@ -3,6 +3,7 @@
 #include "textureSetManager.h"
 #include "fileManager.h"
 #include "serialize.h"
+#include "log.h"
 #include <direct.h>   
 #include <algorithm>  
 
@@ -22,7 +23,7 @@ FileManager* FileManager:: getInstance()
 	return(instance);
 }
 
-bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
+bool FileManager::initDirectory()
 {
 	//1 : success
 	//-1: source failed
@@ -32,43 +33,79 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 	//取得config位置
 	bool result = false;
 	bool toolDirSet = setToolConfigPath();
+	wcout << "toolDirSet : " << toolDirSet << endl;
 	if (toolDirSet)
 	{
+		//make log
+		logPath = configPath + L"/" + L"log.txt";
+		bool logExist = (checkPath(logPath) == FILE_EXIST);
+
+		if (!logExist)
+		{
+			createFile(logPath);
+			logExist = true;
+		}
+		Log* _myLog = Log::getInstance();
+		_myLog->setLogPath(logPath);
+
 		readIni();
 	}
 
 	//检测从 initFile 里面读入的信息的正确性
-	bool sourceDirGood = checkPath(sourceDir);
-	bool targetDirGood = checkPath(targetDir);
-	bool tstDirGood = checkPath(tstPath);
-	bool textetExportGood = checkPath(textetExportDir)==FOLDER_EXIST;
+	bool sourceDirGood = checkPath(sourceDir) == FOLDER_EXIST;
+	bool targetDirGood = checkPath(targetDir) == FOLDER_EXIST;
+	bool tstDirGood = checkPath(tstPath) == FOLDER_EXIST;
+	bool textetExportGood = checkPath(textetExportDir) == FOLDER_EXIST;
 	bool textetDirGood = sourceDir.find(textetSourceDir) != wstring::npos;
-	textetDirGood = false;
 	if (!sourceDirGood)
 	{
-		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + sourceDir);
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> sourceDir ");
 	}
+	else
+	{
+		Log::log(L"set source path");
+	}
+	Log::log(L"--"+sourceDir);
 	if (!targetDirGood)
 	{
-		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + targetDir);
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> targetDir" );
 	}
+	else
+	{
+		Log::log(L"set asset target path");
+	}
+	Log::log(L"--" + targetDir);
 	if (!tstDirGood)
 	{
-		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + tstPath);
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> tstPath" );
 	}
+	else
+	{
+		Log::log(L"set tst folder path");
+	}
+	Log::log(L"--" + tstPath);
 	if (!textetExportGood)
 	{
-		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> " + textetExportGood);
+		Log::log(L"<error> < FileManager::initDirectory> <dir not exist > : WorkingPath.ini -> textetExportDir");
 	}
+	else
+	{
+		Log::log(L"set textet file export path ");
+	}
+	Log::log(L"--" + textetExportDir);
 	if (!textetDirGood)
 	{
-		Log::log(L"<error> < FileManager::initDirectory> <illegal path> : WorkingPath.ini -> " + textetExportGood);
+		Log::log(L"<error> < FileManager::initDirectory> <illegal path> : WorkingPath.ini -> textetSourceDir" );
 	}
+	else
+	{
+		Log::log(L"set textet relative source path");
+	}
+	Log::log(L"--" + textetSourceDir);
 	if (sourceDirGood && targetDirGood && tstDirGood && textetExportGood)
 	{
 		bool sourceCheck;
 		bool targetCheck;
-
 		bool keyWordExist;
 		bool logExist;
 		bool idExist;
@@ -77,35 +114,23 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 
 		if (sourceDir != L"" && targetDir != L"")
 		{
-			batchInputPath = sourceDir + L"/" + myFolderName;
+			batchInputPath = sourceDir;
 			batchOutputPath = targetDir;
-			if (useSubFolder)
-			{
-				batchOutputPath = batchOutputPath +L"/" + myFolderName;
-				textetDestDir = textetDestDir + L"/" + myFolderName;
-				textetSourceDir = textetSourceDir + L"/" + myFolderName;
-			}
 			if (checkPath(batchOutputPath) == ILLEGAL_PATH)
 			{
 				createFolder(batchOutputPath);
+				Log::log(L"Create folder for asset output : "+ batchOutputPath);
 			}
 			sourceCheck = setBatchInputPath(batchInputPath);
 			targetCheck = setBatchExportPath(batchOutputPath);
-			subFolder = myFolderName;
 		}
 		if (sourceCheck && targetCheck)
 		{
 			keyWordExist = (checkPath(keyWordJsonPath) == FILE_EXIST);
-			logExist = (checkPath(logPath) == FILE_EXIST);
 			idExist = (checkPath(IDJsonPath) == FILE_EXIST);
 			dictionartExist = (checkPath(dictionJsonPath) == FILE_EXIST);
 			nameUsageExist = (checkPath(usageNamePath) == FILE_EXIST);
 
-			if (!logExist)
-			{
-				createFile(logPath);
-				logExist = true;
-			}
 
 			if (!idExist)
 			{
@@ -135,14 +160,14 @@ bool FileManager::initDirectory(wstring myFolderName , bool useSubFolder)
 			}
 
 
-			if (logExist && keyWordExist && idExist && dictionartExist && nameUsageExist)
+			if (keyWordExist && idExist && dictionartExist && nameUsageExist)
 			{
 				KeywordManager * myKM = KeywordManager::getInstance();
 				Log * myLog = Log::getInstance();
 				TextureSetManager * myTM = TextureSetManager::getInstance();
 
 				myKM->initJsonMap(IDJsonPath, keyWordJsonPath, dictionJsonPath, usageNamePath);
-				myLog->setLogPath(logPath);
+
 				myTM->initFile(tstPath, textetSourceDir, textetDestDir);
 
 				result = true;
@@ -193,7 +218,7 @@ bool  FileManager::setToolConfigPath()
 	bool result = false;
 	if (checkPath(_path) == ILLEGAL_PATH)
 	{
-		wstring info = L"<error> < FileManager::setInitPath> <ilegal path> : " + _path;
+		wstring info = L"<error> < FileManager::setInitPath> <ilegal path> : \n--" + _path;
 		Log::log(info);
 	}
 	else
@@ -215,14 +240,14 @@ bool FileManager::setBatchInputPath(wstring myPath )
 	bool result = false;
 	if (checkPath(myPath) == ILLEGAL_PATH)
 	{
-		wstring info = L"< FileManager::setBatchInputPath> ilegal path : "+ batchInputPath;
+		wstring info = L"< FileManager::setBatchInputPath> ilegal path : \n-- "+ batchInputPath;
 		Log::log(info);
 	}
 	else
 	{
 		batchInputPath = myPath;
 		result = true;
-		Log::log(L"set source folder : " + batchInputPath);
+		Log::log(L"set source folder : \n--" + batchInputPath);
 	}	
 	return (result);
 }
@@ -232,7 +257,7 @@ bool FileManager::setBatchExportPath(wstring myTargetPath)
 	bool result = false;
 	if (checkPath(myTargetPath) == ILLEGAL_PATH)
 	{
-		wstring info = L"< FileManager::myTargetPath> ilegal path : " + myTargetPath;
+		wstring info = L"< FileManager::myTargetPath> ilegal path : \n--" + myTargetPath;
 		Log::log(info);
 	}
 	else
@@ -281,9 +306,7 @@ void FileManager::paseInitFile(vector<wstring> myInit)
 				wstring _value = _line.substr(_equalPos+1, _line.size());
 				if (para == L"sourceDir")
 				{
-					wcout << _value << endl;
 					sourceDir = _value;
-					wcout << sourceDir << endl;
 				}
 				else if (para == L"targetDir")
 				{

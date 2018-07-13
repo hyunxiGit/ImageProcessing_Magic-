@@ -181,7 +181,7 @@ void ObjectSet::exportTextet(wstring myExportPath)
 	wstring textetExportDir;
 	if (myExportPath != L"")
 	{
-		wcout << sourcePath + L"/" + megaScanId + L"/" << endl;
+		wcout <<"from : " << sourcePath + L"/" + megaScanId + L"/" << endl;
 		textetExportDir = myExportPath + L"/" + megaScanId + L".texet";
 	}
 	else
@@ -189,7 +189,7 @@ void ObjectSet::exportTextet(wstring myExportPath)
 		textetExportDir = targetPath + L"/" + objectId + L".texet";
 	}
 
-	wcout << textetExportDir << endl;
+	wcout << "to : " << textetExportDir << endl;
 	Serialize::exportTextet(textetExportDir, textet);
 }
 

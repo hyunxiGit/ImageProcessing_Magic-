@@ -40,7 +40,7 @@ private:
 public:
 	static FileManager* getInstance();
 	static short checkPath(wstring);
-	bool initDirectory(wstring folderName , bool useSubFolder = false);
+	bool initDirectory();
 	bool setToolConfigPath();
 	bool setBatchInputPath(wstring);
 	bool setBatchExportPath(wstring);
